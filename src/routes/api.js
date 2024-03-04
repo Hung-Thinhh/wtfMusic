@@ -5,18 +5,19 @@ const express = require('express')
 // import groupController from "../controller/groupController"
 // import roleController from "../controller/roleController"
 // import {checkUserJWT,checkUserPermission} from '../middleware/jwt'
+const getAll= require("../controller/getData")
 const router = express.Router();
 
 
 
 const initApiRouter = (app) => {
     
-// router.all('*',checkUserJWT,checkUserPermission)
-router.all('*')
+    // router.all('*',checkUserJWT,checkUserPermission)
+    router.all('*')
 
     // router.post("/register", apiController.handleRegister);
-   
-
+   router.get('/getartist', getAll.getartist);
+   router.get('/getsong', getAll.getsong);
     return app.use("/api", router);
 }
 
