@@ -3,8 +3,8 @@ const  {Nuxtify}  = require ("nuxtify-api")
 const handleHome = async (req, res) => {
     const getSongmp3 = async() => {
         console.log("getSongmp3")
-        const url = await Nuxtify.song.getUrl('Z690CWC7');
-        // const url = await Nuxtify.video.getDetail('Z6ZIBDE6');
+        // const url = await Nuxtify.song.getDetail('Z6ZIBDE6');
+        const url = await Nuxtify.getArtist("Jisoo");
         const timestamp = 1708862634884;
         const date1 = new Date(23960);
 
@@ -52,4 +52,4 @@ console.log(date2);
 module.exports = {
     handleHome,
     
-}
+}   

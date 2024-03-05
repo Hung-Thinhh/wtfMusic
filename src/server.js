@@ -20,7 +20,7 @@ app.use(cors(corsOptions));
   
 configViewEngine(app);
 //conect database
-db.connect()
+// db.connect()
 // init web router
 initWebRouter(app); 
 initApiRouter(app); 

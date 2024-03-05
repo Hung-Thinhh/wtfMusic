@@ -17,7 +17,15 @@ const initApiRouter = (app) => {
 
     // router.post("/register", apiController.handleRegister);
    router.get('/getartist', getAll.getartist);
-   router.get('/getsong', getAll.getsong);
+   router.get('/songly', getAll.songly);
+   router.get('/songurl', getAll.songurl);
+   router.get('/SongDetail', getAll.songdetail);
+   router.get('/home', getAll.gethome);
+   router.get('/artist', getAll.getArtist);
+   router.get('/get100', getAll.get100);
+
+
+
     return app.use("/api", router);
 }
 
