@@ -70,7 +70,7 @@ const getArtist = async (req, res) => {
 }
 const get100 = async (req, res) => {
     const getSongmp3 = async () => {
-        const songly = await Nuxtify.getPlaylist('ZWZB96AB');
+        const songly = await Nuxtify.getDetail('ZWZA0C8O');
         return res.json(songly);
     }
     getSongmp3()
