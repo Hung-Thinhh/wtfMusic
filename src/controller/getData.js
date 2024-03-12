@@ -30,30 +30,26 @@ const getartist = async (req, res) => {
     getSongmp3()
 
 }
+
 const songdetail = async (req, res) => {
-    const getSongmp3 = async () => {
-        const SongDetail = await Nuxtify.song.getDetail('Z690CWC8');
-        return res.json(SongDetail);
-    }
-    getSongmp3()
+    const songId = req.params.id;
+    const SongDetail = await Nuxtify.song.getDetail(songId);
+    res.json(SongDetail);
 }
+
 const songurl = async (req, res) => {
-    const getSongmp3 = async () => {
-        const songurl = await Nuxtify.song.getUrl('Z690CWC8');
-
-        return res.json(songurl);
-    }
-    getSongmp3()
+    const songId = req.params.id;
+    const songUrl = await Nuxtify.song.getUrl(songId);
+    res.json(songUrl);
 }
+
 const songly = async (req, res) => {
-    const getSongmp3 = async () => {
-        const songly = await Nuxtify.song.getLyrics('Z690CWC8');
-
-
-        return res.json(songly);
-    }
-    getSongmp3()
+    const songId = req.params.id;
+    const songLyrics = await Nuxtify.song.getLyrics(songId);
+    res.json(songLyrics);
 }
+
+
 const gethome = async (req, res) => {
     const getSongmp3 = async () => {
         const songly = await Nuxtify.getHome();
