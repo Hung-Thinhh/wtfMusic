@@ -4,7 +4,9 @@ const handleHome = async (req, res) => {
     const getSongmp3 = async() => {
         console.log("getSongmp3")
         // const url = await Nuxtify.song.getDetail('Z6ZIBDE6');
-        const url = await Nuxtify.getArtist("Jisoo");
+        // const url = await Nuxtify.getArtist("Jisoo");
+        const url = await Nuxtify.search.getSuggestion('drill');
+
         const timestamp = 1708862634884;
         const date1 = new Date(23960);
 

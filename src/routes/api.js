@@ -20,6 +20,7 @@ const initApiRouter = (app) => {
     router.get('/songdetail/:id', getAll.songdetail);
     router.get('/songurl/:id', getAll.songurl);
     router.get('/songly/:id', getAll.songly);
+    router.get('/search/:id', getAll.search);
     router.get('/home', getAll.gethome);
     router.get('/artist', getAll.getArtist);
     router.get('/get100', getAll.get100);

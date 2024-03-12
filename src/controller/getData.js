@@ -71,6 +71,16 @@ const get100 = async (req, res) => {
     }
     getSongmp3()
 }
+
+
+const search = async (req, res) => {
+    const getSongmp3 = async () => {
+        const songId = req.params.id;
+        const songly = await Nuxtify.search.getSuggestion(songId);
+        return res.json(songly);
+    }
+    getSongmp3()
+}
 module.exports = {
     getartist,
     songly,
@@ -78,7 +88,8 @@ module.exports = {
     songdetail,
     gethome,
     getArtist,
-    get100
+    get100,
+    search
 }
 
 

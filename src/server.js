@@ -10,6 +10,7 @@ require('dotenv').config()
 const app = express()
 const PORT = process.env.PORT || 6969
 
+
 const corsOptions = {
     origin: 'http://localhost:3000', // Thay đổi địa chỉ này thành nguồn gốc của ứng dụng của bạn
     optionsSuccessStatus: 200, // Mã trạng thái thành công mặc định khi yêu cầu CORS thành công
