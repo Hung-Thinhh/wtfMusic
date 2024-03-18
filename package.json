@@ -20,6 +20,7 @@
     "mongoose": "^8.2.0",
     "nodemon": "^3.1.0",
     "nuxtify-api": "^2.2.0",
+    "react-copy-to-clipboard": "^5.1.0",
     "react-toastify": "^10.0.4"
   }
 }
