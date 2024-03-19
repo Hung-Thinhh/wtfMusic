@@ -14,7 +14,6 @@ const initApiRouter = (app) => {
 
     // router.all('*',checkUserJWT,checkUserPermission)
     router.all('*')
-
     // router.post("/register", apiController.handleRegister);
     router.get('/getartist', getAll.getartist);
     router.get('/songdetail/:id', getAll.songdetail);
@@ -24,8 +23,6 @@ const initApiRouter = (app) => {
     router.get('/home', getAll.gethome);
     router.get('/artist', getAll.getArtist);
     router.get('/get100', getAll.get100);
-
-
 
     return app.use("/api", router);
 }
