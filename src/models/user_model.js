@@ -3,36 +3,43 @@ const { Schema } = mongoose;
 
 
 const userSchema = new Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true, 
-    trim: true,
-    index: true 
-  },
-  avt: {
-    type: String,
-    required: true,
-    unique: false, 
-    trim: false,
-    index: true 
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    index: true 
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-    index: true   
-  }
+    id: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        index: true
+    },
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        index: true
+    },
+    avt: {
+        type: String,
+        required: true,
+        unique: false,
+        trim: false,
+        index: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        index: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+        index: true
+    }
 });
 
 

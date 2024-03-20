@@ -6,6 +6,8 @@ const express = require('express')
 // import roleController from "../controller/roleController"
 // import {checkUserJWT,checkUserPermission} from '../middleware/jwt'
 const getAll = require("../controller/getData")
+const userctrl = require("../controller/auth")
+
 const router = express.Router();
 
 
@@ -23,6 +25,10 @@ const initApiRouter = (app) => {
     router.get('/home', getAll.gethome);
     router.get('/artist', getAll.getArtist);
     router.get('/get100', getAll.get100);
+    router.get('/signup', userctrl.signup);
+    router.get('/login', userctrl.login);
+
+
 
     return app.use("/api", router);
 }
