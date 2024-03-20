@@ -6,6 +6,8 @@ const express = require('express')
 // import roleController from "../controller/roleController"
 // import {checkUserJWT,checkUserPermission} from '../middleware/jwt'
 const getAll = require("../controller/getData")
+const getHome = require("../controller/homeController");
+
 const router = express.Router();
 
 
@@ -21,7 +23,7 @@ const initApiRouter = (app) => {
     router.get('/songurl/:id', getAll.songurl);
     router.get('/songly/:id', getAll.songly);
     router.get('/search/:id', getAll.search);
-    router.get('/home', getAll.gethome);
+    router.get('/home', getHome.getHome);
     router.get('/artist', getAll.getArtist);
     router.get('/get100', getAll.get100);
 
