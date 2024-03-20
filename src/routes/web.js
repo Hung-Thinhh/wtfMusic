@@ -5,7 +5,7 @@ const  homeController = require("../controller/homeController");
 const router = express.Router();
 
 const initWebRouter = (app) => {
-    router.get("/", homeController.getHome);
+    router.get("/", homeController.handleHome);
     // router.get("/user", homeController.handleCreateUser);
     // router.post("/user/create-user", homeController.handleCreateNewUser);
     // router.post("/delete-user/:id", homeController.handleDeleteUser);
