@@ -9,6 +9,8 @@ const getAll = require("../controller/getData")
 const router = express.Router();
 const userctrl = require("../controller/auth")
 const getHome = require("../controller/homeController");
+const getPlaylist = require("../controller/getPlaylist");
+
 
 
 
@@ -29,6 +31,8 @@ const initApiRouter = (app) => {
     router.get('/get100', getAll.get100);
     router.get('/signup', userctrl.signup);
     router.get('/login', userctrl.login);
+    router.get('/getplaylist/:id', getPlaylist.fetchPlaylist);
+
 
 
 
