@@ -8,6 +8,7 @@ const express = require('express')
 const getAll = require("../controller/getData")
 const router = express.Router();
 const userctrl = require("../controller/auth")
+const getRating = require("../controller/RatingController")
 const getHome = require("../controller/homeController");
 const getPlaylist = require("../controller/getPlaylist");
 
