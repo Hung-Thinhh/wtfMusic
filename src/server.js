@@ -4,6 +4,7 @@ const db = require('./config/connectDb');
 const  initWebRouter = require("./routes/web");
 const initApiRouter = require("./routes/api");
 const cors = require('cors');
+const bodyParser = require('body-parser');
 require('dotenv').config()
 
 
@@ -19,10 +20,11 @@ const corsOptions = {
   
   // Sử dụng middleware CORS trên tất cả các yêu cầu
 app.use(cors(corsOptions));
-  
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 configViewEngine(app);
 //conect database
-// db.connect()
+db.connect()
 // init web router
 initWebRouter(app); 
 initApiRouter(app); 

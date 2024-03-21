@@ -11,6 +11,8 @@ const userctrl = require("../controller/auth")
 const getRating = require("../controller/RatingController")
 const getHome = require("../controller/homeController");
 const getPlaylist = require("../controller/getPlaylist");
+const clone = require("../controller/clonedata");
+
 
 
 
@@ -34,6 +36,9 @@ const initApiRouter = (app) => {
     router.get('/signup', userctrl.signup);
     router.get('/login', userctrl.login);
     router.get('/getplaylist/:id', getPlaylist.fetchPlaylist);
+    router.post('/clone', clone.fetchclone);
+    router.post('/cloneplaylist', clone.fetchplaylistclone);
+
 
 
 

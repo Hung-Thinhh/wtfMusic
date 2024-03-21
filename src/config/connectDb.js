@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
-function connect() {
+async function connect() {
   try {
-    mongoose
+   await mongoose
       .connect(
         "mongodb+srv://wtfmusic:wtfmusic2024@cluster0.psz9xf9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
       )
