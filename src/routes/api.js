@@ -27,6 +27,7 @@ const initApiRouter = (app) => {
     router.get('/songly/:id', getAll.songly);
     router.get('/search/:id', getAll.search);
     router.get('/home', getHome.getHome);
+    router.get('/rating', getRating.getRating);
     router.get('/artist', getAll.getArtist);
     router.get('/get100', getAll.get100);
     router.get('/signup', userctrl.signup);

@@ -3,7 +3,7 @@ const { Nuxtify } = require("nuxtify-api");
 const handleHome = async (req, res) => {
   console.log("getSongmp3");
 
-  const url = await Nuxtify.getHome();
+  const url = await Nuxtify.chart.getHome();
 
   const timestamp = 1708862634884;
   const date1 = new Date(23960);
