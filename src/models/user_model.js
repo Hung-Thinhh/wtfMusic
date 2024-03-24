@@ -22,7 +22,8 @@ const userSchema = new Schema({
         required: true,
         unique: false,
         trim: false,
-        index: true
+        index: true,
+        default: ''
     },
     email: {
         type: String,
@@ -48,4 +49,4 @@ userSchema.index({ username: 1, email: 1 }, { unique: true });
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;
+export default User;

@@ -1,43 +1,38 @@
-const express = require('express')
+import express from 'express'
+import {checkUserJWT, checkUserPermission} from '../middleware/jwt.js';
+const {getartist,songly,songurl,songdetail,gethome,getArtist,get100,search}= require("../controller/getData.js")
+const {getRating} = require("../controller/RatingController.js")
+const {getHome}= require("../controller/homeController.js");
+const {fetchPlaylist} = require("../controller/getPlaylist.js");
+const {fetchclone,fetchplaylistclone} = require("../controller/clonedata.js");
 
-// import apiController from "../controller/apiController"
-// import userController from "../controller/userController"
-// import groupController from "../controller/groupController"
-// import roleController from "../controller/roleController"
-// import {checkUserJWT,checkUserPermission} from '../middleware/jwt'
-const getAll = require("../controller/getData")
+const {handleRegister} = require("../controller/Authentication.js")
+
 const router = express.Router();
-const userctrl = require("../controller/auth")
-const getRating = require("../controller/RatingController")
-const getHome = require("../controller/homeController");
-const getPlaylist = require("../controller/getPlaylist");
-const clone = require("../controller/clonedata");
-
-
-
-
-
-
 
 const initApiRouter = (app) => {
 
-    // router.all('*',checkUserJWT,checkUserPermission)
-    router.all('*')
-    // router.post("/register", apiController.handleRegister);
-    router.get('/getartist', getAll.getartist);
-    router.get('/songdetail/:id', getAll.songdetail);
-    router.get('/songurl/:id', getAll.songurl);
-    router.get('/songly/:id', getAll.songly);
-    router.get('/search/:id', getAll.search);
-    router.get('/home', getHome.getHome);
-    router.get('/rating', getRating.getRating);
-    router.get('/artist', getAll.getArtist);
-    router.get('/get100', getAll.get100);
-    router.get('/signup', userctrl.signup);
-    router.get('/login', userctrl.login);
-    router.get('/getplaylist/:id', getPlaylist.fetchPlaylist);
-    router.post('/clone', clone.fetchclone);
-    router.post('/cloneplaylist', clone.fetchplaylistclone);
+    router.all('*',checkUserJWT,checkUserPermission)
+    // router.all('*')
+
+    //register
+    router.post("/register", handleRegister);
+
+    //music
+    router.get('/getartist', getartist);
+    router.get('/songdetail/:id', songdetail);
+    router.get('/songurl/:id', songurl);
+    router.get('/songly/:id', songly);
+    router.get('/search/:id', search);
+    router.get('/home', getHome);
+    router.get('/rating', getRating);
+    router.get('/artist', getArtist);
+    router.get('/get100', get100);
+    // router.get('/signup', userctrl.signup);
+    // router.get('/login', userctrl.login);
+    router.get('/getplaylist/:id', fetchPlaylist);
+    router.post('/clone', fetchclone);
+    router.post('/cloneplaylist', fetchplaylistclone);
 
 
 
@@ -46,4 +41,4 @@ const initApiRouter = (app) => {
     return app.use("/api", router);
 }
 
-module.exports = initApiRouter;
+export default initApiRouter;

@@ -1,6 +1,5 @@
-const express = require('express')
-
-const path = require('path')
+import express from 'express'
+import path from 'path'
 
 /**
  * 
@@ -11,4 +10,4 @@ const configViewEngine = (app) => {
     app.set('view engine', 'ejs');
     app.set("views", path.join('./src', 'views'));
 }
-module.exports = configViewEngine;
+export default configViewEngine;

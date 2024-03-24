@@ -1,10 +1,10 @@
-const express = require('express')
-const configViewEngine = require("./config/viewEngine");
-const db = require('./config/connectDb');
-const  initWebRouter = require("./routes/web");
-const initApiRouter = require("./routes/api");
-const cors = require('cors');
-const bodyParser = require('body-parser');
+import express from 'express'
+import configViewEngine from "./config/viewEngine.js";
+import db from './config/connectDb.js';
+import  initWebRouter from "./routes/web.js";
+import initApiRouter from "./routes/api.js";
+import cors from 'cors';
+import bodyParser from 'body-parser';
 require('dotenv').config()
 
 

@@ -1,11 +1,10 @@
-const express = require('express')
-
-const  homeController = require("../controller/homeController");
+import express from 'express'
+import {handleHome} from '../controller/homeController'
 
 const router = express.Router();
 
 const initWebRouter = (app) => {
-    router.get("/", homeController.handleHome);
+    router.get("/", handleHome);
     // router.get("/user", homeController.handleCreateUser);
     // router.post("/user/create-user", homeController.handleCreateNewUser);
     // router.post("/delete-user/:id", homeController.handleDeleteUser);
@@ -14,4 +13,4 @@ const initWebRouter = (app) => {
     return app.use("/", router);
 }
 
-module.exports= initWebRouter;
+export default initWebRouter;

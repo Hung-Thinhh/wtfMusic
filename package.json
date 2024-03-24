@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./src/server.js"
+    "start": "nodemon --exec babel-node src/server.js"
   },
   "keywords": [
     "wtfMusic"
@@ -13,7 +13,11 @@
   "author": "HT90",
   "license": "ISC",
   "dependencies": {
+    "@babel/core": "^7.24.3",
+    "@babel/node": "^7.23.9",
+    "@babel/preset-env": "^7.24.3",
     "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -21,9 +25,12 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.3.0",
     "mongoose": "^8.2.0",
-    "nodemon": "^3.1.0",
     "nuxtify-api": "^2.2.0",
     "react-copy-to-clipboard": "^5.1.0",
-    "react-toastify": "^10.0.4"
+    "react-toastify": "^10.0.4",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }
