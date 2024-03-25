@@ -1,7 +1,7 @@
 require("dotenv").config();
 import bcrypt from "bcryptjs";
 import User from "../models/user_model.js";
-const { getGroupWithRole } = require("./jwt-services.js");
+// const { getGroupWithRole } = require("./jwt-services.js");
 const { createToken } = require("../middleware/jwt.js");
 // get the promise implementation, we will use bluebird
 const salt = bcrypt.genSaltSync(10);
@@ -12,13 +12,20 @@ const hashPassword = (password) => {
   return pass_hash;
 };
 const checkEmail = async (email) => {
-  let user = await User.findOne({
-    where: { email: email },
-  });
+  let user = await User.findOne({ email: email });
   if (user) {
     return true;
+  } else {
+    return false;
   }
-  return false;
+};
+const checkUsername = async (username) => {
+  let user = await User.findOne({ username: 'nht' });
+  if (user) {
+    return true;
+  } else {
+    return false;
+  }
 };
 const generateId = () => {
   return uuidv4();
@@ -26,31 +33,37 @@ const generateId = () => {
 const handleRegister = async (data) => {
   try {
     let isEmailExist = await checkEmail(data.email);
-    if (isEmailExist) {
+    let isUsernameExist = await checkUsername(data.username);
+    console.log('email'+isEmailExist);
+    console.log('name'+isUsernameExist);
+    if (isUsernameExist) {
+      return {
+        EM: "the Username already exists",
+        EC: "1",
+      };
+    } else if (isEmailExist) {
       return {
         EM: "the Email already exists",
         EC: "1",
       };
     }
-
-    let hashPass = hashPassword(data.password);
-    await User.findOneAndUpdate(
-    {id: generateId()},
-      {
-        
+    else {
+      let hashPass = hashPassword(data.password);
+  
+      const newUser = new User({
+        id: generateId(),
         email: data.email,
         username: data.username,
         password: hashPass,
         avt: "",
-      },
-      { upsert: true }
-    );
-  
+      });
+      await newUser.save();
 
-    return {
-      EM: "A user created successfully",
-      EC: "0",
-    };
+      return {
+        EM: "A user created successfully",
+        EC: "0",
+      };
+    }
   } catch (error) {
     console.log("error: >>>>", error);
     return {
@@ -64,21 +77,20 @@ const checkPassword = (inputPassword, hashPassword) => {
 };
 const handleLogin = async (data) => {
   try {
-    let user = await User.findOne({
-      where: {
-        [Op.or]: [{ email: data.valueLogin }, { phone: data.valueLogin }],
-      },
+    const user = await User.findOne({
+      $or: [{ email: data.valueLogin }, { username: data.valueLogin }],
     });
+    console.log(user);
     if (user) {
-      console.log("hahah");
+      console.log(user.password);
       let isCorrectPassword = await checkPassword(data.password, user.password);
       if (isCorrectPassword) {
-        let groupWithRole = await getGroupWithRole(user);
+        // let groupWithRole = await getGroupWithRole(user);
         let payload = {
           email: user.email,
-          groupWithRole,
+          // groupWithRole,
           email: user.email,
-          name: user.username,
+          username: user.username,
         };
         let token = createToken(payload);
         return {
@@ -86,9 +98,9 @@ const handleLogin = async (data) => {
           EC: "0",
           DT: {
             access_token: token,
-            data: groupWithRole,
+            // data: groupWithRole,
             email: user.email,
-            name: user.username,
+            username: user.username,
           },
         };
       }

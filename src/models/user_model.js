@@ -19,8 +19,7 @@ const userSchema = new Schema({
     },
     avt: {
         type: String,
-        required: true,
-        unique: false,
+        unique: true,
         trim: false,
         index: true,
         default: ''

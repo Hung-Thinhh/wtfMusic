@@ -83,8 +83,23 @@ const handleLogout = async (req, res) => {
     });
   }
 };
+const checkAccount = async (req, res) => {
+  console.log('check');
+  console.log(req.user)
+    return res.status(200).json({
+        EM: "ok!",
+          EC: "0",
+          DT: {
+            access_token: req.token,
+            // groupWithRole:req.user.groupWithRole,
+            email: req.user.email,
+            username: req.user.username
+          },
+    })
+}
 module.exports = {
   handleRegister,
   handleLogin,
   handleLogout,
+  checkAccount
 };
