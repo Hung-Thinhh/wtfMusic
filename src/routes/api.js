@@ -6,7 +6,7 @@ const {getHome}= require("../controller/homeController.js");
 const {fetchPlaylist} = require("../controller/getPlaylist.js");
 const {fetchclone,fetchplaylistclone} = require("../controller/clonedata.js");
 
-const {handleRegister,handleLogin,checkAccount} = require("../controller/Authentication.js")
+const {handleRegister,handleLogin,checkAccount,handleLogout} = require("../controller/Authentication.js")
 
 const router = express.Router();
 
@@ -19,6 +19,7 @@ const initApiRouter = (app) => {
     router.post("/register", handleRegister);
     router.post("/login", handleLogin);
     router.get("/account",checkAccount);
+    router.post("/logout",handleLogout);
 
     //music
     router.get('/getartist', getartist);

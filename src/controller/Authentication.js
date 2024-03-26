@@ -41,14 +41,20 @@ const handleLogin = async (req, res) => {
         DT: "",
       });
     }
-    console.log(req.body.valueLogin);
     let data = await Authentication_service.handleLogin(req.body);
     if (data) {
-      console.log(data);
-      res.cookie("jwt", data.DT.access_token, {
-        httpOnly: true,
-        maxAge: 60 * 60 * 1000,
-      });
+      if (req.body.password.checkRemember) {
+        res.cookie("jwt", data.DT.access_token, {
+          httpOnly: true,
+          maxAge: 20* 24* 60 * 60 * 1000,
+        });
+      } else {
+        
+        res.cookie("jwt", data.DT.access_token, {
+          httpOnly: true,
+          maxAge: 60 * 60 * 1000,
+        });
+      }
       return res.status(200).json({
         EM: data.EM,
         EC: data.EC,

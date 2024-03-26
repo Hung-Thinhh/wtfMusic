@@ -89,7 +89,7 @@ const handleLogin = async (data) => {
         let payload = {
           email: user.email,
           // groupWithRole,
-          email: user.email,
+          // email: user.email,
           username: user.username,
         };
         let token = createToken(payload);
