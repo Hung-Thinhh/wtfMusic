@@ -59,7 +59,7 @@ const gethome = async (req, res) => {
 }
 const getArtist = async (req, res) => {
     const getSongmp3 = async () => {
-        const songly = await Nuxtify.getArtist("Jisoo");
+        const songly = await Nuxtify.getArtist("Rose-BLACKPINK");
         return res.json(songly);
     }
     getSongmp3()
