@@ -24,7 +24,7 @@ const handleRegister = async (req, res) => {
     });
   } catch (error) {
     console.log(error)
-    return res.status(500).json({
+    return res.status(200).json({
       EM: "error from server",
       EC: "-1",
       DT: "",
@@ -64,7 +64,7 @@ const handleLogin = async (req, res) => {
   } catch (error) {
     console.log("error: >>>>", error);
 
-    return res.status(500).json({
+    return res.status(200).json({
       EM: "error from server",
       EC: "-1",
       DT: "",
@@ -82,7 +82,7 @@ const handleLogout = async (req, res) => {
   } catch (error) {
     console.log("error: >>>>", error);
 
-    return res.status(500).json({
+    return res.status(200).json({
       EM: "error from server",
       EC: "-1",
       DT: "",
@@ -90,8 +90,8 @@ const handleLogout = async (req, res) => {
   }
 };
 const checkAccount = async (req, res) => {
-  console.log('check');
-  console.log(req.user)
+  // console.log('check');
+  // console.log(req.user)
     return res.status(200).json({
         EM: "ok!",
           EC: "0",

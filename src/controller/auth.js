@@ -29,7 +29,7 @@ const signup = async (req, res) => {
             res.json({ message: 'User successfully signed up', token: token });
         }
     } catch (error) {
-        res.status(500).send(`Failed to create/update user: ${error.message}`);
+        res.status(200).send(`Failed to create/update user: ${error.message}`);
     }
 }
 const login = async (req, res) => {
@@ -60,7 +60,7 @@ const login = async (req, res) => {
         });
         
     } catch (error) {
-        res.status(500).json({ message: `Server error: ${error.message}` });
+        res.status(200).json({ message: `Server error: ${error.message}` });
     }
 };
 

@@ -4,7 +4,7 @@ const {getartist,songly,songurl,songdetail,gethome,getArtist,get100,search}= req
 const {getRating} = require("../controller/RatingController.js")
 const {getHome}= require("../controller/homeController.js");
 const {fetchPlaylist} = require("../controller/getPlaylist.js");
-const {fetchclone,fetchplaylistclone} = require("../controller/clonedata.js");
+const {fetchclone,fetchplaylistclone,fetchArtistsClone} = require("../controller/clonedata.js");
 
 const {handleRegister,handleLogin,checkAccount,handleLogout} = require("../controller/Authentication.js")
 
@@ -29,13 +29,16 @@ const initApiRouter = (app) => {
     router.get('/search/:id', search);
     router.get('/home', getHome);
     router.get('/rating', getRating);
-    router.get('/artist', getArtist);
+    router.get('/artist/:id', getArtist);
     router.get('/get100', get100);
     // router.get('/signup', userctrl.signup);
     // router.get('/login', userctrl.login);
     router.get('/getplaylist/:id', fetchPlaylist);
+    // update data
     router.post('/clone', fetchclone);
     router.post('/cloneplaylist', fetchplaylistclone);
+    router.post('/clonepArtists', fetchArtistsClone);
+
 
 
 
