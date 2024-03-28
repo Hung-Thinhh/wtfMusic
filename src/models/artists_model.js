@@ -1,57 +1,65 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const playlistSchema = new Schema({
-    playlistId: {
+const ArtistsSchema = new Schema({
+    id: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        index: true
+    },
+    artistsName: {
         type: String,
         required: true,
         trim: true,
         index: true
     },
-    playlistname: {
+    alias: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        index: true
+    },
+    biography: {
         type: String,
         required: true,
         trim: true,
-        index: true
+        default: ''
     },
-    genresid: {
-        type: Array,
-        required: true,
-        trim: true,
-        index: true
-    },
-    artistsId: {
-        type: Array,
-        required: true,
-        trim: true,
-        index: true
-    },
-    thumbnail: {
+    avt: {
         type: String,
-        required: true
+        default: ''
     },
-    description: { //Sửa lại trường 'desciption' thành 'description'
+    birthday: {
+        type: Date,
+        index: true
+    },
+    realName: {
         type: String,
         required: true,
-        trim: true,
-    },
-    songid: {
-        type: Array,
-        required: true,
+        unique: true,
         trim: true,
         index: true
     },
-    like: {
+    totalFollow: {
         type: Number,
         required: true,
         min: 0,
         default: 0
     },
-    listen: {
-        type: Number,
+    songListId: {
+        type: Array,
         required: true,
-        min: 0,
-        default: 0
+        trim: true,
+        index: true
+    },
+    playListId: {
+        type: Array,
+        required: true,
+        trim: true,
+        index: true
     },
     createdAt: {
         type: Date,
@@ -63,6 +71,10 @@ const playlistSchema = new Schema({
     }
 });
 
-const Playlist = mongoose.model('Playlist', playlistSchema);
 
-module.exports = Playlist;
+ArtistsSchema.index({ id: 1, ArtistsName: 1 }, { unique: true });
+
+
+const Ar = mongoose.model('Artists', ArtistsSchema);
+
+module.exports = Ar;
