@@ -5,7 +5,7 @@ const {getRating} = require("../controller/RatingController.js")
 const {getHome}= require("../controller/homeController.js");
 const {fetchPlaylist} = require("../controller/getPlaylist.js");
 const {fetchclone,fetchplaylistclone,fetchArtistsClone} = require("../controller/clonedata.js");
-
+const {addToHistory,updateH}=require("../controller/history.js");
 const {handleRegister,handleLogin,checkAccount,handleLogout} = require("../controller/Authentication.js")
 
 const router = express.Router();
@@ -38,6 +38,11 @@ const initApiRouter = (app) => {
     router.post('/clone', fetchclone);
     router.post('/cloneplaylist', fetchplaylistclone);
     router.post('/clonepArtists', fetchArtistsClone);
+
+
+    router.post('/addnewhistory', addToHistory);
+    router.post('/updatewhistory', updateH);
+
 
 
 
