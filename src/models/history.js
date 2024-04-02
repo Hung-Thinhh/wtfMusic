@@ -8,10 +8,6 @@ const historySchema = new Schema({
         trim: true,
         index: true
     },
-    thumbnail: {
-        type: String,
-        required: true
-    },
     songid: {
         type: Array,
         required: true,
@@ -19,13 +15,7 @@ const historySchema = new Schema({
         index: true
     },
     like: {
-        type: Number,
-        required: true,
-        min: 0,
-        default: 0
-    },
-    listen: {
-        type: Number,
+        type: Boolean,
         required: true,
         min: 0,
         default: 0

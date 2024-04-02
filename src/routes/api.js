@@ -41,7 +41,7 @@ const initApiRouter = (app) => {
 
 
     router.post('/addnewhistory', addToHistory);
-    router.post('/updatewhistory', updateH);
+
 
 
 
