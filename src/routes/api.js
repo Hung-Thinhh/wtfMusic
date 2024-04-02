@@ -3,6 +3,7 @@ import {checkUserJWT, checkUserPermission} from '../middleware/jwt.js';
 const {getartist,songly,songurl,songdetail,gethome,getArtist,get100,search}= require("../controller/getData.js")
 const {getRating} = require("../controller/RatingController.js")
 const {getHome}= require("../controller/homeController.js");
+const {addLikes}= require("../controller/llikeController.js");
 const {fetchPlaylist} = require("../controller/getPlaylist.js");
 const {fetchclone,fetchplaylistclone,fetchArtistsClone} = require("../controller/clonedata.js");
 const {addToHistory,updateH}=require("../controller/history.js");
@@ -41,9 +42,7 @@ const initApiRouter = (app) => {
 
 
     router.post('/addnewhistory', addToHistory);
-
-
-
+    router.post('/addLikes', addLikes);
 
 
 
