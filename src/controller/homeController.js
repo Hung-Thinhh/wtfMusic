@@ -1,8 +1,9 @@
 const BlogPost = require("../models/modles_Test");
 const { Nuxtify } = require("nuxtify-api");
-const handleHome = async (req, res) => {
-  console.log("getSongmp3");
 
+const handleHome = async (req, res) => {
+
+  // Kết quả: "ZWZB96DC"
   const url = await Nuxtify.song.getLyrics('Z7I9OC70');
 
   const timestamp = 1708862634884;

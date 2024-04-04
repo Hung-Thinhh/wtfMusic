@@ -8,6 +8,7 @@ const {fetchPlaylist} = require("../controller/getPlaylist.js");
 const {fetchclone,fetchplaylistclone,fetchArtistsClone,fetchAutoCloneGenre} = require("../controller/clonedata.js");
 const {addToHistory,updateH}=require("../controller/history.js");
 const {handleRegister,handleLogin,checkAccount,handleLogout} = require("../controller/Authentication.js")
+const {addToPlayList} = require("../controller/create_playList.js")
 
 const router = express.Router();
 
@@ -44,6 +45,8 @@ const initApiRouter = (app) => {
 
 
     router.post('/addnewhistory', addToHistory);
+    router.post('/addnewplaylist', addToPlayList);
+
     router.post('/addLikes', addLikes);
 
 

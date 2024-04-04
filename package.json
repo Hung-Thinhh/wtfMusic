@@ -28,7 +28,8 @@
     "nuxtify-api": "^2.2.0",
     "react-copy-to-clipboard": "^5.1.0",
     "react-toastify": "^10.0.4",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.24.3",
