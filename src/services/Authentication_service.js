@@ -20,7 +20,7 @@ const checkEmail = async (email) => {
   }
 };
 const checkUsername = async (username) => {
-  let user = await User.findOne({ username: 'nht' });
+  let user = await User.findOne({ username: username });
   if (user) {
     return true;
   } else {
@@ -34,8 +34,8 @@ const handleRegister = async (data) => {
   try {
     let isEmailExist = await checkEmail(data.email);
     let isUsernameExist = await checkUsername(data.username);
-    console.log('email'+isEmailExist);
-    console.log('name'+isUsernameExist);
+    console.log('email'+data.email);
+    console.log('name'+data.username);
     if (isUsernameExist) {
       return {
         EM: "the Username already exists",
@@ -56,6 +56,7 @@ const handleRegister = async (data) => {
         username: data.username,
         password: hashPass,
         avt: "",
+        birthday: '',
       });
       await newUser.save();
 
@@ -132,4 +133,6 @@ module.exports = {
   handleRegister,
   handleLogin,
   checkEmail,
+  checkPassword,
+  hashPassword
 };
