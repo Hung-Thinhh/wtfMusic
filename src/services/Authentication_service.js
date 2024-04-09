@@ -82,11 +82,11 @@ const handleLogin = async (data) => {
     });
     console.log(user);
     if (user) {
-      console.log(user.password);
       let isCorrectPassword = await checkPassword(data.password, user.password);
       if (isCorrectPassword) {
         // let groupWithRole = await getGroupWithRole(user);
         let payload = {
+          id: user.id,
           email: user.email,
           // groupWithRole,
           // email: user.email,

@@ -23,7 +23,7 @@ const verifyToken = (token) => {
   return decode;
 };
 
-const SecurePaths = ["/user","/account"];
+const SecurePaths = ["/user","/account","/getInfor"];
 
 const extractToken = (req) => { 
   if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
@@ -42,6 +42,7 @@ const checkUserJWT = (req, res, next) => {
     let decoded = verifyToken(token);
     if (decoded) {
       req.user = decoded;
+      console.log(req.user)
       req.token = token;
       next();
     } else {

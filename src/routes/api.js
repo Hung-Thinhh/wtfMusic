@@ -9,12 +9,13 @@ const {fetchclone,fetchplaylistclone,fetchArtistsClone,fetchAutoCloneGenre} = re
 const {addToHistory,updateH}=require("../controller/history.js");
 const {handleRegister,handleLogin,checkAccount,handleLogout} = require("../controller/Authentication.js")
 const {addToPlayList} = require("../controller/create_playList.js")
-
+import {Infor} from '../controller/User.js'
 const router = express.Router();
 
 const initApiRouter = (app) => {
 
-    router.all('*',checkUserJWT,checkUserPermission)
+    router.all('*',checkUserJWT)
+    // router.all('*',checkUserJWT,checkUserPermission)
     // router.all('*')
 
     //register
@@ -22,6 +23,7 @@ const initApiRouter = (app) => {
     router.post("/login", handleLogin);
     router.get("/account",checkAccount);
     router.post("/logout",handleLogout);
+    router.get("/getInfor",Infor);
 
     //music
     router.get('/getartist', getartist);
