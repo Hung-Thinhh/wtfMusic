@@ -26,6 +26,7 @@
     "mongodb": "^6.3.0",
     "mongoose": "^8.2.0",
     "nuxtify-api": "^2.2.0",
+    "react-admin": "^4.16.15",
     "react-copy-to-clipboard": "^5.1.0",
     "react-toastify": "^10.0.4",
     "uuid": "^9.0.1",

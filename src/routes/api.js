@@ -9,6 +9,8 @@ const {fetchclone,fetchplaylistclone,fetchArtistsClone,fetchAutoCloneGenre} = re
 const {addToHistory,updateH}=require("../controller/history.js");
 const {handleRegister,handleLogin,checkAccount,handleLogout} = require("../controller/Authentication.js")
 const {addToPlayList} = require("../controller/create_playList.js")
+const {adminSong} = require("../controller/admin/listStong.js");
+
 import {Infor} from '../controller/User.js'
 const router = express.Router();
 
@@ -51,9 +53,9 @@ const initApiRouter = (app) => {
 
     router.post('/addLikes', addLikes);
 
+// admin
 
-
-
+    router.get('/admin/song',adminSong)
 
     return app.use("/api", router);
 }
