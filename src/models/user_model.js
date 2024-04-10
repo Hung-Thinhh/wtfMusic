@@ -17,6 +17,13 @@ const userSchema = new Schema({
         trim: true,
         index: true
     },
+    birthday: {
+        type: Date,
+        unique: true,
+        trim: false,
+        index: true,
+        default: ''
+    },
     avt: {
         type: String,
         unique: true,
