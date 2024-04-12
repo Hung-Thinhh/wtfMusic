@@ -6,7 +6,8 @@ const playlistSchema = new Schema({
         type: String,
         required: true,
         trim: true,
-        index: true
+        index: true,
+        unique: true,
     },
     playlistname: {
         type: String,

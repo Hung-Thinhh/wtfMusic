@@ -18,7 +18,13 @@ const songSchema = new Schema({
         type: String,
         required: true
     },
-    artistsId: {
+    alias: {
+        type: String,
+        required: true,
+        trim: true,
+        index: true
+    },
+    artists: {
         type: Array,
         required: true,
         trim: true,
@@ -27,7 +33,8 @@ const songSchema = new Schema({
     genresid: {
         type: Array,
         required: true,
-        trim: true
+        trim: true,
+        index: true
     },
     like: {
         type: Number,
@@ -41,11 +48,13 @@ const songSchema = new Schema({
         min: 0,
         default: 0
     },
-    lyrc: {
-        type: String,
-        required: true,
-        trim: true
-    },
+    lyric: [
+        {
+            startTime: { type: Number },
+            endTime: { type: Number },
+            data: { type: String },
+        }
+    ],
     songLink: {
         type: String,
         required: true,
