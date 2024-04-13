@@ -4,6 +4,7 @@ const Ar = require('../models/artists_model');
 const genre = require('../models/genre_model')
 
 const { Nuxtify } = require("nuxtify-api");
+const { response } = require('express');
 const fetchclone = async (req, res) => {
     try {
         const id = req.body.data.id;
@@ -23,19 +24,19 @@ const fetchplaylistclone = async (req, res) => {
         if (existingPlaylist) {
             // Playlist already exists, update the data
             // await Playlist.findOneAndUpdate({ playlistId: id }, playlistData, { upsert: true });
-            const f = playlistData.songid.map(async (id) => await fetchSongData(id));
-            console.log("Playlist updated successfully", f);
-
+            
             // Update the playlist data in MongoDB
-            await Playlist.updateOne({ playlistId: id }, playlistData);
+            const newww = await Playlist.updateOne({ playlistId: id }, playlistData);
+            console.log("Playlist updated successfully", newww,playlistData);
+            res.json(newww)
         } else {
             // Playlist doesn't exist, insert the data
             // await Playlist.create(playlistData);
-            const f = playlistData.songid.map(async (id) => await fetchSongData(id));
-            console.log("New playlist inserted successfully", f);
-
+            
             // Insert the playlist data into MongoDB
-            await Playlist.create(playlistData);
+            const newww = await Playlist.create(playlistData);
+            console.log("New playlist inserted successfully", newww,playlistData);
+            res.json(newww)
         }
 
     } catch (err) {
@@ -55,7 +56,9 @@ const fetchArtistsClone = async (req, res) => {
     }
 };
 
-const fetchSongData = async (SongId) => {
+const fetchSongData = async (req, res) => {
+    console.log("da duoc goi")
+    const SongId = req.body.id
     try {
         const songDetailRes = await fetch(`http://localhost:6969/api/songdetail/${SongId}`);
         const songDetailResult = await songDetailRes.json();
@@ -67,10 +70,10 @@ const fetchSongData = async (SongId) => {
         const songLyricsResult = await songLyricsRes.json();
 
         const id = SongId;
-        const genres = songDetailResult.data.genres ? songDetailResult.data.genres.map((genre) => genre.id) : [];
+        const genresid = songDetailResult.data.genreIds ? songDetailResult.data.genreIds.map((genre) => genre) : [];
         const like = songDetailResult.data?.like || 0;
         const listen = songDetailResult.data?.listen || 0;
-        const artistInfo = songDetailResult.data.artists ? songDetailResult.data.artists.map((artist) => artist.id) : [];
+        const artists = songDetailResult.data.artists ? songDetailResult.data.artists.map((artist) => artist.id) : [];
         const alias = songDetailResult.data?.alias || "Unknown Artist";
         const duration = songDetailResult.data?.duration || "Unknown Artist";
         const songname = songDetailResult.data && songDetailResult.data.title ? songDetailResult.data.title : "Untitled Song";
@@ -84,48 +87,48 @@ const fetchSongData = async (SongId) => {
         const Ly = songLyricsResult.data.sentences ? songLyricsResult.data.sentences : null;
 
 
-        const ress=await Song.findOneAndUpdate({ id: id }, {
-            id,
-            thumbnail,
-            songname,
-            artistInfo,
-            alias,
-            songLink,
-            listen,
-            like,
-            duration,
-            lyricsString: Ly,
-            genres
-        }, { upsert: true });
+        const existingSong = await Song.findOne({ id: SongId });
 
-        console.log(JSON.stringify({
-            id,
-            thumbnail,
-            songname,
-            artistInfo,
-            alias,
-            songLink,
-            listen,
-            like,
-            duration,
-            lyricsString: Ly,
-            genres
-        }))
-        console.log(ress.songname)
+        if (existingSong) {
+        
+            const updatedSong = await Song.findOneAndUpdate(
+                { id: SongId },
+                {
+                    $set: {
+                        thumbnail,
+                        songname,
+                        artists,
+                        alias,
+                        songLink,
+                        listen,
+                        like,
+                        duration,
+                        lyric: Ly,
+                        genresid
+                    }
+                },
+                { new: true }
+            );
 
-        return {
-            id,
-            thumbnail,
-            songname,
-            artistInfo,
-            alias,
-            songLink,
-            listen,
-            like,
-            duration,
-            lyricsString: Ly,
-            genres
-        };
+            res.json(updatedSong);
+        } else {
+            const newSong = await Song.create({
+                id: SongId,
+                thumbnail,
+                songname,
+                artists,
+                alias,
+                songLink,
+                listen,
+                like,
+                duration,
+                lyric: Ly,
+                genresid
+            });
+
+            // Trả về dữ liệu bài hát mới tạo
+            res.json(newSong);
+        }
     } catch (err) {
         console.error("Error fetching playlist data", err);
         throw (err);
@@ -134,8 +137,8 @@ const fetchSongData = async (SongId) => {
 
 const fetchAutoCloneGenre = async (req, res) => {
     try {
-    
-
+        const songId= await Playlist.find({},{songid:1})
+        res.json({songId:songId})
     } catch (err) {
         console.error("Artists Clone ERROR", err);
     }
@@ -145,5 +148,6 @@ module.exports = {
     fetchclone,
     fetchplaylistclone,
     fetchArtistsClone,
-    fetchAutoCloneGenre
+    fetchAutoCloneGenre,
+    fetchSongData
 };
