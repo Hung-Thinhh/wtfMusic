@@ -27,7 +27,7 @@ const fetchplaylistclone = async (req, res) => {
             
             // Update the playlist data in MongoDB
             const newww = await Playlist.updateOne({ playlistId: id }, playlistData);
-            console.log("Playlist updated successfully", newww,playlistData);
+            console.log("Playlist updated successfully");
             res.json(newww)
         } else {
             // Playlist doesn't exist, insert the data
@@ -35,7 +35,7 @@ const fetchplaylistclone = async (req, res) => {
             
             // Insert the playlist data into MongoDB
             const newww = await Playlist.create(playlistData);
-            console.log("New playlist inserted successfully", newww,playlistData);
+            console.log("New playlist inserted successfully");
             res.json(newww)
         }
 
@@ -57,7 +57,6 @@ const fetchArtistsClone = async (req, res) => {
 };
 
 const fetchSongData = async (req, res) => {
-    console.log("da duoc goi")
     const SongId = req.body.id
     try {
         const songDetailRes = await fetch(`http://localhost:6969/api/songdetail/${SongId}`);
