@@ -85,6 +85,7 @@ const handleLogout = async (req, res) => {
   }
 };
 const checkAccount = async (req, res) => {
+  const account = await Authentication_service.handleCheckAccount(req.user.id)
   return res.status(200).json({
     EM: "ok!",
     EC: "0",
@@ -93,6 +94,7 @@ const checkAccount = async (req, res) => {
       // groupWithRole:req.user.groupWithRole,
       email: req.user.email,
       username: req.user.username,
+      avt: account.DT.avt
     },
   });
 };

@@ -34,8 +34,8 @@ const handleRegister = async (data) => {
   try {
     let isEmailExist = await checkEmail(data.email);
     let isUsernameExist = await checkUsername(data.username);
-    console.log('email'+data.email);
-    console.log('name'+data.username);
+    console.log("email" + data.email);
+    console.log("name" + data.username);
     if (isUsernameExist) {
       return {
         EM: "the Username already exists",
@@ -46,17 +46,16 @@ const handleRegister = async (data) => {
         EM: "the Email already exists",
         EC: "1",
       };
-    }
-    else {
+    } else {
       let hashPass = hashPassword(data.password);
-  
+
       const newUser = new User({
         id: generateId(),
         email: data.email,
         username: data.username,
         password: hashPass,
         avt: "",
-        birthday: '',
+        birthday: "",
       });
       await newUser.save();
 
@@ -81,7 +80,6 @@ const handleLogin = async (data) => {
     const user = await User.findOne({
       $or: [{ email: data.valueLogin }, { username: data.valueLogin }],
     });
-    console.log(user);
     if (user) {
       let isCorrectPassword = await checkPassword(data.password, user.password);
       if (isCorrectPassword) {
@@ -99,7 +97,7 @@ const handleLogin = async (data) => {
           EC: "0",
           DT: {
             access_token: token,
-            // data: groupWithRole,
+            avt: user.avt,
             email: user.email,
             username: user.username,
           },
@@ -128,11 +126,24 @@ const handleLogin = async (data) => {
     };
   }
 };
-
+const handleCheckAccount = async (id) => {
+  const user = await User.findOne({
+    id: id,
+  });
+  console.log('okkkkkkkkkkkkkkk'+user)
+  if (user) {
+    return {
+      EM: "ok!",
+      EC: "0",
+      DT: user,
+    };
+  } 
+};
 module.exports = {
   handleRegister,
   handleLogin,
   checkEmail,
   checkPassword,
-  hashPassword
+  hashPassword,
+  handleCheckAccount,
 };
