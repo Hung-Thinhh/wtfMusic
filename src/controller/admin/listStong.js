@@ -8,17 +8,17 @@ const adminSong = async (req, res) => {
             songname: 1, 
             genresid: 1,
             listen:1,
-            artistsId:1,
+            artistsid:1,
             like:1,
             _id:0
-        });
-
+        }).limit(10);
         const handledata = await Promise.all(songdata.map(async (song) => {
             
             const genresNames = await Promise.all(
                 song.genresid.map(async (genresid) =>
                 await Genres.findOne({genreId: genresid}, {genrename: 1, _id: 0})
             ));
+            console.log(genresNames)
 
             return {...song.toObject(), genresid: genresNames};
         }));
