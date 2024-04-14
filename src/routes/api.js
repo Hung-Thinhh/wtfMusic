@@ -8,7 +8,7 @@ const {fetchPlaylist} = require("../controller/getPlaylist.js");
 const {fetchclone,fetchplaylistclone,fetchArtistsClone,fetchAutoCloneGenre,fetchSongData} = require("../controller/clonedata.js");
 const {addToHistory,updateH}=require("../controller/history.js");
 const {handleRegister,handleLogin,checkAccount,handleLogout} = require("../controller/Authentication.js")
-const {addToPlayList} = require("../controller/create_playList.js")
+import addToPlayList from"../controller/create_playList.js"
 import {Infor,editInfor,changePass} from '../controller/User.js'
 const {adminSong} = require("../controller/admin/listStong.js");
 const router = express.Router();

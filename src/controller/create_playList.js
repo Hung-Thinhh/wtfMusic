@@ -2,6 +2,7 @@ const playList = require('../models/playlist_model');
 import User from "../models/user_model.js";
 const { v4: uuidv4 } = require('uuid');
 const addToPlayList = async (req, res) => {
+    console.log(req.body.data)
     try {
         const playListData = req.body.data;
 
@@ -9,9 +10,11 @@ const addToPlayList = async (req, res) => {
             const user = await User.findOne({
                 $or: [{ username: playListData.artistsId }],
             });
+            console.log(user);
+
             
             if (!user) {
-                return res.status(404).send({error: 'User not found'});
+                return res.status(200).send({error: 'User not found'});
             }
 
             let playlist = await playList.findOne({ artistsId: user.id });
@@ -58,6 +61,4 @@ const addToPlayList = async (req, res) => {
     }
 }
 
-module.exports = {
-    addToPlayList
-};
+export default addToPlayList
