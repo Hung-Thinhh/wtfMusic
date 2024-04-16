@@ -42,6 +42,24 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    likedPlayLists: {
+        type: Array,
+        required: true,
+        trim: true,
+        index: true
+    },
+    likedSongs: {
+        type: Array,
+        required: true,
+        trim: true,
+        index: true
+    },
+    myPlayLists: {
+        type: Array,
+        required: true,
+        trim: true,
+        index: true
+    },
     createdAt: {
         type: Date,
         default: Date.now,

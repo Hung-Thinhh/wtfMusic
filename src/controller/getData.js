@@ -2,7 +2,6 @@ const { Nuxtify } = require("nuxtify-api")
 
 const getartist = async (req, res) => {
     const getSongmp3 = async () => {
-        console.log("getSongmp3")
         // const url = await Nuxtify.getArtist('Jisoo');
         const url = await Nuxtify.song.getSongDetail('Z6709W0Z');
         const timestamp = 1708862634884;
@@ -14,7 +13,7 @@ const getartist = async (req, res) => {
 
         const diffSeconds = timestampSeconds - startTime; // Tính hiệu giữa timestamp và startTime
 
-        console.log("Difference in seconds:", diffSeconds);
+
         const date2 = new Date(diffSeconds);
 
         const seconds2 = date2.getSeconds();

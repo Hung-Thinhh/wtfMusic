@@ -3,14 +3,12 @@ import Authentication_service from "../services/Authentication_service.js";
 const handleRegister = async (req, res) => {
   try {
     if (!req.body.username || !req.body.email || !req.body.password) {
-      console.log(req.body.username, req.body.email, req.body.password);
       return res.status(200).json({
         EM: "missing required",
         EC: "1",
         DT: "",
       });
     }
-    console.log(req.body);
     let data = await Authentication_service.handleRegister(req.body);
 
     return res.status(200).json({
