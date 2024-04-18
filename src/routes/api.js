@@ -3,12 +3,15 @@ import {checkUserJWT, checkUserPermission} from '../middleware/jwt.js';
 const {getartist,songly,songurl,songdetail,gethome,getArtist,get100,search}= require("../controller/getData.js")
 const {getRating} = require("../controller/RatingController.js")
 const {getHome}= require("../controller/homeController.js");
-const {addLikes}= require("../controller/llikeController.js");
 const {fetchPlaylist} = require("../controller/getPlaylist.js");
 const {fetchclone,fetchplaylistclone,fetchArtistsClone,fetchAutoCloneGenre,fetchSongData} = require("../controller/clonedata.js");
 const {addToHistory,updateH}=require("../controller/history.js");
 const {handleRegister,handleLogin,checkAccount,handleLogout} = require("../controller/Authentication.js")
-import addToPlayList from"../controller/create_playList.js"
+import addlike from"../controller/addlike.js"
+import createPlaylist from"../controller/reatePlayList.js"
+import getUserPlayList from"../controller/getUPlayList.js"
+
+
 import {Infor,editInfor,changePass} from '../controller/User.js'
 const {adminSong} = require("../controller/admin/listStong.js");
 const router = express.Router();
@@ -54,9 +57,16 @@ const initApiRouter = (app) => {
 
 
     router.post('/addnewhistory', addToHistory);
-    router.post('/addnewplaylist', addToPlayList);
+    router.post('/addlike', addlike);
 
-    router.post('/addLikes', addLikes);
+    router.post('/createplaylist', createPlaylist);
+
+
+    router.post('/getuserplaylist', getUserPlayList);
+
+
+
+
 
 // admin
 
