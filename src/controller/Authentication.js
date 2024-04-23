@@ -83,18 +83,29 @@ const handleLogout = async (req, res) => {
   }
 };
 const checkAccount = async (req, res) => {
-  const account = await Authentication_service.handleCheckAccount(req.user.id)
-  return res.status(200).json({
-    EM: "ok!",
-    EC: "0",
-    DT: {
-      access_token: req.token,
-      // groupWithRole:req.user.groupWithRole,
-      email: req.user.email,
-      username: req.user.username,
-      avt: account.DT.avt
-    },
-  });
+  if (req.user.id) {
+    
+    const account = await Authentication_service.handleCheckAccount(req.user.id)
+    
+    return res.status(200).json({
+      EM: "ok!",
+      EC: "0",
+      DT: {
+        access_token: req.token,
+        // groupWithRole:req.user.groupWithRole,
+        email: req.user.email,
+        username: req.user.username,
+        avt: account.DT.avt
+      },
+    });
+  } else {
+    return res.status(200).json({
+      EM: "not login",
+      EC: "1",
+      DT: []
+    });
+  }
+  
 };
 module.exports = {
   handleRegister,
