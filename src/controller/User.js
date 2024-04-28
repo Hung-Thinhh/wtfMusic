@@ -2,8 +2,14 @@ import {
   getInfor,
   updateInfor,
   changepassword,
+  addBanSong
 } from "../services/User_service";
-
+const cloudinary = require("cloudinary").v2;
+cloudinary.config({
+  cloud_name: "drupmc7qd",
+  api_key: "725439635389318",
+  api_secret: "c52-kr9-K0JKIQVNLQNZnSD5FRs",
+});
 const multer = require("multer");
 
 const Infor = async (req, res) => {
@@ -61,10 +67,36 @@ const editInfor = async (req, res) => {
         const file = req.file;
         // Chuyển Buffer sang base64
         const fileBase64 = file.buffer.toString("base64");
+        let imageUrl;
+
+        try {
+          imageUrl = await new Promise((resolve, reject) => {
+            cloudinary.uploader.upload(
+              "data:image/png;base64," + fileBase64,
+              function (error, result) {
+                if (error) {
+                  console.log("Error uploading file:", error);
+                  reject(error);
+                } else {
+                  console.log("Uploaded file details:", result);
+                  // Lấy URL an toàn của hình ảnh đã tải lên
+                  const secureUrl = result.secure_url;
+
+                  // Tiếp tục xử lý với URL hình ảnh
+                  resolve(secureUrl);
+                }
+              }
+            );
+          });
+        } catch (error) {
+          // Xử lý lỗi nếu có
+          console.log("Failed to upload image:", error);
+        }
+        console.log('hahaha'+imageUrl)
         form = {infor:{
           email: req.body.email,
           birthday: req.body.birthday,
-          avt:fileBase64
+          avt:imageUrl
         }}
         
       }
@@ -121,8 +153,36 @@ const changePass = async (req, res) => {
     });
   }
 };
+const updateBanSongs = async(req, res) => {
+  try {
+    const songId = req.body.songId;
+    console.log(req.user)
+    let data = await addBanSong(songId, req.user.id);
+    if (data && data.EC == "0") {
+      return res.status(200).json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    } else {
+      return res.status(200).json({
+        EM: data.EM,
+        EC: "-1",
+        DT: "",
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(200).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+}
 module.exports = {
   Infor,
   editInfor,
   changePass,
+  updateBanSongs
 };

@@ -72,9 +72,30 @@ const changepassword = async (data, id) => {
     };
   }
 };
+const addBanSong = async (songId, id) => {
+  const updateUser = await User.findOneAndUpdate(
+        { id: id },
+        { $addToSet: { banSongs: songId } },
+        { upsert: true }
+  );
+  if (updateUser) {
+    return {
+      EM: "Bài nhạc đã bị cấm",
+      EC: "0",
+      DT: "",
+    };
+  } else {
+    return {
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    };
+  }
+};
 
 module.exports = {
   getInfor,
   updateInfor,
   changepassword,
+  addBanSong
 };
