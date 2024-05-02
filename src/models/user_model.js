@@ -60,6 +60,12 @@ const userSchema = new Schema({
         trim: true,
         index: true
     },
+    banSongs: {
+        type: Array,
+        required: true,
+        trim: true,
+        index: true
+    },
     createdAt: {
         type: Date,
         default: Date.now,
