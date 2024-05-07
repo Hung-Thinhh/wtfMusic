@@ -62,30 +62,32 @@ const fetchSongData = async (req, res) => {
     const SongId = req.body.id;
     try {
         const detail = await Nuxtify.song.getDetail(SongId);
+        if (Array.isArray(detail.data.artists) && detail.data) {
+            const artistIds = Array.isArray(detail.data.artists) ? detail.data.artists.map(artist => artist.alias) : [];
+            const artists = await Promise.all(artistIds.map(alias => Nuxtify.getArtist(alias)));
 
-        const artistIds = detail.data.artists.map(artist => artist.alias);
-        const artists = await Promise.all(artistIds.map(alias => Nuxtify.getArtist(alias)));
+            const result = await Promise.all(artists.map(async ar => {
+                const sections = ar.data.sections;
+                const songListIds = sections.flatMap(section => section.items ? section.items.map(item => item.encodeId ? item.encodeId : null) : []);
+                const filteredSongListIds = songListIds.filter(id => id !== null);
 
-        const result = await Promise.all(artists.map(async ar => {
-            const sections = ar.data.sections;
-            const songListIds = sections.flatMap(section => section.items ? section.items.map(item => item.encodeId ? item.encodeId : null) : []);
-            const filteredSongListIds = songListIds.filter(id => id !== null);
-
-            return {
-                id: ar.data.id,
-                artistsName: ar.data.name,
-                alias: ar.data.alias,
-                biography: ar.data.biography,
-                avt: ar.data.thumbnail,
-                birthday: ar.data.birthday,
-                realName: ar.data.realname,
-                totalFollow: ar.data.totalFollow,
-                songListId: filteredSongListIds,
-                playListId: [ar.data.playlistId],
-            };
-        }));
-        console.log('================================',result[0].alias);
-        res.json(result);
+                return {
+                    id: ar.data.id,
+                    artistsName: ar.data.name,
+                    alias: ar.data.alias,
+                    biography: ar.data.biography,
+                    avt: ar.data.thumbnail,
+                    birthday: ar.data.birthday,
+                    realName: ar.data.realname,
+                    totalFollow: ar.data.totalFollow,
+                    songListId: filteredSongListIds,
+                    playListId: [ar.data.playlistId],
+                };
+            }));
+            console.log('================================', result[0].alias);
+            res.json(result);
+        }
+        else { res.json({}) }
     } catch (err) {
         console.error("Error fetching playlist data", err);
         throw err;
