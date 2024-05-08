@@ -97,7 +97,8 @@ const checkAccount = async (req, res) => {
         email: req.user.email,
         username: req.user.username,
         avt: account.DT.avt,
-        likedSongs: account.DT.likedSongs
+        likedSongs: account.DT.likedSongs,
+        likedPlayLists: account.DT.likedPlayLists
       },
     });
   } else {
