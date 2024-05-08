@@ -45,23 +45,23 @@ const initApiRouter = (app) => {
     router.get('/rating', getRating);
     router.get('/artist/:id', getArtist);
     router.get('/get100', get100);
-    router.get('/getallsong', fetchAutoCloneGenre);
     router.get('/getplaylist/:id', fetchPlaylist);
     
     router.post('/clone', fetchclone);
     router.post('/cloneplaylist', fetchplaylistclone);
     router.post('/clonepArtists', fetchArtistsClone);
-    router.post('/postsong', fetchSongData);
     router.post('/addnewhistory', addToHistory);
     router.post('/addlike', addlike);
     router.post('/createplaylist', createPlaylist);
     router.post('/getuserplaylist', getUserPlayList);
     router.post('/updatetoplaylist', upDateToPlaylist);
-
-// admin
-
+    
+    // admin
+    router.get('/getallsong', fetchAutoCloneGenre);
+    router.post('/postsong', fetchSongData);
+    
     router.get('/admin/song',adminSong)
-
+    
     return app.use("/api", router);
 }
 

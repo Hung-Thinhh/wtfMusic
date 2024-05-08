@@ -33,7 +33,7 @@ const ArtistsSchema = new Schema({
         default: ''
     },
     birthday: {
-        type: Date,
+        type: String,
         index: true
     },
     realName: {
