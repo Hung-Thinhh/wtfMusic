@@ -2,7 +2,8 @@ import {
   getInfor,
   updateInfor,
   changepassword,
-  addBanSong
+  addBanSong,
+  addLike,
 } from "../services/User_service";
 const cloudinary = require("cloudinary").v2;
 cloudinary.config({
@@ -45,11 +46,10 @@ const upload = multer({
 }).single("file"); // 'file' tương ứng với tên field trong form data khi gửi từ client
 const editInfor = async (req, res) => {
   try {
-
     // Xử lý yêu cầu `multipart/form-data` sử dụng multer
     upload(req, res, async function (err) {
-      let form
-      if (err ) {
+      let form;
+      if (err) {
         // Xử lý lỗi khi tải lên
         console.log(err);
         return res.status(200).json({
@@ -58,12 +58,13 @@ const editInfor = async (req, res) => {
           DT: "",
         });
       } else if (!req.file) {
-        form = {infor:{
-          email: req.body.email,
-          birthday: req.body.birthday
-        }}
-      }
-       else {
+        form = {
+          infor: {
+            email: req.body.email,
+            birthday: req.body.birthday,
+          },
+        };
+      } else {
         const file = req.file;
         // Chuyển Buffer sang base64
         const fileBase64 = file.buffer.toString("base64");
@@ -92,13 +93,14 @@ const editInfor = async (req, res) => {
           // Xử lý lỗi nếu có
           console.log("Failed to upload image:", error);
         }
-        console.log('hahaha'+imageUrl)
-        form = {infor:{
-          email: req.body.email,
-          birthday: req.body.birthday,
-          avt:imageUrl
-        }}
-        
+        console.log("hahaha" + imageUrl);
+        form = {
+          infor: {
+            email: req.body.email,
+            birthday: req.body.birthday,
+            avt: imageUrl,
+          },
+        };
       }
       let data = await updateInfor(form, req.user.id);
       console.log(req.body.email);
@@ -116,8 +118,6 @@ const editInfor = async (req, res) => {
         });
       }
     });
-    
-     
   } catch (err) {
     console.log(err);
     return res.status(200).json({
@@ -153,10 +153,10 @@ const changePass = async (req, res) => {
     });
   }
 };
-const updateBanSongs = async(req, res) => {
+const updateBanSongs = async (req, res) => {
   try {
     const songId = req.body.songId;
-    console.log(req.user)
+    console.log(req.user);
     let data = await addBanSong(songId, req.user.id);
     if (data && data.EC == "0") {
       return res.status(200).json({
@@ -179,10 +179,38 @@ const updateBanSongs = async(req, res) => {
       DT: "",
     });
   }
-}
+};
+const addLikeSomething = async (req, res) => {
+  try {
+    console.log(JSON.stringify(req.body));
+    console.log(req.user);
+    let data = await addLike(req.body.data, req.user.id);
+    if (data && data.EC == "0") {
+      return res.status(200).json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    } else {
+      return res.status(200).json({
+        EM: data.EM,
+        EC: "-1",
+        DT: "",
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(200).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
 module.exports = {
   Infor,
   editInfor,
   changePass,
-  updateBanSongs
+  updateBanSongs,
+  addLikeSomething,
 };
