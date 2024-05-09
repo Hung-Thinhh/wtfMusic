@@ -23,7 +23,7 @@ const verifyToken = (token) => {
   return decode;
 };
 
-const SecurePaths = ["/user","/account","/getInfor","/editInfor","/changepass","/banSong"];
+const SecurePaths = ["/user","/account","/getInfor","/editInfor","/changepass","/banSong","/addlike"];
 
 const extractToken = (req) => { 
   if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {

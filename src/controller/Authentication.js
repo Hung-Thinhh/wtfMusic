@@ -37,15 +37,16 @@ const handleLogin = async (req, res) => {
     }
     let data = await Authentication_service.handleLogin(req.body);
     if (data) {
-      if (req.body.password.checkRemember) {
+      if (req.body.checkRemember) {
+        console.log('lâu')
         res.cookie("jwt", data.DT.access_token, {
           httpOnly: true,
-          maxAge: 20 * 24 * 60 * 60 * 1000,
+          maxAge: 30 * 24 * 60 * 60 * 1000,
         });
       } else {
         res.cookie("jwt", data.DT.access_token, {
           httpOnly: true,
-          maxAge: 60 * 60 * 1000,
+          maxAge: 24*60 * 60 * 1000,
         });
       }
       return res.status(200).json({

@@ -74,13 +74,43 @@ const changepassword = async (data, id) => {
 };
 const addBanSong = async (songId, id) => {
   const updateUser = await User.findOneAndUpdate(
-        { id: id },
-        { $addToSet: { banSongs: songId } },
-        { upsert: true }
+    { id: id },
+    { $addToSet: { banSongs: songId } },
+    { upsert: true }
   );
   if (updateUser) {
     return {
       EM: "Bài nhạc đã bị cấm",
+      EC: "0",
+      DT: "",
+    };
+  } else {
+    return {
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    };
+  }
+};
+const addLike = async (data, id) => {
+  let updateData 
+  if (data.type == "song") {
+    updateData = await User.findOneAndUpdate(
+      { id: id },
+      { $addToSet: { likedSongs: data.id } },
+      { upsert: true }
+    );
+    
+  } else {
+    updateData = await User.findOneAndUpdate(
+      { id: id },
+      { $addToSet: { likedPlayLists: data.id } },
+      { upsert: true }
+    );
+  }
+  if (updateData) {
+    return {
+      EM: "Đã thêm vào danh sách yêu thích!",
       EC: "0",
       DT: "",
     };
@@ -97,5 +127,6 @@ module.exports = {
   getInfor,
   updateInfor,
   changepassword,
-  addBanSong
+  addBanSong,
+  addLike,
 };
