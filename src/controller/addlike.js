@@ -5,12 +5,10 @@ const addlike = async (req, res) => {
     try {
         if (req.body.data.type === "playlist") {
             const playListData = req.body.data;
-            console.log("sdfksdjs",playListData)
 
             const getUser = await User.findOne({ username: playListData.user });
 
             if (getUser) {
-                // Kiểm tra nếu id đã tồn tại trong likedPlayLists của người dùng
                 if (getUser.likedPlayLists.includes(playListData.id)) {
                     console.log("Id đã tồn tại trong likedPlayLists");
                 } else {
@@ -22,11 +20,9 @@ const addlike = async (req, res) => {
             }
         } else {
             const playListData = req.body.data;
-            console.log("sdfksdjs",playListData)
             const getUser = await User.findOne({ username: playListData.user });
 
             if (getUser) {
-                // Kiểm tra nếu id đã tồn tại trong likedSongs của người dùng
                 if (getUser.likedSongs.includes(playListData.id)) {
                     console.log("Id đã tồn tại trong likedSongs");
                 } else {
