@@ -86,7 +86,6 @@ const checkAccount = async (req, res) => {
   if (req.user.id) {
     
     const account = await Authentication_service.handleCheckAccount(req.user.id)
-    
     return res.status(200).json({
       EM: "ok!",
       EC: "0",
@@ -95,7 +94,10 @@ const checkAccount = async (req, res) => {
         // groupWithRole:req.user.groupWithRole,
         email: req.user.email,
         username: req.user.username,
-        avt: account.DT.avt
+        avt: account.DT.avt,
+        myPlayLists: account.DT.myPlayLists,
+        likedSongs: account.DT.likedSongs,
+        likedPlayLists: account.DT.likedPlayLists
       },
     });
   } else {

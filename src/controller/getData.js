@@ -1,4 +1,5 @@
 const { Nuxtify } = require("nuxtify-api")
+const Ar = require('../models/artists_model');
 
 const getartist = async (req, res) => {
     const getSongmp3 = async () => {
@@ -56,13 +57,23 @@ const gethome = async (req, res) => {
     }
     getSongmp3()
 }
+
 const getArtist = async (req, res) => {
     const artistId = req.params.id;
-    const getSongmp3 = async () => {
-        const songly = await Nuxtify.getArtist(artistId);
-        return res.json(songly);
-    }
-    getSongmp3()
+    await Ar.findOne({ alias: artistId }).then((data) => {
+        if (data) {
+            console.log("Artist my",data)
+            return res.json(data);
+        } else {
+            console.log("Artist nuxtify",artistId)
+            const getSongmp3 = async () => {
+                const songly = await Nuxtify.getArtist(artistId);
+                return res.json(songly);
+            }
+            getSongmp3()
+        }
+    })
+
 }
 const get100 = async (req, res) => {
     const getSongmp3 = async () => {

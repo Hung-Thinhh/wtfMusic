@@ -14,9 +14,9 @@ const multer = require("multer");
 
 const Infor = async (req, res) => {
   try {
-    console.log(req.user.id);
+
     let data = await getInfor(req.user.id);
-    console.log(data);
+
     if (data && data.EC == "0") {
       return res.status(200).json({
         EM: "Infor User get successfully",
@@ -101,7 +101,7 @@ const editInfor = async (req, res) => {
         
       }
       let data = await updateInfor(form, req.user.id);
-      console.log(req.body.email);
+
       if (data && data.EC == "0") {
         return res.status(200).json({
           EM: data.EM,
@@ -130,7 +130,7 @@ const editInfor = async (req, res) => {
 const changePass = async (req, res) => {
   try {
     let data = await changepassword(req.body, req.user.id);
-    console.log(data);
+
     if (data && data.EC == "0") {
       return res.status(200).json({
         EM: data.EM,
@@ -156,7 +156,7 @@ const changePass = async (req, res) => {
 const updateBanSongs = async(req, res) => {
   try {
     const songId = req.body.songId;
-    console.log(req.user)
+  
     let data = await addBanSong(songId, req.user.id);
     if (data && data.EC == "0") {
       return res.status(200).json({
