@@ -60,7 +60,7 @@ const initApiRouter = (app) => {
     router.get('/getallsong', fetchAutoCloneGenre);
     router.post('/postsong', fetchSongData);
     
-    router.get('/admin/song',adminSong)
+    router.get('/admin/song/:id',adminSong)
     
     return app.use("/api", router);
 }
