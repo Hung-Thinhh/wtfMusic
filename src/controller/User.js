@@ -3,7 +3,7 @@ import {
   updateInfor,
   changepassword,
   addBanSong,
-  addLike,
+  addLike,unLike
 } from "../services/User_service";
 const cloudinary = require("cloudinary").v2;
 cloudinary.config({
@@ -207,10 +207,38 @@ const addLikeSomething = async (req, res) => {
     });
   }
 };
+const unLikeSomething = async (req, res) => {
+  try {
+    console.log(JSON.stringify(req.body));
+    console.log(req.user);
+    let data = await unLike(req.body.data, req.user.id);
+    if (data && data.EC == "0") {
+      return res.status(200).json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    } else {
+      return res.status(200).json({
+        EM: data.EM,
+        EC: "-1",
+        DT: "",
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(200).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
 module.exports = {
   Infor,
   editInfor,
   changePass,
   updateBanSongs,
   addLikeSomething,
+  unLikeSomething
 };

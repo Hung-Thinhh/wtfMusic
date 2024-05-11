@@ -13,7 +13,7 @@ import upDateToPlaylist from"../controller/adSongToPl.js"
 
 
 
-import {Infor,editInfor,changePass,updateBanSongs,addLikeSomething} from '../controller/User.js'
+import {Infor,editInfor,changePass,updateBanSongs,addLikeSomething,unLikeSomething} from '../controller/User.js'
 const {adminSong} = require("../controller/admin/listStong.js");
 const router = express.Router();
 
@@ -34,6 +34,7 @@ const initApiRouter = (app) => {
     router.post("/changepass",changePass);
     router.post("/banSong",updateBanSongs);
     router.post('/addlike', addLikeSomething);
+    router.post('/unlike', unLikeSomething);
 
     //music
     router.get('/getartist', getartist);
