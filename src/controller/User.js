@@ -1,9 +1,5 @@
 import {
-  getInfor,
-  updateInfor,
-  changepassword,
-  addBanSong,
-  addLike,unLike
+  getInfor,updateInfor,changepassword,addBanSong,addLike,unLike,getMyPlaylist,createMyPlaylist,addToMyPlaylist
 } from "../services/User_service";
 const cloudinary = require("cloudinary").v2;
 cloudinary.config({
@@ -234,11 +230,100 @@ const unLikeSomething = async (req, res) => {
     });
   }
 };
+const getMyPl = async (req, res) => {
+  try {
+    let data = await getMyPlaylist(req.user.id);
+
+    if (data && data.EC == "0") {
+      return res.status(200).json({
+        EM: data.EM,
+        EC: "0",
+        DT: data.DT,
+      });
+    } else {
+      return res.status(200).json({
+        EM: data.EM,
+        EC: "-1",
+        DT: "",
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(200).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
+const createMyPl = async (req, res) => {
+  try {
+    const playlistname = req.body.data.playlistname
+    if (playlistname) {
+      let data = await createMyPlaylist(req.user,playlistname);
+
+      if (data && data.EC == "0") {
+        return res.status(200).json({
+          EM: data.EM,
+          EC: "0",
+          DT: data.DT,
+        });
+      } else {
+        return res.status(200).json({
+          EM: data.EM,
+          EC: "-1",
+          DT: "",
+        });
+      }
+    } else {
+      return res.status(200).json({
+        EM: "Hãy tạo tên playlist",
+        EC: "-1",
+        DT: "",
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(200).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
+const addToPlaylist = async (req, res) => {
+  try {
+    const dataAdd = req.body.data;
+    let data = await addToMyPlaylist(req.user.id,dataAdd);
+
+    if (data && data.EC == "0") {
+      return res.status(200).json({
+        EM: data.EM,
+        EC: "0",
+        DT: data.DT,
+      });
+    } else {
+      return res.status(200).json({
+        EM: data.EM,
+        EC: "-1",
+        DT: "",
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(200).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
 module.exports = {
   Infor,
   editInfor,
   changePass,
   updateBanSongs,
   addLikeSomething,
-  unLikeSomething
+  unLikeSomething,
+  getMyPl,createMyPl,addToPlaylist
 };

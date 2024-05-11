@@ -7,13 +7,8 @@ const {fetchPlaylist} = require("../controller/getPlaylist.js");
 const {fetchclone,fetchplaylistclone,fetchArtistsClone,fetchAutoCloneGenre,fetchSongData} = require("../controller/clonedata.js");
 const {addToHistory,updateH}=require("../controller/history.js");
 const {handleRegister,handleLogin,checkAccount,handleLogout} = require("../controller/Authentication.js")
-import createPlaylist from"../controller/reatePlayList.js"
-import getUserPlayList from"../controller/getUPlayList.js"
-import upDateToPlaylist from"../controller/adSongToPl.js"
 
-
-
-import {Infor,editInfor,changePass,updateBanSongs,addLikeSomething,unLikeSomething} from '../controller/User.js'
+import {Infor,editInfor,changePass,updateBanSongs,addLikeSomething,unLikeSomething,getMyPl,createMyPl,addToPlaylist} from '../controller/User.js'
 const {adminSong} = require("../controller/admin/listStong.js");
 const router = express.Router();
 
@@ -35,6 +30,9 @@ const initApiRouter = (app) => {
     router.post("/banSong",updateBanSongs);
     router.post('/addlike', addLikeSomething);
     router.post('/unlike', unLikeSomething);
+    router.post('/createplaylist', createMyPl);
+    router.post('/getuserplaylist', getMyPl);
+    router.post('/addtoplaylist', addToPlaylist);
 
     //music
     router.get('/getartist', getartist);
@@ -52,9 +50,7 @@ const initApiRouter = (app) => {
     router.post('/cloneplaylist', fetchplaylistclone);
     router.post('/clonepArtists', fetchArtistsClone);
     router.post('/addnewhistory', addToHistory);
-    router.post('/createplaylist', createPlaylist);
-    router.post('/getuserplaylist', getUserPlayList);
-    router.post('/updatetoplaylist', upDateToPlaylist);
+
     
     // admin
     router.get('/getallsong', fetchAutoCloneGenre);

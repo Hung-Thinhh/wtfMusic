@@ -2,6 +2,7 @@ import User from "../models/user_model.js";
 import Song from "../models/sonng_model.js";
 import Playlist from "../models/playlist_model.js";
 import { checkPassword, hashPassword } from "./Authentication_service.js";
+const { v4: uuidv4 } = require("uuid");
 
 const getInfor = async (id) => {
   let user = await User.findOne({ id: id });
@@ -125,7 +126,7 @@ const addLike = async (data, id) => {
 };
 const unLike = async (data, id) => {
   let updateData;
-  console.log(data)
+  console.log(data);
   if (data.type == "song") {
     let ps = await Song.findOne({ id: data.id });
     if (ps) {
@@ -143,14 +144,14 @@ const unLike = async (data, id) => {
     }
   } else {
     let ps = await Playlist.findOne({ playlistId: data.id });
-    console.log(ps)
+    console.log(ps);
     if (ps) {
       updateData = await User.findOneAndUpdate(
         { id: id },
         { $pull: { likedPlayLists: data.id } },
         { new: true }
       );
-    }else {
+    } else {
       return {
         EM: "không thấy playlist này",
         EC: "-1",
@@ -172,6 +173,126 @@ const unLike = async (data, id) => {
     };
   }
 };
+const getMyPlaylist = async (idUser) => {
+  try {
+    const getUser = await User.findOne({ id: idUser });
+
+    if (getUser.myPlayLists.length > 0) {
+      const getplaylist = async (id) => {
+        return await Playlist.findOne({ playlistId: id });
+      };
+      const playlistPromises = getUser.myPlayLists.map((idPlaylist) => {
+        return getplaylist(idPlaylist);
+      });
+      const playlists = await Promise.all(playlistPromises);
+      return {
+        EM: "Lấy danh sách nhạc đã tạo thành công!",
+        EC: "0",
+        DT: playlists,
+      };
+    } else {
+      return {
+        EM: "Lấy danh sách nhạc đã tạo thành công!",
+        EC: "1",
+        DT: [],
+      };
+    }
+  } catch (err) {
+    return {
+      EM: "Lấy danh sách nhạc đã tạo thất bại!",
+      EC: "-1",
+      DT: "",
+    };
+  }
+};
+const createMyPlaylist = async (user, playlistname) => {
+  try {
+    const getUser = await User.findOne({ id: user.id });
+
+    if (playlistname) {
+      const newPlaylistID = uuidv4().substring(0, 8).toUpperCase();
+
+      //Tạo playlist mới với các thông tin tương ứng
+      const createdPlaylist = new Playlist({
+        playlistId: newPlaylistID,
+        playlistname: playlistname,
+        genresid: [],
+        artistsId: [user.username],
+        thumbnail:
+          "https://photo-resize-zmp3.zmdcdn.me/w240_r1x1_jpeg/cover/f/3/a/f/f3af71df0b7a68ec44955faa5dc7d0ce.jpg",
+        description: "/",
+        songid: [],
+        like: 0,
+        listen: 0,
+        type: "user",
+      });
+
+      // Lưu playlist
+      const data1 = await createdPlaylist.save();
+
+      //Thêm playlistId vào mảng playlistId của user
+      getUser.myPlayLists.push(newPlaylistID);
+      const data2 = await getUser.save();
+
+      console.log("Thêm playlist vào myPlaylists:", data2, data1);
+      return {
+        EM: "Tạo danh sách nhạc thành công!",
+        EC: "0",
+        DT: { playlistId: data2, message: data1 },
+      };
+    } else {
+      return {
+        EM: "Không thể tạo danh sách nhạc!",
+        EC: "-1",
+        DT: "",
+      };
+    }
+  } catch (err) {
+    console.error(err);
+    return {
+      EM: "Không thể tạo danh sách nhạc!!",
+      EC: "-1",
+      DT: "",
+    };
+  }
+};
+const addToMyPlaylist = async (idUser, data) => {
+  try {
+    const curUser = await User.findOne({ id: idUser });
+    const playlist = await Playlist.findOne({ playlistId: data.playlistId });
+    console.log(curUser);
+    if (
+      !curUser ||
+      !curUser.myPlayLists ||
+      curUser.myPlayLists.indexOf(playlist.playlistId) === -1
+    ) {
+      return {
+        EM: "Không thể tạo danh sách nhạc!",
+        EC: "-1",
+        DT: "",
+      };
+    } else {
+      const updatePromises = data.songId.map(async (songId) => {
+        return playlist.updateOne({ $addToSet: { songid: songId } });
+      });
+
+      await Promise.all(updatePromises);
+      return {
+        EM: "Thêm vào playlist thành công",
+        EC: "0",
+        DT: "",
+      };
+    }
+  } catch (err) {
+    console.error(err);
+
+    return {
+      EM: "Không thể tạo danh sách nhạc!",
+      EC: "-1",
+      DT: "",
+    };
+  }
+};
 
 module.exports = {
   getInfor,
@@ -180,4 +301,7 @@ module.exports = {
   addBanSong,
   addLike,
   unLike,
+  getMyPlaylist,
+  createMyPlaylist,
+  addToMyPlaylist,
 };
