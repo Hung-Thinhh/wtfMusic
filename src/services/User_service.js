@@ -98,17 +98,37 @@ const addBanSong = async (songId, id) => {
 const addLike = async (data, id) => {
   let updateData;
   if (data.type == "song") {
-    updateData = await User.findOneAndUpdate(
-      { id: id },
-      { $addToSet: { likedSongs: data.id } },
-      { upsert: true }
-    );
+    let ps = await Song.findOne({ id: data.id });
+    if (ps) {
+      
+      updateData = await User.findOneAndUpdate(
+        { id: id },
+        { $addToSet: { likedSongs: data.id } },
+        { upsert: true }
+      );
+    } else {
+      return {
+        EM: "không thấy bài hát này",
+        EC: "-1",
+        DT: "",
+      };
+    }
   } else {
-    updateData = await User.findOneAndUpdate(
-      { id: id },
-      { $addToSet: { likedPlayLists: data.id } },
-      { upsert: true }
-    );
+    let ps = await Playlist.findOne({ playlistId: data.id });
+    if (ps) {
+      
+      updateData = await User.findOneAndUpdate(
+        { id: id },
+        { $addToSet: { likedPlayLists: data.id } },
+        { upsert: true }
+      );
+    } else {
+      return {
+        EM: "không thấy playlist này",
+        EC: "-1",
+        DT: "",
+      };
+    }
   }
   if (updateData) {
     return {
@@ -129,6 +149,7 @@ const unLike = async (data, id) => {
   console.log(data);
   if (data.type == "song") {
     let ps = await Song.findOne({ id: data.id });
+    console.log(ps);
     if (ps) {
       updateData = await User.findOneAndUpdate(
         { id: id },
@@ -208,8 +229,21 @@ const getMyPlaylist = async (idUser) => {
 const createMyPlaylist = async (user, playlistname) => {
   try {
     const getUser = await User.findOne({ id: user.id });
-
-    if (playlistname) {
+    const getplaylist = async (id) => {
+      return await Playlist.findOne({ playlistId: id }, "playlistname");
+    };
+    const playlistPromises = getUser.myPlayLists.map((idPlaylist) => {
+      return getplaylist(idPlaylist);
+    });
+    const playlists = await Promise.all(playlistPromises);
+    const isDuplicateName = async (newPlaylistName) => {
+      const hasDuplicate = await playlists.some((playlist) => {
+        return playlist.playlistname === newPlaylistName;
+      });
+      return hasDuplicate;
+    };
+    const hasDuplicate = await isDuplicateName(playlistname);
+    if (!hasDuplicate) {
       const newPlaylistID = uuidv4().substring(0, 8).toUpperCase();
 
       //Tạo playlist mới với các thông tin tương ứng
@@ -261,8 +295,10 @@ const addToMyPlaylist = async (idUser, data) => {
     const curUser = await User.findOne({ id: idUser });
     const playlist = await Playlist.findOne({ playlistId: data.playlistId });
     console.log(curUser);
+
     if (
       !curUser ||
+      !playlist ||
       !curUser.myPlayLists ||
       curUser.myPlayLists.indexOf(playlist.playlistId) === -1
     ) {
@@ -272,11 +308,19 @@ const addToMyPlaylist = async (idUser, data) => {
         DT: "",
       };
     } else {
-      const updatePromises = data.songId.map(async (songId) => {
-        return playlist.updateOne({ $addToSet: { songid: songId } });
-      });
+      console.log('hahaha',data.songId);
+      // Chuyển đổi các songId trong playlist thành một tập hợp (set)
+      const existingSongIds = new Set(playlist.songid);
 
-      await Promise.all(updatePromises);
+      // Tạo một mảng mới chứa các songId cần thêm
+      const songsToAdd = data.songId.filter((id) => !existingSongIds.has(id));
+      console.log('songsToAdd',songsToAdd)
+      // Thêm các bài hát mới vào playlist
+      await Playlist.updateOne(
+        { playlistId: data.playlistId },
+        { $push: { songid: { $each: songsToAdd } } }
+      );
+
       return {
         EM: "Thêm vào playlist thành công",
         EC: "0",
@@ -287,7 +331,7 @@ const addToMyPlaylist = async (idUser, data) => {
     console.error(err);
 
     return {
-      EM: "Không thể tạo danh sách nhạc!",
+      EM: "Không thể thêm vào danh sách nhạc!",
       EC: "-1",
       DT: "",
     };
