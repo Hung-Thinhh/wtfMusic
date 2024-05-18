@@ -7,7 +7,7 @@ const adminSong = async (req, res) => {
     try {
         // Xóa dữ liệu trùng lặp trước khi truy vấn
         const query = [
-            { $group: { _id: { songname: '$songname', thumbnail: '$thumbnail' }, count: { $sum: 1 } } },
+            { $group: { _id: { songname: '$songname', thumbnail: '$thumbnail',id:'$id' }, count: { $sum: 1 } } },
             { $match: { count: { $gt: 1 } } },
         ];
         const duplicateSongs = await Song.aggregate(query);
@@ -15,8 +15,8 @@ const adminSong = async (req, res) => {
             const { songname, thumbnail } = song._id;
             await Song.deleteMany({ songname, thumbnail });
         });
-        await Promise.all(deletePromises);
-
+        const p = await Promise.all(deletePromises);
+        console.log(p);
         // Truy vấn dữ liệu bài hát sau khi xóa trùng lặp
         const songCount = await Song.countDocuments({});
         const songdata = await Song.find({}, {
@@ -29,7 +29,7 @@ const adminSong = async (req, res) => {
             alias: 1,
             id: 1,
             _id: 0
-        }).skip(+limit).limit(10);
+        }).sort({ _id: -1 }).skip(+limit).limit(10);
 
         const handledata = await Promise.all(songdata.map(async (song) => {
             const genresNames = await Promise.all(
