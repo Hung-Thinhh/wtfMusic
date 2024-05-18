@@ -2,7 +2,7 @@ const history = require('../models/history');
 const addToHistory = async (req, res) => {
     try {
         const historyData = req.body.data;
-        console.log("LỊCH SỬ",historyData)
+        // console.log("LỊCH SỬ",historyData)
         // const newHistory = new history(historyData);
         // const savedHistory = await newHistory.save();
 
