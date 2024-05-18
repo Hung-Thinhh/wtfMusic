@@ -10,6 +10,8 @@ const {handleRegister,handleLogin,checkAccount,handleLogout} = require("../contr
 
 import {Infor,editInfor,changePass,updateBanSongs,addLikeSomething,unLikeSomething,getMyPl,createMyPl,addToPlaylist} from '../controller/User.js'
 const {adminSong} = require("../controller/admin/listStong.js");
+const {adminAr} = require("../controller/admin/listSinger.js");
+
 const {adminS} = require("../controller/admin/song.js");
 const {adminSS} = require("../controller/admin/searchSong.js");
 
@@ -61,6 +63,8 @@ const initApiRouter = (app) => {
     router.post('/postsong', fetchSongData);
     
     router.get('/admin/song/:id',adminSong)
+    router.get('/admin/artist/:id',adminAr)
+
     router.post('/admin/restsong',adminS)
     router.post('/admin/searchsong',adminSS)
 
