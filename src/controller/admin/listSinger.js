@@ -19,15 +19,15 @@ const adminAr = async (req, res) => {
             _id: 0
         }).sort({ _id: -1 }).skip(+limit).limit(10);
 
+        artistData.map(async (artist) => {console.log(artist.songListId)})
         const handleData = await Promise.all(artistData.map(async (artist) => {
             const songListNames = await Promise.all(
                 artist.songListId.map(async (songId) =>
-                    await Song.findOne({ id: songId }, { songname: 1, _id: 0 })
+                    await Song.findOne({ id: songId }, { alias: 1, _id: 0 })
                 ));
-
+                console.log(songListNames)
             return { ...artist.toObject(), songListId: songListNames};
         }));
-
         const responseData = { handleData, maxPage: artistCount };
         res.json(responseData);
     } catch (err) {
