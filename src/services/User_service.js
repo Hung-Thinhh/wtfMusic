@@ -3,6 +3,7 @@ import Song from "../models/sonng_model.js";
 import Playlist from "../models/playlist_model.js";
 import { checkPassword, hashPassword } from "./Authentication_service.js";
 const { v4: uuidv4 } = require("uuid");
+const { Nuxtify } = require("nuxtify-api");
 
 const getInfor = async (id) => {
   let user = await User.findOne({ id: id });
@@ -341,7 +342,7 @@ const addToMyPlaylist = async (idUser, data) => {
 const getAllUser = async (data) => {
   const limit = data;
   try {
-    // Truy vấn dữ liệu bài hát sau khi xóa trùng lặp
+    // Truy vấn dữ liệu user sau khi xóa trùng lặp
     const UserCount = await User.countDocuments({});
     const Userdata = await User.find({}, {
       _id: 1,
@@ -357,16 +358,11 @@ const getAllUser = async (data) => {
     }).sort({ _id: -1 }).skip(+limit).limit(10);
 
     const handledata = await Promise.all(Userdata.map(async (User) => {
-      const playlistName = await Promise.all(
-        User.likedPlayLists.map(async (id) =>
-          await Playlist.findOne({ playlistId: id }, { playlistname: 1, _id: 0 })
-        ));
       const songName = await Promise.all(
         User.likedSongs.map(async (id) =>
           await Song.findOne({ id: id }, { songname: 1, _id: 0 })
         ));
-
-      return { ...User.toObject(), likedSongs: songName, likedPlayLists: playlistName };
+      return { ...User.toObject(), likedSongs: songName };
     }));
     const responseData = { handledata, maxPage: UserCount };
     return {
@@ -376,7 +372,7 @@ const getAllUser = async (data) => {
     };
   } catch (err) {
     return {
-      EM: "Không lấy danh sách user !",
+      EM: "Không lấy danh sách user!",
       EC: "-1",
       DT: "",
     };
