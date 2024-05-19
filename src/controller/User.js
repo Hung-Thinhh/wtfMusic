@@ -1,5 +1,5 @@
 import {
-  getInfor,updateInfor,changepassword,addBanSong,addLike,unLike,getMyPlaylist,createMyPlaylist,addToMyPlaylist
+  getInfor,updateInfor,changepassword,addBanSong,addLike,unLike,getMyPlaylist,createMyPlaylist,addToMyPlaylist,getAllUser
 } from "../services/User_service";
 const cloudinary = require("cloudinary").v2;
 cloudinary.config({
@@ -318,6 +318,32 @@ const addToPlaylist = async (req, res) => {
     });
   }
 };
+const getAllUs = async(req, res) => {
+  try {
+    let data = await getAllUser(req.params.id);
+
+    if (data && data.EC == "0") {
+      return res.status(200).json({
+        EM: data.EM,
+        EC: "0",
+        DT: data.DT,
+      });
+    } else {
+      return res.status(200).json({
+        EM: data.EM,
+        EC: "-1",
+        DT: "",
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(200).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+}
 module.exports = {
   Infor,
   editInfor,
@@ -325,5 +351,5 @@ module.exports = {
   updateBanSongs,
   addLikeSomething,
   unLikeSomething,
-  getMyPl,createMyPl,addToPlaylist
+  getMyPl,createMyPl,addToPlaylist,getAllUs
 };

@@ -100,7 +100,7 @@ const addLike = async (data, id) => {
   if (data.type == "song") {
     let ps = await Song.findOne({ id: data.id });
     if (ps) {
-      
+
       updateData = await User.findOneAndUpdate(
         { id: id },
         { $addToSet: { likedSongs: data.id } },
@@ -116,7 +116,7 @@ const addLike = async (data, id) => {
   } else {
     let ps = await Playlist.findOne({ playlistId: data.id });
     if (ps) {
-      
+
       updateData = await User.findOneAndUpdate(
         { id: id },
         { $addToSet: { likedPlayLists: data.id } },
@@ -308,13 +308,13 @@ const addToMyPlaylist = async (idUser, data) => {
         DT: "",
       };
     } else {
-      console.log('hahaha',data.songId);
+      console.log('hahaha', data.songId);
       // Chuyển đổi các songId trong playlist thành một tập hợp (set)
       const existingSongIds = new Set(playlist.songid);
 
       // Tạo một mảng mới chứa các songId cần thêm
       const songsToAdd = data.songId.filter((id) => !existingSongIds.has(id));
-      console.log('songsToAdd',songsToAdd)
+      console.log('songsToAdd', songsToAdd)
       // Thêm các bài hát mới vào playlist
       await Playlist.updateOne(
         { playlistId: data.playlistId },
@@ -338,6 +338,51 @@ const addToMyPlaylist = async (idUser, data) => {
   }
 };
 
+const getAllUser = async (data) => {
+  const limit = data;
+  try {
+    // Truy vấn dữ liệu bài hát sau khi xóa trùng lặp
+    const UserCount = await User.countDocuments({});
+    const Userdata = await User.find({}, {
+      _id: 1,
+      id: 1,
+      username: 1,
+      birthday: 1,
+      avt: 1,
+      email: 1,
+      likedPlayLists: 1,
+      likedSongs: 1,
+      myPlayLists: 1,
+      banSongs: 1
+    }).sort({ _id: -1 }).skip(+limit).limit(10);
+
+    const handledata = await Promise.all(Userdata.map(async (User) => {
+      const playlistName = await Promise.all(
+        User.likedPlayLists.map(async (id) =>
+          await Playlist.findOne({ playlistId: id }, { playlistname: 1, _id: 0 })
+        ));
+      const songName = await Promise.all(
+        User.likedSongs.map(async (id) =>
+          await Song.findOne({ id: id }, { songname: 1, _id: 0 })
+        ));
+
+      return { ...User.toObject(), likedSongs: songName, likedPlayLists: playlistName };
+    }));
+    const responseData = { handledata, maxPage: UserCount };
+    return {
+      EM: "Lấy danh sách nhạc đã tạo thành công!",
+      EC: "0",
+      DT: responseData,
+    };
+  } catch (err) {
+    return {
+      EM: "Không lấy danh sách user !",
+      EC: "-1",
+      DT: "",
+    };
+  }
+};
+
 module.exports = {
   getInfor,
   updateInfor,
@@ -348,4 +393,5 @@ module.exports = {
   getMyPlaylist,
   createMyPlaylist,
   addToMyPlaylist,
+  getAllUser,
 };

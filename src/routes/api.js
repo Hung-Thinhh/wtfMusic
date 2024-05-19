@@ -8,7 +8,7 @@ const {fetchclone,fetchplaylistclone,fetchArtistsClone,fetchAutoCloneGenre,fetch
 const {addToHistory,updateH}=require("../controller/history.js");
 const {handleRegister,handleLogin,checkAccount,handleLogout} = require("../controller/Authentication.js")
 
-import {Infor,editInfor,changePass,updateBanSongs,addLikeSomething,unLikeSomething,getMyPl,createMyPl,addToPlaylist} from '../controller/User.js'
+import {Infor,editInfor,changePass,updateBanSongs,addLikeSomething,unLikeSomething,getMyPl,createMyPl,addToPlaylist,getAllUs} from '../controller/User.js'
 const {adminSong} = require("../controller/admin/listStong.js");
 const {adminAr} = require("../controller/admin/listSinger.js");
 
@@ -64,6 +64,7 @@ const initApiRouter = (app) => {
     
     router.get('/admin/song/:id',adminSong)
     router.get('/admin/artist/:id',adminAr)
+    router.get('/admin/user/:id',getAllUs)
 
     router.post('/admin/restsong',adminS)
     router.post('/admin/searchsong',adminSS)
