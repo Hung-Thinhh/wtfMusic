@@ -1,6 +1,8 @@
 import User from "../models/user_model.js";
 import Song from "../models/sonng_model.js";
 import Playlist from "../models/playlist_model.js";
+import genre from "../models/genre_model.js";
+const Ar = require('../models/artists_model');
 import { checkPassword, hashPassword } from "./Authentication_service.js";
 const { v4: uuidv4 } = require("uuid");
 const { Nuxtify } = require("nuxtify-api");
@@ -354,17 +356,12 @@ const getAllUser = async (data) => {
       likedPlayLists: 1,
       likedSongs: 1,
       myPlayLists: 1,
-      banSongs: 1
+      banSongs: 1,
+      createdAt: 1
     }).sort({ _id: -1 }).skip(+limit).limit(10);
 
-    const handledata = await Promise.all(Userdata.map(async (User) => {
-      const songName = await Promise.all(
-        User.likedSongs.map(async (id) =>
-          await Song.findOne({ id: id }, { songname: 1, _id: 0 })
-        ));
-      return { ...User.toObject(), likedSongs: songName };
-    }));
-    const responseData = { handledata, maxPage: UserCount };
+
+    const responseData = { handledata: Userdata, maxPage: UserCount };
     return {
       EM: "Lấy danh sách nhạc đã tạo thành công!",
       EC: "0",
@@ -378,7 +375,112 @@ const getAllUser = async (data) => {
     };
   }
 };
+const getGenres = async (data) => {
+  const limit = data;
+  try {
+    // Truy vấn dữ liệu user sau khi xóa trùng lặp
+    const genreCount = await genre.countDocuments({});
+    const genredata = await genre.find({}, {
+      _id: 1,
+      genreId: 1,
+      genrename: 1,
+      thumbnail: 1,
+      playListId: 1,
+      listen: 1,
+    }).sort({ _id: -1 }).skip(+limit).limit(10);
 
+
+    const responseData = { handledata: genredata, maxPage: genreCount };
+    return {
+      EM: "Lấy danh thể loại tạo thành công!",
+      EC: "0",
+      DT: responseData,
+    };
+  } catch (err) {
+    return {
+      EM: "Không lấy danh sách thể loại!",
+      EC: "-1",
+      DT: "",
+    };
+  }
+};
+const adminSerachService = async (data) => {
+  try {
+    const songs = await Song.find({
+      $or: [
+        { songname: { $regex: data, $options: 'i' } },
+        { artists: { $regex: data, $options: 'i' } }
+      ]
+    });
+    const Genre = await genre.find({
+      $or: [
+        { genrename: { $regex: data, $options: 'i' } },
+      ]
+    });
+    const playlist = await Playlist.find({
+      $or: [
+        { description: { $regex: data, $options: 'i' } },
+        { playlistname: { $regex: data, $options: 'i' } }
+      ]
+    });
+    const user = await User.find({
+      $or: [
+        { email: { $regex: data, $options: 'i' } },
+        { username: { $regex: data, $options: 'i' } }
+      ]
+    });
+    const ar = await Ar.find({
+      $or: [
+        { artistsName: { $regex: data, $options: 'i' } },
+        { alias: { $regex: data, $options: 'i' } },
+        { realName: { $regex: data, $options: 'i' } }
+      ]
+    });
+    return {
+      EM: "Lấy danh thể tìm kiếm thành công!",
+      EC: "0",
+      DT: {
+        songs: songs,
+        genre: Genre,
+        Playlist: playlist,
+        User: user,
+        ar: ar,
+      },
+    };
+  } catch (err) {
+    return {
+      EM: "Không lấy tìm được!",
+      EC: "-1",
+      DT: "",
+    };
+  }
+};
+const adminHomeService = async () => {
+  try {
+    const songs = await Song.countDocuments({});
+    const Genre = await genre.countDocuments({});
+    const playlist = await Playlist.countDocuments({});
+    const user = await User.countDocuments({});
+    const ar = await Ar.countDocuments({});
+    return {
+      EM: "Lấy dữ liệu trang cghur thành công!",
+      EC: "0",
+      DT: {
+        songs: songs,
+        genre: Genre,
+        Playlist: playlist,
+        User: user,
+        ar: ar,
+      },
+    };
+  } catch (err) {
+    return {
+      EM: "Không lấy  dữ liệu trang cghur được!",
+      EC: "-1",
+      DT: "",
+    };
+  }
+};
 module.exports = {
   getInfor,
   updateInfor,
@@ -390,4 +492,7 @@ module.exports = {
   createMyPlaylist,
   addToMyPlaylist,
   getAllUser,
+  getGenres,
+  adminSerachService,
+  adminHomeService,
 };
