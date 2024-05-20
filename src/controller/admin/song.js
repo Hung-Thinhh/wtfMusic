@@ -2,14 +2,15 @@ const Song = require('../../models/sonng_model');
 
 const adminS = async (req, res) => {
   const { status, data } = req.body;
+  console.log(status, data);
   try {
     switch (status) {
       case 'update':
-        // const updatedSong = await Song.findOneAndUpdate({ id: data.id }, data, { upsert: true });
+        const updatedSong = await Song.findOneAndUpdate({ id: data.id }, data, { upsert: true });
         res.json(updatedSong);
         break;
       case 'delete':
-        // const deletedSong = await Song.findOneAndDelete({ id: data.id });
+        const deletedSong = await Song.findOneAndDelete({ id: data });
         res.json(deletedSong);
         break;
       case 'create':

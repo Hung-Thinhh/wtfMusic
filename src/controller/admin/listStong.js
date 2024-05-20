@@ -28,6 +28,7 @@ const adminSong = async (req, res) => {
             like: 1,
             alias: 1,
             id: 1,
+            createdAt: 1,
             _id: 0
         }).sort({ _id: -1 }).skip(+limit).limit(10);
 
