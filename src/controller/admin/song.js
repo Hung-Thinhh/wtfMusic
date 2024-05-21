@@ -1,5 +1,5 @@
 const Song = require('../../models/sonng_model');
-
+const { v4: uuidv4 } = require("uuid");
 const adminS = async (req, res) => {
   const { status, data } = req.body;
   console.log(status, data);
@@ -14,7 +14,10 @@ const adminS = async (req, res) => {
         res.json(deletedSong);
         break;
       case 'create':
-        // const createdSong = await Song.create(data);
+        const newIDSong = uuidv4().substring(0, 8).toUpperCase();
+        data.lyric = JSON.parse(data.lyric);
+        const createdSong = await Song.create({ ...data, alias: data.songname, id: newIDSong });
+        console.log(createdSong);
         res.json(createdSong);
         break;
       default:
