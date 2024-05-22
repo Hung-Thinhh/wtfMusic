@@ -66,6 +66,13 @@ const userSchema = new Schema({
         trim: true,
         index: true
     },
+    role: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        index: true
+    },
     createdAt: {
         type: Date,
         default: Date.now,
