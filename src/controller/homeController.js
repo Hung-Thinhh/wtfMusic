@@ -1,15 +1,15 @@
 const BlogPost = require("../models/modles_Test");
 const { Nuxtify } = require("nuxtify-api");
+import  {getNewRelease} from "../services/home-services"
 
 const handleHome = async (req, res) => {
-  const url = await Nuxtify.song.getLyrics('Z7I9OC70');
- 
+  const url = await Nuxtify.song.getLyrics('Z77UO6WC');;
   return res.json(url);
 };
 
 const getHome = async (req, res) => {
 
-  
+    const haha = await getNewRelease();
 
     const url = 
         {
@@ -9318,7 +9318,7 @@ const getHome = async (req, res) => {
           ],
           "hasMore": false,
           "total": 20
-        }
+  }
     return res.json(url);
 
 

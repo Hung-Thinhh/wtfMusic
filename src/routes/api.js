@@ -5,7 +5,7 @@ const {getRating} = require("../controller/RatingController.js")
 const {getHome}= require("../controller/homeController.js");
 const {fetchPlaylist} = require("../controller/getPlaylist.js");
 const {fetchclone,fetchplaylistclone,fetchArtistsClone,fetchAutoCloneGenre,fetchSongData} = require("../controller/clonedata.js");
-const {addToHistory,updateH}=require("../controller/history.js");
+const {addToHistory,getHistory}=require("../controller/history.js");
 const {handleRegister,handleLogin,checkAccount,handleLogout} = require("../controller/Authentication.js")
 
 import {Infor,
@@ -69,7 +69,10 @@ const initApiRouter = (app) => {
     router.post('/clone', fetchclone);
     router.post('/cloneplaylist', fetchplaylistclone);
     router.post('/clonepArtists', fetchArtistsClone);
+
+    // history
     router.post('/addnewhistory', addToHistory);
+    router.get('/getHistory', getHistory);
 
     
     // admin

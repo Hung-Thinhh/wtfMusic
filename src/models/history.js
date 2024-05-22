@@ -3,23 +3,24 @@ const { Schema } = mongoose;
 
 const historySchema = new Schema({
     userId: {
-        type: Array,
+        type: String,
         required: true,
         trim: true,
         index: true
     },
-    songid: {
+    SongHistory: {
         type: Array,
         required: true,
         trim: true,
-        index: true
+        index: true,
     },
-    like: {
-        type: Boolean,
+    PlaylistHistory: {
+        type: Array,
         required: true,
-        min: 0,
-        default: 0
+        trim: true,
+        index: true,
     },
+   
     createdAt: {
         type: Date,
         default: Date.now
@@ -30,6 +31,6 @@ const historySchema = new Schema({
     }
 });
 
-const history = mongoose.model('history', historySchema);
+const History = mongoose.model('History', historySchema);
 
-module.exports = history;
+module.exports = History;
