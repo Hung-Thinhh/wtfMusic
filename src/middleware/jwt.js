@@ -24,7 +24,7 @@ const verifyToken = (token) => {
 };
 
 const SecurePaths = ["/user", "/account", "/getInfor", "/editInfor", "/changepass",
-  "/banSong", "/addlike", "/unlike", "/createplaylist", "/getuserplaylist","/addtoplaylist"];
+  "/banSong", "/addlike", "/unlike", "/createplaylist", "/getuserplaylist","/addtoplaylist","/getuserlikesong"];
 
 const extractToken = (req) => { 
   if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {

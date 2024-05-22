@@ -480,6 +480,39 @@ const adminHomeService = async () => {
     };
   }
 };
+
+const getMylikesSongs = async (idUser) => {
+  try {
+    const getUser = await User.findOne({ id: idUser });
+
+    if (getUser.likedSongs.length > 0) {
+      const getsong = async (id) => {
+        return await Song.findOne({ id: id },{id:1,songname:1});
+      };
+      const playlistPromises = getUser.likedSongs.map((idSong) => {
+        return getsong(idSong);
+      });
+      const playlists = await Promise.all(playlistPromises);
+      return {
+        EM: "Lấy danh sách nhạc đã thich thành công!",
+        EC: "0",
+        DT: playlists,
+      };
+    } else {
+      return {
+        EM: "Lấy danh sách nhạc đã thich thành công!",
+        EC: "1",
+        DT: [],
+      };
+    }
+  } catch (err) {
+    return {
+      EM: "Lấy danh sách nhạc đã thich thất bại!",
+      EC: "-1",
+      DT: "",
+    };
+  }
+};
 module.exports = {
   getInfor,
   updateInfor,
@@ -494,4 +527,5 @@ module.exports = {
   getGenres,
   adminSerachService,
   adminHomeService,
+  getMylikesSongs
 };
