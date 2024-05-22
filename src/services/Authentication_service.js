@@ -56,6 +56,7 @@ const handleRegister = async (data) => {
         password: hashPass,
         avt: "",
         birthday: "",
+        role: "1",
       });
       await newUser.save();
 

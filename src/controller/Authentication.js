@@ -98,7 +98,8 @@ const checkAccount = async (req, res) => {
         avt: account.DT.avt,
         myPlayLists: account.DT.myPlayLists,
         likedSongs: account.DT.likedSongs,
-        likedPlayLists: account.DT.likedPlayLists
+        likedPlayLists: account.DT.likedPlayLists,
+        isAdmin: account.DT.role == "0" ? true: false,
       },
     });
   } else {
