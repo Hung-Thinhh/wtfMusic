@@ -33,6 +33,7 @@
     "react-admin": "^4.16.15",
     "react-copy-to-clipboard": "^5.1.0",
     "react-toastify": "^10.0.4",
+    "uploadthing": "^6.10.4",
     "uuid": "^9.0.1",
     "uuidv4": "^6.2.13"
   },

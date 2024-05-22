@@ -297,7 +297,6 @@ const addToMyPlaylist = async (idUser, data) => {
   try {
     const curUser = await User.findOne({ id: idUser });
     const playlist = await Playlist.findOne({ playlistId: data.playlistId });
-    console.log(curUser);
 
     if (
       !curUser ||

@@ -27,22 +27,23 @@ const adminSong = async (req, res) => {
             artists: 1,
             like: 1,
             alias: 1,
+            songLink: 1,
             id: 1,
             createdAt: 1,
             _id: 0
         }).sort({ _id: -1 }).skip(+limit).limit(10);
 
         const handledata = await Promise.all(songdata.map(async (song) => {
-            const genresNames = await Promise.all(
-                song.genresid.map(async (genresid) =>
-                    await Genres.findOne({ genreId: genresid }, { genrename: 1, _id: 0 })
-                ));
-            const artistsNames = await Promise.all(
-                song.artists.map(async (artistsid) =>
-                    await Ar.findOne({ id: artistsid }, { artistsName: 1, _id: 0 })
-                ));
+            // const genresNames = await Promise.all(
+            //     song.genresid.map(async (genresid) =>
+            //         await Genres.findOne({ genreId: genresid }, { genrename: 1, _id: 0 })
+            //     ));
+            // const artistsNames = await Promise.all(
+            //     song.artists.map(async (artistsid) =>
+            //         await Ar.findOne({ id: artistsid }, { artistsName: 1, _id: 0 })
+            //     ));
 
-            return { ...song.toObject(), genresid: genresNames, artists: artistsNames };
+            return { ...song.toObject()};
         }));
 
         const responseData = { handledata, maxPage: songCount };
