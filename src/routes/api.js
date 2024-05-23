@@ -26,6 +26,8 @@ const {adminSong} = require("../controller/admin/listStong.js");
 const {adminAr} = require("../controller/admin/listSinger.js");
 
 const {adminS} = require("../controller/admin/song.js");
+const {adminG} = require("../controller/admin/genre.js");
+const {adminA} = require("../controller/admin/artists.js");
 const {adminSS} = require("../controller/admin/searchSong.js");
 
 
@@ -83,6 +85,8 @@ const initApiRouter = (app) => {
     router.get('/admin/home/',adminHome)
 
     router.post('/admin/restsong',adminS)
+    router.post('/admin/restgenre',adminG)
+    router.post('/admin/restartists',adminA)
     router.post('/admin/searchsong',adminSearch)
 
     

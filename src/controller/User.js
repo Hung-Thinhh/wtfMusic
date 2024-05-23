@@ -444,6 +444,7 @@ const userGetLikeSongs= async(req, res) => {
 
   try {
     let data = await getMylikesSongs(req.user.id);
+    console.log(data);
     if (data && data.EC == "0") {
       return res.status(200).json({
         EM: data.EM,

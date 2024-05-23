@@ -487,16 +487,25 @@ const getMylikesSongs = async (idUser) => {
 
     if (getUser.likedSongs.length > 0) {
       const getsong = async (id) => {
-        return await Song.findOne({ id: id },{id:1,songname:1});
+        return await Song.findOne({ id: id });
       };
-      const playlistPromises = getUser.likedSongs.map((idSong) => {
+      const getplaylist = async (id) => {
+        return await Playlist.findOne({ playlistId: id });
+      };
+      const songPromises = getUser.likedSongs.map((idSong) => {
         return getsong(idSong);
       });
+      const songs = await Promise.all(songPromises);
+
+      const playlistPromises = getUser.likedPlayLists.map((idplaylist) => {
+        return getplaylist(idplaylist);
+      });
       const playlists = await Promise.all(playlistPromises);
+      
       return {
         EM: "Lấy danh sách nhạc đã thich thành công!",
         EC: "0",
-        DT: playlists,
+        DT: {songs:songs,playlist:playlists},
       };
     } else {
       return {
