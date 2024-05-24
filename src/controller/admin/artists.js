@@ -6,6 +6,7 @@ const adminA = async (req, res) => {
     switch (status) {
       case 'update':
         const updatedArtists = await Ar.findOneAndUpdate({ id: data.id }, data, { upsert: true });
+        console.log(updatedArtists);
         res.json(updatedArtists);
         break;
       case 'delete':
