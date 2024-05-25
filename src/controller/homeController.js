@@ -1,10 +1,54 @@
-const BlogPost = require("../models/modles_Test");
+
 const { Nuxtify } = require("nuxtify-api");
 import  {getNewRelease,getSongHot,getSongRemix,getSongChill,getSongTop100,getAlbumHot,getSongRating,getSongSad} from "../services/home-services"
 
+
+
+
+const Song = require("../models/sonng_model");
+const Playlist = require("../models/playlist_model");
+
+
 const handleHome = async (req, res) => {
-  const url = await Nuxtify.getPlaylist('6C00I06D');
-  return res.json(url);
+  try {
+    // Lấy tất cả các document từ collection
+    const documents = await Playlist.find();
+
+    // Mảng để lưu các document không đúng định dạng
+    const invalidDocuments = [];
+
+    // Kiểm tra từng document
+    documents.forEach((document) => {
+      // Kiểm tra nếu các trường bị thiếu hoặc không đúng kiểu dữ liệu
+      if (
+        !document.playlistId ||
+        !document.playlistname ||
+        !document.genresid ||
+        !document.artistsId ||
+        !document.thumbnail ||
+        !document.type ||
+        !document.description ||
+        !document.songid ||
+        !document.like ||
+        !document.listen 
+      ) {
+        invalidDocuments.push(document);
+      }
+    });
+
+    // Xoá các document không đúng định dạng
+    const result = await Playlist.deleteMany({ _id: { $in: invalidDocuments.map(invalid => invalid._id) } });
+
+    console.log(`${result.deletedCount} document đã được xoá.`);
+
+    // Tiếp tục xử lý các tác vụ khác trong hàm handleHome
+
+    res.status(200).json({ message: "Xoá các document không đúng định dạng thành công." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Gặp lỗi khi xoá các document không đúng định dạng." });
+  }
+
 };
 
 const getHome = async (req, res) => {
@@ -9330,6 +9374,6 @@ const getHome = async (req, res) => {
 
 };
 module.exports = {
-    handleHome,
-    getHome
+  handleHome,
+  getHome
 };
