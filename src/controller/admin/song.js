@@ -7,47 +7,32 @@ cloudinary.config({
   api_secret: "c52-kr9-K0JKIQVNLQNZnSD5FRs",
 });
 const multer = require("multer");
-const upload = multer({
-  storage: multer.memoryStorage(),
-}).single("file");
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "_" + file.originalname);
+  }
+});
+const upload = multer({ storage: storage }).fields([
+  { name: "file", maxCount: 1 },
+  { name: "songLink", maxCount: 1 }
+]);
 const adminS = async (req, res) => {
-  const { status, data } = req.body;
-  if (status) {
-    try {
-      switch (status) {
-        case 'delete':
-          const deletedSong = await Song.findOneAndDelete({ id: data });
-          res.json(deletedSong);
-          break;
-        case 'create':
-          const newIDSong = uuidv4().substring(0, 8).toUpperCase();
-          data.lyric = JSON.parse(data.lyric);
-          const createdSong = await Song.create({ ...data, alias: data.songname, id: newIDSong });
-          console.log(createdSong);
-          res.json(createdSong);
-          break;
-        default:
-          res.status(400).json({ error: 'Invalid status' });
-          break;
-      }
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Internal server error' });
-    }
-  } else {
-    try {
-      // Xử lý yêu cầu `multipart/form-data` sử dụng multer
-      upload(req, res, async function (err) {
+  try {
+    upload(req, res, async function (err) {
+      if (req.body.status === "update") {
+        console.log(req.body.status)
         let form;
         if (err) {
-          // Xử lý lỗi khi tải lên
           console.log(err);
           return res.status(200).json({
             EM: "error from server",
             EC: "-1",
-            DT: "",
+            DT: ""
           });
-        } else if (!req.file) {
+        } else if (!req.files || !req.files.file || !req.files.songLink) {
           form = {
             infor: {
               id: req.id,
@@ -56,13 +41,14 @@ const adminS = async (req, res) => {
               genresid: req.genresid,
               songLink: req.songLink,
               like: req.like,
-              listen: req.listen,
-            },
+              listen: req.listen
+            }
           };
         } else {
-          const file = req.file;
-          // Chuyển Buffer sang base64
+          const file = req.files.file[0];
+          const songLink = req.files.songLink[0];
           const fileBase64 = file.buffer.toString("base64");
+          const songLinkBase64 = songLink.buffer.toString("base64");
           let imageUrl;
           try {
             imageUrl = await new Promise((resolve, reject) => {
@@ -74,17 +60,13 @@ const adminS = async (req, res) => {
                     reject(error);
                   } else {
                     console.log("Uploaded file details:", result);
-                    // Lấy URL an toàn của hình ảnh đã tải lên
                     const secureUrl = result.secure_url;
-
-                    // Tiếp tục xử lý với URL hình ảnh
                     resolve(secureUrl);
                   }
                 }
               );
             });
           } catch (error) {
-            // Xử lý lỗi nếu có
             console.log("Failed to upload image:", error);
           }
           form = {
@@ -93,40 +75,121 @@ const adminS = async (req, res) => {
               songname: req.body.songname,
               artists: req.body.artists,
               genresid: req.body.genresid,
-              songLink: req.body.songLink,
+              songLink: {
+                path: songLink.path,
+                base64: songLinkBase64
+              },
               like: req.body.like,
               listen: req.body.listen,
-              thumbnail: imageUrl,
-            },
+              thumbnail: imageUrl
+            }
           };
         }
         let data = form;
         console.log(JSON.stringify(data));
-
         if (data) {
           return res.status(200).json({
             EM: data.EM,
             EC: "0",
-            DT: data.DT,
+            DT: data.DT
           });
         } else {
           return res.status(200).json({
             EM: "error from server",
             EC: "-1",
-            DT: "",
+            DT: ""
           });
         }
-      });
-    } catch (err) {
-      console.log(err);
-      return res.status(200).json({
-        EM: "error from server",
-        EC: "-1",
-        DT: "",
-      });
-    }
+      } else if (req.body.status === "create") {
+        console.log(req.body.status)
+        let form;
+        if (err) {
+          console.log(err);
+          return res.status(200).json({
+            EM: "error from server",
+            EC: "-1",
+            DT: ""
+          });
+        } else if (!req.files || !req.files.file || !req.files.songLink) {
+          form = {
+            infor: {
+              id: req.id,
+              songname: req.songname,
+              artists: req.artists,
+              genresid: req.genresid,
+              songLink: req.songLink,
+              like: req.like,
+              listen: req.listen
+            }
+          };
+        } else {
+          const file = req.files.file[0];
+          const songLink = req.files.songLink[0];
+          const fileBase64 = file.buffer.toString("base64");
+          const songLinkBase64 = songLink.buffer.toString("base64");
+          console.log(songLinkBase64)
+          let imageUrl;
+          try {
+            imageUrl = await new Promise((resolve, reject) => {
+              cloudinary.uploader.upload(
+                "data:image/png;base64," + fileBase64,
+                function (error, result) {
+                  if (error) {
+                    console.log("Error uploading file:", error);
+                    reject(error);
+                  } else {
+                    console.log("Uploaded file details:", result);
+                    const secureUrl = result.secure_url;
+                    resolve(secureUrl);
+                  }
+                }
+              );
+            });
+          } catch (error) {
+            console.log("Failed to upload image:", error);
+          }
+          form = {
+            infor: {
+              id: req.body.id,
+              songname: req.body.songname,
+              artists: req.body.artists,
+              genresid: req.body.genresid,
+              songLink: {
+                path: songLink.path,
+                base64: songLinkBase64
+              },
+              like: req.body.like,
+              listen: req.body.listen,
+              thumbnail: imageUrl
+            }
+          };
+        }
+        let data = form;
+        console.log(JSON.stringify(data));
+        if (data) {
+          return res.status(200).json({
+            EM: data.EM,
+            EC: "0",
+            DT: data.DT
+          });
+        } else {
+          return res.status(200).json({
+            EM: "error from server",
+            EC: "-1",
+            DT: ""
+          });
+        }
+      }
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(200).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: ""
+    });
   }
-};
+}
 
 module.exports = {
   adminS
