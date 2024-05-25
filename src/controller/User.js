@@ -78,7 +78,7 @@ const editInfor = async (req, res) => {
         // Chuyển Buffer sang base64
         const fileBase64 = file.buffer.toString("base64");
         let imageUrl;
-
+        console.log(fileBase64)
         try {
           imageUrl = await new Promise((resolve, reject) => {
             cloudinary.uploader.upload(
