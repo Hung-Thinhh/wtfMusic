@@ -1,16 +1,22 @@
 const BlogPost = require("../models/modles_Test");
 const { Nuxtify } = require("nuxtify-api");
-import  {getNewRelease} from "../services/home-services"
+import  {getNewRelease,getSongHot,getSongRemix,getSongChill,getSongTop100,getAlbumHot,getSongRating,getSongSad} from "../services/home-services"
 
 const handleHome = async (req, res) => {
-  const url = await Nuxtify.song.getLyrics('Z77UO6WC');;
+  const url = await Nuxtify.getPlaylist('6C00I06D');
   return res.json(url);
 };
 
 const getHome = async (req, res) => {
 
-    const haha = await getNewRelease();
-
+  const newRelease = await getNewRelease();
+  const songHot = await getSongHot()
+  const songChill = await getSongChill();
+  const songTop100 = await getSongTop100();
+  const albumHot = await getAlbumHot();
+  const songRating = await getSongRating();
+  const songRemix = await getSongRemix();
+  const songSad = await getSongSad();
     const url = 
         {
           "items": [
@@ -9319,7 +9325,7 @@ const getHome = async (req, res) => {
           "hasMore": false,
           "total": 20
   }
-    return res.json(url);
+  return res.json({ url, newRelease,songHot,songRemix,songChill,songTop100,albumHot,songRating,songSad });
 
 
 };

@@ -9,7 +9,9 @@ const fetchclone = async (req, res) => {
     try {
         const id = req.body.data.id;
         const songData = req.body.data;
+      
         const updatedSong = await Song.findOneAndUpdate({ id: id }, songData, { upsert: true });
+        
         res.json(updatedSong);
     } catch (err) {
         console.log(err);

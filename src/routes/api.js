@@ -1,6 +1,6 @@
 import express from 'express'
 import {checkUserJWT, checkUserPermission} from '../middleware/jwt.js';
-const {getartist,songly,songurl,songdetail,gethome,getArtist,get100,search}= require("../controller/getData.js")
+const {getartist,songly,songurl,gethome,getArtist,get100,search}= require("../controller/getData.js")
 const {getRating} = require("../controller/RatingController.js")
 const {getHome}= require("../controller/homeController.js");
 const {fetchPlaylist} = require("../controller/getPlaylist.js");
@@ -24,6 +24,7 @@ import {Infor,
     userGetLikeSongs} from '../controller/User.js'
 const {adminSong} = require("../controller/admin/listStong.js");
 const {adminAr} = require("../controller/admin/listSinger.js");
+const {songdetail,songPage} = require("../controller/songController.js");
 
 const {adminS} = require("../controller/admin/song.js");
 const {adminSS} = require("../controller/admin/searchSong.js");
@@ -57,6 +58,7 @@ const initApiRouter = (app) => {
     //music
     router.get('/getartist', getartist);
     router.get('/songdetail/:id', songdetail);
+    router.get('/songPage/:id', songPage);
     router.get('/songurl/:id', songurl);
     router.get('/songly/:id', songly);
     router.get('/search/:id', search);

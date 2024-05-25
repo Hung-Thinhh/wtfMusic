@@ -5,11 +5,11 @@ const fetchPlaylist = async (req, res) => {
     const id = req.params.id;
     try {
         const songly = await Nuxtify.getPlaylist(id);
-        await Playlist.findOneAndUpdate(
-            { playlistId: id },
-            { $inc: { listen: 10 } },
-            { upsert: true }
-        );
+        // await Playlist.findOneAndUpdate(
+        //     { playlistId: id },
+        //     { $inc: { listen: 10 } },
+        //     { upsert: true }
+        // );
         return res.json(songly);
     } catch (error) {
         res.status(200).send(`Failed to get playlist: ${error.message}`);
