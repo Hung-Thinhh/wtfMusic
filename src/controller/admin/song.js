@@ -7,99 +7,74 @@ cloudinary.config({
   api_secret: "c52-kr9-K0JKIQVNLQNZnSD5FRs",
 });
 const multer = require("multer");
+
 const upload = multer({
   storage: multer.memoryStorage(),
-}).single("file");
+}).fields([
+  { name: "file", maxCount: 1 },
+  { name: "songLink", maxCount: 1 }
+]);
+
 const adminS = async (req, res) => {
-  const { status, data } = req.body;
-  if (status) {
-    try {
-      switch (status) {
-        case 'delete':
-          const deletedSong = await Song.findOneAndDelete({ id: data });
-          res.json(deletedSong);
-          break;
-        case 'create':
-          const newIDSong = uuidv4().substring(0, 8).toUpperCase();
-          data.lyric = JSON.parse(data.lyric);
-          const createdSong = await Song.create({ ...data, alias: data.songname, id: newIDSong });
-          console.log(createdSong);
-          res.json(createdSong);
-          break;
-        default:
-          res.status(400).json({ error: 'Invalid status' });
-          break;
-      }
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Internal server error' });
-    }
-  } else {
-    try {
-      // Xử lý yêu cầu `multipart/form-data` sử dụng multer
-      upload(req, res, async function (err) {
+  try {
+    upload(req, res, async function (err) {
+// upate !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      if (req.body.status === "update") {
+        console.log(req.body.status)
         let form;
         if (err) {
-          // Xử lý lỗi khi tải lên
           console.log(err);
           return res.status(200).json({
             EM: "error from server",
             EC: "-1",
-            DT: "",
+            DT: ""
           });
-        } else if (!req.file) {
-          form = {
-            infor: {
-              id: req.id,
-              songname: req.songname,
-              artists: req.artists,
-              genresid: req.genresid,
-              songLink: req.songLink,
-              like: req.like,
-              listen: req.listen,
-            },
-          };
         } else {
-          const file = req.file;
-          // Chuyển Buffer sang base64
-          const fileBase64 = file.buffer.toString("base64");
-          let imageUrl;
-          try {
-            imageUrl = await new Promise((resolve, reject) => {
-              cloudinary.uploader.upload(
-                "data:image/png;base64," + fileBase64,
-                function (error, result) {
-                  if (error) {
-                    console.log("Error uploading file:", error);
-                    reject(error);
-                  } else {
-                    console.log("Uploaded file details:", result);
-                    // Lấy URL an toàn của hình ảnh đã tải lên
-                    const secureUrl = result.secure_url;
+          const id = req.body.id;
+          const songname = req.body.songname;
+          const artists = req.body.artists;
+          const genresid = req.body.genresid;
+          const songLink = req.body.songLink;
+          const file = req.files.file[0];
+          const songLinkFile = req.files.songLink[0];
 
-                    // Tiếp tục xử lý với URL hình ảnh
-                    resolve(secureUrl);
-                  }
-                }
-              );
-            });
+          const fileBase64 = file.buffer.toString("base64");
+          const songLinkBase64 = songLinkFile.buffer.toString("base64");
+
+          let fileUrl;
+          let songLinkUrl;
+
+          try {
+            const fileResult = await cloudinary.uploader.upload(
+              "data:image/png;base64," + fileBase64
+            );
+            fileUrl = fileResult.secure_url;
+
+            const songLinkResult = await cloudinary.uploader.upload(
+              "data:audio/mp3;base64," + songLinkBase64
+            );
+            songLinkUrl = songLinkResult.secure_url;
           } catch (error) {
-            // Xử lý lỗi nếu có
-            console.log("Failed to upload image:", error);
+            console.log("Failed to upload file:", error);
           }
+
           form = {
             infor: {
-              id: req.body.id,
-              songname: req.body.songname,
-              artists: req.body.artists,
-              genresid: req.body.genresid,
-              songLink: req.body.songLink,
-              like: req.body.like,
-              listen: req.body.listen,
-              thumbnail: imageUrl,
-            },
+              id: id,
+              songname: songname,
+              artists: artists,
+              genresid: genresid,
+              songLink: {
+                path: songLinkFile ? songLinkFile.path : "",
+                base64: songLinkBase64
+              },
+              like: like,
+              listen: listen,
+              thumbnail: fileUrl
+            }
           };
         }
+
         let data = form;
         console.log(JSON.stringify(data));
 
@@ -107,26 +82,100 @@ const adminS = async (req, res) => {
           return res.status(200).json({
             EM: data.EM,
             EC: "0",
-            DT: data.DT,
+            DT: data.DT
           });
         } else {
           return res.status(200).json({
             EM: "error from server",
             EC: "-1",
-            DT: "",
+            DT: ""
           });
         }
-      });
-    } catch (err) {
-      console.log(err);
-      return res.status(200).json({
-        EM: "error from server",
-        EC: "-1",
-        DT: "",
-      });
-    }
+      } 
+      
+// create +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      else if (req.body.status === "create") {
+        console.log(req.body.status)
+        let form;
+        if (err) {
+          console.log(err);
+          return res.status(200).json({
+            EM: "error from server",
+            EC: "-1",
+            DT: ""
+          });
+        } else {
+          const id = req.body.id;
+          const songname = req.body.songname;
+          const artists = req.body.artists;
+          const genresid = req.body.genresid;
+          const songLink = req.body.songLink;
+          const file = req.files.file[0];
+          const songLinkFile = req.files.songLink[0];
+
+          const fileBase64 = file.buffer.toString("base64");
+          const songLinkBase64 = songLinkFile.buffer.toString("base64");
+          let fileUrl;
+          let songLinkUrl;
+
+          try {
+            const fileResult = await cloudinary.uploader.upload(
+              "data:image/png;base64," + fileBase64
+            );
+            fileUrl = fileResult.secure_url;
+            console.log("lonk1",fileUrl)
+
+            const songLinkResult = await cloudinary.uploader.upload(
+
+              "data:audio/mp3;base64," + songLinkBase64,
+              {resource_type:"auto"}
+            );
+            songLinkUrl = songLinkResult.url;
+
+          } catch (error) {
+            console.log("Failed to upload file:", error);
+          }
+
+          form = {
+            infor: {
+              id: id,
+              songname: songname,
+              artists: artists,
+              genresid: genresid,
+              songLink: songLinkUrl,
+              like: 0,
+              listen: 0,
+              thumbnail: fileUrl
+            }
+          };
+        }
+
+        let data = form;
+        console.log(data);
+        if (data) {
+          return res.status(200).json({
+            EM: data.EM,
+            EC: "0",
+            DT: data.DT
+          });
+        } else {
+          return res.status(200).json({
+            EM: "error from server",
+            EC: "-1",
+            DT: ""
+          });
+        }
+      }
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(200).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: ""
+    });
   }
-};
+}
 
 module.exports = {
   adminS
