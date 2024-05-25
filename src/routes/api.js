@@ -3,7 +3,7 @@ import {checkUserJWT, checkUserPermission} from '../middleware/jwt.js';
 const {getartist,songly,songurl,gethome,getArtist,get100,search}= require("../controller/getData.js")
 const {getRating} = require("../controller/RatingController.js")
 const {getHome}= require("../controller/homeController.js");
-const {fetchPlaylist} = require("../controller/getPlaylist.js");
+const {fetchPlaylist} = require("../controller/playlistController.js");
 const {fetchclone,fetchplaylistclone,fetchArtistsClone,fetchAutoCloneGenre,fetchSongData} = require("../controller/clonedata.js");
 const {addToHistory,getHistory}=require("../controller/history.js");
 const {handleRegister,handleLogin,checkAccount,handleLogout} = require("../controller/Authentication.js")
