@@ -18,7 +18,7 @@ const upload = multer({
 const adminS = async (req, res) => {
   try {
     upload(req, res, async function (err) {
-// upate !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      // upate !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       if (req.body.status === "update") {
         console.log(req.body.status)
         let form;
@@ -30,7 +30,7 @@ const adminS = async (req, res) => {
             DT: ""
           });
         } else {
-          const id = req.body.id;
+          const idsomg = req.body.id;
           const songname = req.body.songname;
           const artists = req.body.artists;
           const genresid = req.body.genresid;
@@ -49,33 +49,33 @@ const adminS = async (req, res) => {
               "data:image/png;base64," + fileBase64
             );
             fileUrl = fileResult.secure_url;
+            console.log("lonk1", fileUrl)
 
             const songLinkResult = await cloudinary.uploader.upload(
-              "data:audio/mp3;base64," + songLinkBase64
+
+              "data:audio/mp3;base64," + songLinkBase64,
+              { resource_type: "auto" }
             );
-            songLinkUrl = songLinkResult.secure_url;
+            songLinkUrl = songLinkResult.url;
+            duration = songLinkResult.duration;
           } catch (error) {
             console.log("Failed to upload file:", error);
           }
 
           form = {
             infor: {
-              id: id,
               songname: songname,
+              thumbnail: fileUrl,
+              alias: songname,
               artists: artists,
               genresid: genresid,
-              songLink: {
-                path: songLinkFile ? songLinkFile.path : "",
-                base64: songLinkBase64
-              },
-              like: like,
-              listen: listen,
-              thumbnail: fileUrl
+              songLink: songLinkUrl,
+              duration: duration,
             }
           };
         }
 
-        let data = form;
+        let data = Song.updateOne({id:idsomg},form.infor);
         console.log(JSON.stringify(data));
 
         if (data) {
@@ -91,9 +91,9 @@ const adminS = async (req, res) => {
             DT: ""
           });
         }
-      } 
-      
-// create +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      }
+
+      // create +++++++++++++++++++++++++++++++++++++++++++++++++++++++
       else if (req.body.status === "create") {
         console.log(req.body.status)
         let form;
@@ -117,40 +117,42 @@ const adminS = async (req, res) => {
           const songLinkBase64 = songLinkFile.buffer.toString("base64");
           let fileUrl;
           let songLinkUrl;
-
+          let duration
           try {
             const fileResult = await cloudinary.uploader.upload(
               "data:image/png;base64," + fileBase64
             );
             fileUrl = fileResult.secure_url;
-            console.log("lonk1",fileUrl)
+            console.log("lonk1", fileUrl)
 
             const songLinkResult = await cloudinary.uploader.upload(
 
               "data:audio/mp3;base64," + songLinkBase64,
-              {resource_type:"auto"}
+              { resource_type: "auto" }
             );
             songLinkUrl = songLinkResult.url;
-
+            duration = songLinkResult.duration;
           } catch (error) {
             console.log("Failed to upload file:", error);
           }
-
+          const newIDSong = uuidv4().substring(0, 8).toUpperCase();
           form = {
             infor: {
-              id: id,
+              id: newIDSong,
               songname: songname,
+              thumbnail: fileUrl,
+              alias: songname,
               artists: artists,
               genresid: genresid,
               songLink: songLinkUrl,
+              duration: duration,
               like: 0,
               listen: 0,
-              thumbnail: fileUrl
             }
           };
         }
 
-        let data = form;
+        let data = await Song.create(form.infor);
         console.log(data);
         if (data) {
           return res.status(200).json({
