@@ -19,7 +19,6 @@ const adminA = async (req, res) => {
     upload(req, res, async function (err) {
       // upate !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       if (req.body.status === "create") {
-        console.log(req.body.status)
         let form;
         if (err) {
           console.log(err);
@@ -87,8 +86,8 @@ const adminA = async (req, res) => {
       }
 
       // create +++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      else if (req.body.status === "create") {
-        console.log(req.body.status)
+      else if (req.body.status === "update") {
+       
         let form;
         if (err) {
           console.log(err);
@@ -97,56 +96,63 @@ const adminA = async (req, res) => {
             EC: "-1",
             DT: ""
           });
-        } else {
-          const id = req.body.id;
-          const songname = req.body.songname;
-          const artists = req.body.artists;
-          const genresid = req.body.genresid;
-          const songLink = req.body.songLink;
-          const file = req.files.file[0];
-          const songLinkFile = req.files.songLink[0];
+        } else if (!req.file) {
+          
+          form = {
+            infor: {
+              id:req.body.id,
+              artistsName:req.body.artistsName,
+              biography:req.body.biography,
+              birthday:req.body.birthday,
+              realName:req.body.realName,
+              songListId:req.body.songListId,
+              playListId:req.body.playListId,
+            },
+          };
+          console.log("dell up",form.infor);
+        }else {
+          const id = req.body.id
+          const artistsName = req.body.artistsName
+          const biography = req.body.biography
+          const birthday = req.body.birthday
+          const realName = req.body.realName
+          const songListId = req.body.songListId
+          const playListId = req.body.playListId
 
+          const file = req.file;
           const fileBase64 = file.buffer.toString("base64");
-          const songLinkBase64 = songLinkFile.buffer.toString("base64");
+
           let fileUrl;
-          let songLinkUrl;
-          let duration
+
           try {
             const fileResult = await cloudinary.uploader.upload(
               "data:image/png;base64," + fileBase64
             );
             fileUrl = fileResult.secure_url;
             console.log("lonk1", fileUrl)
-
-            const songLinkResult = await cloudinary.uploader.upload(
-
-              "data:audio/mp3;base64," + songLinkBase64,
-              { resource_type: "auto" }
-            );
-            songLinkUrl = songLinkResult.url;
-            duration = songLinkResult.duration;
           } catch (error) {
             console.log("Failed to upload file:", error);
           }
-          const newIDSong = uuidv4().substring(0, 8).toUpperCase();
+
           form = {
             infor: {
-              id: newIDSong,
-              songname: songname,
-              thumbnail: fileUrl,
-              alias: songname,
-              artists: artists,
-              genresid: genresid,
-              songLink: songLinkUrl,
-              duration: duration,
-              like: 0,
-              listen: 0,
+              id:id,
+              artistsName: artistsName,
+              avt:fileUrl,
+              alias: artistsName,
+              biography: biography,
+              birthday: birthday,
+              realName: realName,
+              songListId: songListId,
+              playListId: playListId,
+              totalFollow:0
             }
           };
         }
 
-        let data = await Song.create(form.infor);
-        console.log(data);
+        console.log("coas up",form.infor);
+        let data = await Ar.updateOne({id: form.infor.id },form.infor);
+
         if (data) {
           return res.status(200).json({
             EM: data.EM,

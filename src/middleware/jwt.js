@@ -44,7 +44,6 @@ const checkUserJWT = (req, res, next) => {
     let decoded = verifyToken(token);
     if (decoded) {
       req.user = decoded;
-      console.log(req.user)
       req.token = token;
       next();
     } else {

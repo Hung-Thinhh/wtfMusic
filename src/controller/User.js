@@ -78,7 +78,6 @@ const editInfor = async (req, res) => {
         // Chuyển Buffer sang base64
         const fileBase64 = file.buffer.toString("base64");
         let imageUrl;
-        console.log(fileBase64)
         try {
           imageUrl = await new Promise((resolve, reject) => {
             cloudinary.uploader.upload(
@@ -102,7 +101,6 @@ const editInfor = async (req, res) => {
           // Xử lý lỗi nếu có
           console.log("Failed to upload image:", error);
         }
-        console.log("hahaha" + imageUrl);
         form = {
           infor: {
             email: req.body.email,
@@ -192,7 +190,6 @@ const updateBanSongs = async (req, res) => {
 const addLikeSomething = async (req, res) => {
   try {
     // console.log(JSON.stringify(req.body));
-    console.log("addlike",req.user);
     let data = await addLike(req.body.data, req.user.id);
     if (data && data.EC == "0") {
       return res.status(200).json({
@@ -444,7 +441,6 @@ const userGetLikeSongs= async(req, res) => {
 
   try {
     let data = await getMylikesSongs(req.user.id);
-    console.log(data);
     if (data && data.EC == "0") {
       return res.status(200).json({
         EM: data.EM,

@@ -13,12 +13,15 @@ const adminAr = async (req, res) => {
             avt: 1,
             artistsName: 1,
             alias: 1,
+            realName: 1,
+            biography: 1,
+            birthday: 1,
             totalFollow: 1,
             songListId: 1,
             playListId: 1,
             createdAt: 1,
             _id: 0,
-        }).sort({ totalFollow: -1 }).skip(+limit).limit(10);
+        }).sort({ _id: -1 }).skip(+limit).limit(10);
 
         const songData = await Promise.all(artistData.map(async (artist) => {
             const songListNames = await Promise.all(artist.songListId.map(async (songId) => {

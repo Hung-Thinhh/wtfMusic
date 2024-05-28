@@ -20,7 +20,7 @@ const adminS = async (req, res) => {
     upload(req, res, async function (err) {
       // upate !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       if (req.body.status === "update") {
-        console.log(req.body.status)
+        console.log(req.body.status);
         let form;
         if (err) {
           console.log(err);
@@ -29,54 +29,77 @@ const adminS = async (req, res) => {
             EC: "-1",
             DT: ""
           });
+        } else if (!req.files) {
+          // Không có file và không có songLink
+          const idsong = req.body.id;
+          const songname = req.body.songname;
+          const artists = req.body.artists;
+          const genresid = req.body.genresid;
+
+          form = {
+            infor: {
+              songname: songname,
+              alias: songname,
+              artists: artists,
+              genresid: genresid,
+            }
+          };
         } else {
+          // Có file hoặc songLink hoặc cả hai
           const idsomg = req.body.id;
           const songname = req.body.songname;
           const artists = req.body.artists;
           const genresid = req.body.genresid;
           const songLink = req.body.songLink;
-          const file = req.files.file[0];
-          const songLinkFile = req.files.songLink[0];
+          const file = req.files.file ? req.files.file[0] : null;
+          const songLinkFile = req.files.songLink ? req.files.songLink[0] : null;
 
-          const fileBase64 = file.buffer.toString("base64");
-          const songLinkBase64 = songLinkFile.buffer.toString("base64");
+          const fileBase64 = file ? file.buffer.toString("base64") : null;
+          const songLinkBase64 = songLinkFile ? songLinkFile.buffer.toString("base64") : null;
 
           let fileUrl;
           let songLinkUrl;
+          let duration;
+          // Bổ xung các câu điều kiện kiểm tra tính tồn tại của file và songLink
+          if (fileBase64) {
+            try {
+              const fileResult = await cloudinary.uploader.upload(
+                "data:image/png;base64," + fileBase64
+              );
+              fileUrl = fileResult.secure_url;
+              console.log("link1", fileUrl);
+            } catch (error) {
+              console.log("Failed to upload file:", error);
+            }
+          }
 
-          try {
-            const fileResult = await cloudinary.uploader.upload(
-              "data:image/png;base64," + fileBase64
-            );
-            fileUrl = fileResult.secure_url;
-            console.log("lonk1", fileUrl)
-
-            const songLinkResult = await cloudinary.uploader.upload(
-
-              "data:audio/mp3;base64," + songLinkBase64,
-              { resource_type: "auto" }
-            );
-            songLinkUrl = songLinkResult.url;
-            duration = songLinkResult.duration;
-          } catch (error) {
-            console.log("Failed to upload file:", error);
+          if (songLinkBase64) {
+            try {
+              const songLinkResult = await cloudinary.uploader.upload(
+                "data:audio/mp3;base64," + songLinkBase64,
+                { resource_type: "auto" }
+              );
+              songLinkUrl = songLinkResult.url;
+              duration = songLinkResult.duration;
+            } catch (error) {
+              console.log("Failed to upload songLink:", error);
+            }
           }
 
           form = {
             infor: {
               songname: songname,
-              thumbnail: fileUrl,
+              thumbnail: fileUrl || null,
               alias: songname,
               artists: artists,
               genresid: genresid,
-              songLink: songLinkUrl,
-              duration: duration,
+              songLink: songLinkUrl || null,
+              duration: duration || null,
             }
           };
         }
-
-        let data = Song.updateOne({id:idsomg},form.infor);
-        console.log(JSON.stringify(data));
+        console.log(req.body.id,form.infor)
+        const data = await Song.updateOne({id:req.body.id}, form);
 
         if (data) {
           return res.status(200).json({
