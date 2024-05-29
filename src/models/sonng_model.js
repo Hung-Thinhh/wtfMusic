@@ -7,6 +7,7 @@ const songSchema = new Schema({
     required: true,
     trim: true,
     index: true,
+    unique: true,
   },
   songname: {
     type: String,

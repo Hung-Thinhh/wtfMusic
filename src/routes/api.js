@@ -23,12 +23,14 @@ import {Infor,
     adminHome,
     userGetLikeSongs} from '../controller/User.js'
 const {adminSong} = require("../controller/admin/listStong.js");
+const {adminPlaylist} = require("../controller/admin/listPlaylist.js");
 const {adminAr} = require("../controller/admin/listSinger.js");
 const {songdetail,songPage} = require("../controller/songController.js");
 
 const {adminS} = require("../controller/admin/song.js");
 const {adminG} = require("../controller/admin/genre.js");
 const {adminA} = require("../controller/admin/artists.js");
+const {adminP} = require("../controller/admin/playlist.js");
 const {adminSS} = require("../controller/admin/searchSong.js");
 
 
@@ -84,6 +86,7 @@ const initApiRouter = (app) => {
     router.post('/postsong', fetchSongData);
     
     router.get('/admin/song/:id',adminSong)
+    router.get('/admin/playlist/:id',adminPlaylist)
     router.get('/admin/artist/:id',adminAr)
     router.get('/admin/user/:id',getAllUs)
     router.get('/admin/genres/:id',getAlGenre)
@@ -92,6 +95,7 @@ const initApiRouter = (app) => {
     router.post('/admin/restsong',adminS)
     router.post('/admin/restgenre',adminG)
     router.post('/admin/restartists',adminA)
+    router.post('/admin/restplaylist',adminP)
     router.post('/admin/searchsong',adminSearch)
 
     

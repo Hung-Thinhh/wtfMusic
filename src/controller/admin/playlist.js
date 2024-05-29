@@ -1,4 +1,4 @@
-const Ar = require('../../models/artists_model');
+const Playlist = require('../../models/playlist_model');
 const { v4: uuidv4 } = require("uuid");
 const cloudinary = require("cloudinary").v2;
 cloudinary.config({
@@ -8,13 +8,14 @@ cloudinary.config({
 });
 const multer = require("multer");
 
-
 const upload = multer({
   storage: multer.memoryStorage(),
-}).single("file");
+}).fields([
+  { name: "file", maxCount: 1 },
+  { name: "songLink", maxCount: 1 }
+]);
 
-
-const adminA = async (req, res) => {
+const adminP = async (req, res) => {
   try {
     upload(req, res, async function (err) {
       // upate !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -28,12 +29,15 @@ const adminA = async (req, res) => {
             DT: ""
           });
         } else {
-          const artistsName = req.body.artistsName
-          const biography = req.body.biography
-          const birthday = req.body.birthday
-          const realName = req.body.realName
-          const songListId = req.body.songListId
-          const playListId = req.body.playListId
+          const playlistId = req.body.playlistId
+          const playlistname = req.body.playlistname
+          const genresid = req.body.genresid
+          const artistsId = req.body.artistsId
+          const songLink = req.body.songLink
+          const type = req.body.type
+          const songid = req.body.songid
+
+
           const file = req.file;
           const fileBase64 = file.buffer.toString("base64");
 
@@ -51,23 +55,23 @@ const adminA = async (req, res) => {
           const newIDAr = uuidv4().substring(0, 8).toUpperCase();
 
           form = {
-            infor: {
-              id: newIDAr,
-              artistsName: artistsName,
-              avt: fileUrl,
-              alias: artistsName,
-              biography: biography,
-              birthday: birthday,
-              realName: realName,
-              songListId: songListId.split(","),
-              playListId: playListId.split(","),
-              totalFollow: 0
-            }
+
+            id: newIDAr,
+            playlistId: playlistId,
+            playlistname: playlistname,
+            thumbnail: fileUrl,
+            genresid: genresid.split(","),
+            artistsId: artistsId.split(","),
+            songid: songid.split(","),
+
+            songLink: songLink,
+            type: type,
+
           };
         }
 
-        let data = await Ar.create(form.infor);
         console.log(data);
+        let data = await Playlist.create(form);
 
         if (data) {
           return res.status(200).json({
@@ -143,7 +147,7 @@ const adminA = async (req, res) => {
 
         }
 
-        console.log("coas up", req.body.id , form);
+        console.log("coas up", req.body.id, form);
         let data = await Ar.updateOne({ id: req.body.id }, form);
 
         if (data) {
@@ -169,8 +173,8 @@ const adminA = async (req, res) => {
       DT: ""
     });
   }
-};
+}
 
 module.exports = {
-  adminA
+  adminP
 };
