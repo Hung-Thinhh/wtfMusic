@@ -268,25 +268,34 @@ const adminS = async (req, res) => {
         }
       }
       else if (req.body.status === "delete") {
-        const song = await Song.findOne({ id: req.body.id, state: { $in: [0, 1] } });
-        if (Song) {
-          const newState = Song.state === 1 ? 0 : 1;
-          data = await Song.updateOne({ id: req.body.id }, { state: newState });
-        }
-        if (data) {
-          return res.status(200).json({
-            EM: "success",
-            EC: "0",
-            DT: data
-          });
+        let data;
+        const song = await Song.findOne({ id: req.body.id });
+        if (song) {
+            const newState = song.state === 1 ? 0 : 1;
+            data = await Song.updateOne({ id: req.body.id }, { state: newState });
+            console.log(data);
+            // Kiểm tra xem cập nhật đã thành công hay không
+            if (data.modifiedCount > 0) {
+                return res.status(200).json({
+                    EM: "success",
+                    EC: "0",
+                    DT: data
+                });
+            } else {
+                return res.status(200).json({
+                    EM: "error from server",
+                    EC: "-1",
+                    DT: "No update made"
+                });
+            }
         } else {
-          return res.status(200).json({
-            EM: "error from server",
-            EC: "-1",
-            DT: ""
-          });
+            return res.status(200).json({
+                EM: "error from server",
+                EC: "-1",
+                DT: "Song not found"
+            });
         }
-      }
+    }
     });
   } catch (err) {
     console.log(err);

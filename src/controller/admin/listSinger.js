@@ -20,6 +20,7 @@ const adminAr = async (req, res) => {
             songListId: 1,
             playListId: 1,
             createdAt: 1,
+            state: 1,
             _id: 0,
         }).sort({ _id: -1 }).skip(+limit).limit(10);
 

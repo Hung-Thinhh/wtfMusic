@@ -16,6 +16,7 @@ const adminPlaylist = async (req, res) => {
             songid:1,
             like:1,
             listen:1,
+            state:1,
             _id: 0
         }).sort({ _id: -1 }).skip(+limit).limit(10);
 
