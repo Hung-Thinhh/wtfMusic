@@ -58,6 +58,11 @@ const playlistSchema = new Schema({
         min: 0,
         default: 0
     },
+    state: {
+        type: Number,
+        required: true,
+        trim: true,
+    },
     createdAt: {
         type: Date,
         default: Date.now

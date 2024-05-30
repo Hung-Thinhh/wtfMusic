@@ -10,10 +10,7 @@ const multer = require("multer");
 
 const upload = multer({
   storage: multer.memoryStorage(),
-}).fields([
-  { name: "file", maxCount: 1 },
-  { name: "songLink", maxCount: 1 }
-]);
+}).single("file");
 
 const adminP = async (req, res) => {
   try {
@@ -29,20 +26,17 @@ const adminP = async (req, res) => {
             DT: ""
           });
         } else {
-          const playlistId = req.body.playlistId
           const playlistname = req.body.playlistname
           const genresid = req.body.genresid
           const artistsId = req.body.artistsId
-          const songLink = req.body.songLink
           const type = req.body.type
+          const description = req.body.description
           const songid = req.body.songid
-
 
           const file = req.file;
           const fileBase64 = file.buffer.toString("base64");
 
           let fileUrl;
-
           try {
             const fileResult = await cloudinary.uploader.upload(
               "data:image/png;base64," + fileBase64
@@ -53,20 +47,15 @@ const adminP = async (req, res) => {
             console.log("Failed to upload file:", error);
           }
           const newIDAr = uuidv4().substring(0, 8).toUpperCase();
-
           form = {
-
-            id: newIDAr,
-            playlistId: playlistId,
+            playlistId: newIDAr,
             playlistname: playlistname,
-            thumbnail: fileUrl,
             genresid: genresid.split(","),
             artistsId: artistsId.split(","),
-            songid: songid.split(","),
-
-            songLink: songLink,
+            thumbnail: fileUrl,
             type: type,
-
+            description: description,
+            songid: songid,
           };
         }
 
@@ -99,24 +88,24 @@ const adminP = async (req, res) => {
             DT: ""
           });
         } else if (!req.file) {
-
           form = {
-            artistsName: req.body.artistsName,
-            biography: req.body.biography,
-            birthday: req.body.birthday,
-            realName: req.body.realName,
-            songListId: req.body.songListId,
-            playListId: req.body.playListId,
-
+            playlistId: req.body.playlistId,
+            playlistname: req.body.playlistname,
+            genresid: req.body.genresid,
+            artistsId: req.body.artistsId,
+            type: req.body.type,
+            description: req.body.description,
+            songid: req.body.songid,
           };
           console.log("dell up", form.infor);
         } else {
-          const artistsName = req.body.artistsName
-          const biography = req.body.biography
-          const birthday = req.body.birthday
-          const realName = req.body.realName
-          const songListId = req.body.songListId
-          const playListId = req.body.playListId
+          const playlistId = req.body.playlistId;
+          const playlistname = req.body.playlistname
+          const genresid = req.body.genresid
+          const artistsId = req.body.artistsId
+          const type = req.body.type
+          const description = req.body.description
+          const songid = req.body.songid
 
           const file = req.file;
           const fileBase64 = file.buffer.toString("base64");
@@ -134,27 +123,51 @@ const adminP = async (req, res) => {
           }
 
           form = {
-            artistsName: artistsName,
-            avt: fileUrl,
-            alias: artistsName,
-            biography: biography,
-            birthday: birthday,
-            realName: realName,
-            songListId: songListId,
-            playListId: playListId,
-            totalFollow: 0
+            playlistId: playlistId,
+            thumbnail: fileUrl,
+            playlistname: playlistname,
+            genresid: genresid,
+            artistsId: artistsId,
+            type: type,
+            description: description,
+            songid: songid,
           }
 
         }
 
         console.log("coas up", req.body.id, form);
-        let data = await Ar.updateOne({ id: req.body.id }, form);
+        let data = await Playlist.updateOne({ playlistId: req.body.playlistId }, form);
 
         if (data) {
           return res.status(200).json({
             EM: data.EM,
             EC: "0",
             DT: data.DT
+          });
+        } else {
+          return res.status(200).json({
+            EM: "error from server",
+            EC: "-1",
+            DT: ""
+          });
+        }
+      }
+
+      else if (req.body.status === "delete") {
+        let data;
+        if (req.body.playlistId) {
+          // Cập nhật trạng thái đảo ngược cho Playlist
+          const playlist = await Playlist.findOne({ playlistId: req.body.playlistId, state: { $in: [0, 1] } });
+          if (playlist) {
+            const newState = playlist.state === 1 ? 0 : 1;
+            data = await Playlist.updateOne({ playlistId: req.body.playlistId }, { state: newState });
+          }
+        }
+        if (data) {
+          return res.status(200).json({
+            EM: "success",
+            EC: "0",
+            DT: data
           });
         } else {
           return res.status(200).json({

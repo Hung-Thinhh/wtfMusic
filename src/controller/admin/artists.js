@@ -143,7 +143,7 @@ const adminA = async (req, res) => {
 
         }
 
-        console.log("coas up", req.body.id , form);
+        console.log("coas up", req.body.id, form);
         let data = await Ar.updateOne({ id: req.body.id }, form);
 
         if (data) {
@@ -151,6 +151,28 @@ const adminA = async (req, res) => {
             EM: data.EM,
             EC: "0",
             DT: data.DT
+          });
+        } else {
+          return res.status(200).json({
+            EM: "error from server",
+            EC: "-1",
+            DT: ""
+          });
+        }
+      }
+
+      else if (req.body.status === "delete") {
+        console.log(req.body)
+        let data
+        if (req.body.id) {
+          const curr = await Ar.findOne({ id: req.body.id }, { state: 1, _id: 0 })
+          data = await Ar.updateOne({ id: req.body.id }, { state: curr.state === 1 ? 0 : 1})
+        }
+        if (data) {
+          return res.status(200).json({
+            EM: "success",
+            EC: "0",
+            DT: data
           });
         } else {
           return res.status(200).json({

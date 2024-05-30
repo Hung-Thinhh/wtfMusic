@@ -61,6 +61,11 @@ const ArtistsSchema = new Schema({
         trim: true,
         index: true
     },
+    state: {
+        type: Number,
+        required: true,
+        trim: true,
+    },
     createdAt: {
         type: Date,
         default: Date.now

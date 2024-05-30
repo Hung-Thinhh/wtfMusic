@@ -16,6 +16,7 @@ const upload = multer({
 ]);
 
 const adminS = async (req, res) => {
+  console.log(req.status);
   try {
     upload(req, res, async function (err) {
       // upate !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -154,7 +155,7 @@ const adminS = async (req, res) => {
             genresid: genresid.split(","),
             thumbnail: fileUrl
           };
-        }else if (!req.files.songLink && !req.files.file) {
+        } else if (!req.files.songLink && !req.files.file) {
           const id = req.body.id;
           const songname = req.body.songname;
           const artists = req.body.artists;
@@ -257,6 +258,26 @@ const adminS = async (req, res) => {
             EM: data.EM,
             EC: "0",
             DT: data.DT
+          });
+        } else {
+          return res.status(200).json({
+            EM: "error from server",
+            EC: "-1",
+            DT: ""
+          });
+        }
+      }
+      else if (req.body.status === "delete") {
+        const song = await Song.findOne({ id: req.body.id, state: { $in: [0, 1] } });
+        if (Song) {
+          const newState = Song.state === 1 ? 0 : 1;
+          data = await Song.updateOne({ id: req.body.id }, { state: newState });
+        }
+        if (data) {
+          return res.status(200).json({
+            EM: "success",
+            EC: "0",
+            DT: data
           });
         } else {
           return res.status(200).json({

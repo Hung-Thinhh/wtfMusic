@@ -70,6 +70,11 @@ const songSchema = new Schema({
     required: true,
     trim: true,
   },
+  state: {
+    type: Number,
+    required: true,
+    trim: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
