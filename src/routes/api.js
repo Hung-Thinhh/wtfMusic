@@ -67,6 +67,7 @@ const initApiRouter = (app) => {
     router.post("/logout", handleLogout);
 
     //user
+<<<<<<< HEAD
     router.get("/getInfor", Infor);
     router.post("/editInfor", editInfor);
     router.post("/changepass", changePass);
@@ -100,6 +101,36 @@ const initApiRouter = (app) => {
     router.post("/addnewhistory", addToHistory);
     router.get("/getHistory", getHistory);
 
+=======
+    router.get("/getInfor",Infor);
+    router.post("/editInfor",editInfor);
+    router.post("/changepass",changePass);
+    router.post("/banSong",updateBanSongs);
+    router.post('/addlike', addLikeSomething);
+    router.post('/unlike', unLikeSomething);
+    router.post('/createplaylist', createMyPl);
+    router.post('/getuserplaylist', getMyPl);
+    router.post('/getuserlikesong', userGetLikeSongs);
+    router.post('/addtoplaylist', addToPlaylist);
+    //music
+    router.get('/getartist', getartist);
+    router.get('/songdetail/:id', songdetail);
+    router.get('/songPage/:id', songPage);
+    router.get('/songurl/:id', songurl);
+    router.get('/songly/:id', songly);
+    router.get('/search/:id', search);
+    router.get('/home', getHome);
+    router.get('/rating', getRating);
+    router.get('/artist/:id', getArtist);
+    router.get('/get100', get100);
+    router.get('/getplaylist/:id', fetchPlaylist);
+    router.post('/clone', fetchclone);
+    router.post('/cloneplaylist', fetchplaylistclone);
+    router.post('/clonepArtists', fetchArtistsClone);
+    // history
+    router.post('/addnewhistory', addToHistory);
+    router.get('/getHistory', getHistory);
+>>>>>>> d009b70eae5e1c47206aed510a9cfb5680b72a22
     // admin
     router.get("/getallsong", fetchAutoCloneGenre);
     router.post("/postsong", fetchSongData);
