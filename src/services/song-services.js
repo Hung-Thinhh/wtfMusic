@@ -2,14 +2,16 @@ import Song from "../models/sonng_model";
 import Playlist from "../models/playlist_model";
 import Genres from "../models/genre_model";
 const getSong = async (id) => {
-  const song = await Song.findOne({ id: id });
+  const song = await Song.findOne({
+    id: id,
+    state: { $ne: 1 }
+  });
   if (song) {
     const genreId = song.genresid;
     const genres = [];
     const promises = genreId.map((id) => {
       return Genres.findOne({ genreId: id })
         .then((genresItem) => {
-          // Nếu tìm thấy playlist, thêm thông tin vào mảng playlistInfoArray
           if (genres) {
             const genresInfo = genresItem;
             genres.push(genresInfo);
@@ -52,7 +54,10 @@ const getSong = async (id) => {
   }
 };
 const getSongRelated = async (id) => {
-  const song = await Song.findOne({ id: id });
+  const song = await Song.findOne({
+    id: id,
+    state: { $ne: 1 }
+  });
   if (song) {
     const genreId = song.genresid;
     const genres = [];
@@ -81,6 +86,7 @@ const getSongRelated = async (id) => {
       } else {
         const songRelated = await Song.find({
           genresid: { $in: song.genresid },
+          state: { $ne: 1 }
         })
           .sort({ createdAt: -1 })
           .limit(12);

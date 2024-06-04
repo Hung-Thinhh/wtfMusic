@@ -6,6 +6,8 @@ const Ar = require('../models/artists_model');
 import { checkPassword, hashPassword } from "./Authentication_service.js";
 const { v4: uuidv4 } = require("uuid");
 const { Nuxtify } = require("nuxtify-api");
+const SongRanking = require('../models/songRanking_model.js');
+const PlaylistRanking = require('../models/playlistRanking_model.js');
 
 const getInfor = async (id) => {
   let user = await User.findOne({ id: id });
@@ -102,13 +104,36 @@ const addLike = async (data, id) => {
   let updateData;
   if (data.type == "song") {
     let ps = await Song.findOne({ id: data.id });
+    let songRanking = await SongRanking.findOne({ songId: data.id });
     if (ps) {
-
       updateData = await User.findOneAndUpdate(
         { id: id },
         { $addToSet: { likedSongs: data.id } },
         { upsert: true }
       );
+      if (songRanking) {
+        if (songRanking.rankingDate.getDate() === new Date().getDate()) {
+          songRanking.likeCount += 1;
+          await songRanking.save();
+          ;
+        } else {
+          const newRanking = new SongRanking({
+            songId: songRanking.songId,
+            likeCount: 1,
+            rankingDate: new Date()
+          });
+          await newRanking.save();
+          ;
+        }
+      } else {
+        const newRanking = new SongRanking({
+          songId: data.id,
+          likeCount: 1,
+          rankingDate: new Date()
+        });
+        await newRanking.save();
+        ;
+      }
     } else {
       return {
         EM: "không thấy bài hát này",
@@ -118,13 +143,33 @@ const addLike = async (data, id) => {
     }
   } else {
     let ps = await Playlist.findOne({ playlistId: data.id });
+    let playlistRanking = await PlaylistRanking.findOne({ playlistId: data.id });
     if (ps) {
-
       updateData = await User.findOneAndUpdate(
         { id: id },
         { $addToSet: { likedPlayLists: data.id } },
         { upsert: true }
       );
+      if (playlistRanking) {
+        if (playlistRanking.rankingDate.getDate() === new Date().getDate()) {
+          playlistRanking.likeCount += 1;
+          await playlistRanking.save();
+        } else {
+          const newRanking = new PlaylistRanking({
+            playlistId: playlistRanking.playlistId,
+            likeCount: 1,
+            rankingDate: new Date()
+          });
+          await newRanking.save();
+        }
+      } else {
+        const newRanking = new PlaylistRanking({
+          playlistId: data.id,
+          likeCount: 1,
+          rankingDate: new Date()
+        });
+        await newRanking.save();
+      }
     } else {
       return {
         EM: "không thấy playlist này",
@@ -152,13 +197,34 @@ const unLike = async (data, id) => {
   console.log(data);
   if (data.type == "song") {
     let ps = await Song.findOne({ id: data.id });
-    console.log(ps);
+    let songRanking = await SongRanking.findOne({ songId: data.id });
+
     if (ps) {
       updateData = await User.findOneAndUpdate(
         { id: id },
         { $pull: { likedSongs: data.id } },
         { new: true }
       );
+      if (songRanking) {
+        if (songRanking.rankingDate.getDate() === new Date().getDate()) {
+          songRanking.likeCount -= 1;
+          await songRanking.save();
+        } else {
+          const newRanking = new SongRanking({
+            songId: data.id,
+            likeCount: 1,
+            rankingDate: new Date()
+          });
+          await newRanking.save();
+        }
+      } else {
+        const newRanking = new SongRanking({
+          songId: data.id,
+          likeCount: 1,
+          rankingDate: new Date()
+        });
+        await newRanking.save();
+      }
     } else {
       return {
         EM: "không thấy bài hát này",
@@ -168,13 +234,34 @@ const unLike = async (data, id) => {
     }
   } else {
     let ps = await Playlist.findOne({ playlistId: data.id });
-    console.log(ps);
+    let playlistRanking = await PlaylistRanking.findOne({ playlistId: data.id });
+
     if (ps) {
       updateData = await User.findOneAndUpdate(
         { id: id },
         { $pull: { likedPlayLists: data.id } },
         { new: true }
       );
+      if (playlistRanking) {
+        if (playlistRanking.rankingDate.getDate() === new Date().getDate()) {
+          playlistRanking.likeCount -= 1;
+          await playlistRanking.save();
+        } else {
+          const newRanking = new PlaylistRanking({
+            playlistId: data.id,
+            likeCount: 1,
+            rankingDate: new Date()
+          });
+          await newRanking.save();
+        }
+      } else {
+        const newRanking = new PlaylistRanking({
+          playlistId: data.id,
+          likeCount: 1,
+          rankingDate: new Date()
+        });
+        await newRanking.save();
+      }
     } else {
       return {
         EM: "không thấy playlist này",
@@ -501,11 +588,11 @@ const getMylikesSongs = async (idUser) => {
         return getplaylist(idplaylist);
       });
       const playlists = await Promise.all(playlistPromises);
-      
+
       return {
         EM: "Lấy danh sách nhạc đã thich thành công!",
         EC: "0",
-        DT: {songs:songs,playlist:playlists},
+        DT: { songs: songs, playlist: playlists },
       };
     } else {
       return {
