@@ -58,7 +58,6 @@ const initApiRouter = (app) => {
     router.post('/getuserplaylist', getMyPl);
     router.post('/getuserlikesong', userGetLikeSongs);
     router.post('/addtoplaylist', addToPlaylist);
-
     //music
     router.get('/getartist', getartist);
     router.get('/songdetail/:id', songdetail);
@@ -71,16 +70,12 @@ const initApiRouter = (app) => {
     router.get('/artist/:id', getArtist);
     router.get('/get100', get100);
     router.get('/getplaylist/:id', fetchPlaylist);
-    
     router.post('/clone', fetchclone);
     router.post('/cloneplaylist', fetchplaylistclone);
     router.post('/clonepArtists', fetchArtistsClone);
-
     // history
     router.post('/addnewhistory', addToHistory);
     router.get('/getHistory', getHistory);
-
-    
     // admin
     router.get('/getallsong', fetchAutoCloneGenre);
     router.post('/postsong', fetchSongData);
