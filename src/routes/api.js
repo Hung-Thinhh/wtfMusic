@@ -98,6 +98,8 @@ const initApiRouter = (app) => {
     router.post('/clonepArtists', fetchArtistsClone);
     router.get('/getrankingservice/:id', getSongRankControl);
     router.get('/getrankingplservice/:id', getPlaylistRankControl);
+
+
     // history
     router.post('/addnewhistory', addToHistory);
     router.get('/getHistory', getHistory);
