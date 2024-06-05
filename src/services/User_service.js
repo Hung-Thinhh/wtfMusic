@@ -328,14 +328,14 @@ const createMyPlaylist = async (user, playlistname) => {
     const playlists = await Promise.all(playlistPromises);
     const isDuplicateName = async (newPlaylistName) => {
       const hasDuplicate = await playlists.some((playlist) => {
-        return playlist.playlistname === newPlaylistName;
+        return playlist &&  playlist.playlistname === newPlaylistName;
       });
       return hasDuplicate;
     };
     const hasDuplicate = await isDuplicateName(playlistname);
     if (!hasDuplicate) {
       const newPlaylistID = uuidv4().substring(0, 8).toUpperCase();
-
+console.log('nowwwwwwwwwwwwwwwwwwwwwww');
       //Tạo playlist mới với các thông tin tương ứng
       const createdPlaylist = new Playlist({
         playlistId: newPlaylistID,
@@ -353,6 +353,7 @@ const createMyPlaylist = async (user, playlistname) => {
 
       // Lưu playlist
       const data1 = await createdPlaylist.save();
+      console.log('nvvvvvvvvvvvvvvvvvvvvvvvvvvv');
 
       //Thêm playlistId vào mảng playlistId của user
       getUser.myPlayLists.push(newPlaylistID);
