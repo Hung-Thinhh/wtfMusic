@@ -1,6 +1,6 @@
 import SongRanking from "../models/songRanking_model";
 
-const getSongRank = async (id) => {
+const getSongRankListen = async (id) => {
     if (id === "all") {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -19,14 +19,14 @@ const getSongRank = async (id) => {
             {
                 $group: {
                     _id: { $dateToString: { format: "%Y-%m-%d", date: "$rankingDate" } },
-                    likeCount: { $sum: "$likeCount" },
+                    listenCount: { $sum: "$listenCount" },
                 },
             },
             {
                 $project: {
                     _id: 0,
                     date: "$_id",
-                    likeCount: { $ifNull: ["$likeCount", 0] },
+                    listenCount: { $ifNull: ["$listenCount", 0] },
                 },
             },
             {
@@ -34,7 +34,7 @@ const getSongRank = async (id) => {
             },
         ]);
 
-        // Fill in missing dates with zero likeCount
+        // Fill in missing dates with zero listenCount
         const startDate = new Date(thirtyDaysAgo);
         const endDate = new Date(today);
         const dateMap = new Map();
@@ -43,9 +43,9 @@ const getSongRank = async (id) => {
             dateMap.set(formattedDate, 0);
         }
         for (const ranking of songRankings) {
-            dateMap.set(ranking.date, ranking.likeCount);
+            dateMap.set(ranking.date, ranking.listenCount);
         }
-        const completeSongRankings = Array.from(dateMap, ([date, likeCount]) => ({ date, likeCount }));
+        const completeSongRankings = Array.from(dateMap, ([date, listenCount]) => ({ date, listenCount }));
 
         return {
             EM: "thêm vào lịch sử thành công!",
@@ -75,4 +75,4 @@ const getSongRank = async (id) => {
 
 
 
-module.exports = { getSongRank };
+module.exports = { getSongRankListen };

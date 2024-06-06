@@ -54,8 +54,16 @@ const {adminG} = require("../controller/admin/genre.js");
 const {adminA} = require("../controller/admin/artists.js");
 const {adminP} = require("../controller/admin/playlist.js");
 const {adminSS} = require("../controller/admin/searchSong.js");
+
+
 const {getSongRankControl} = require("../controller/rangkingSong.js");
 const {getPlaylistRankControl} = require("../controller/rangkingPlaylist.js");
+
+const {getSongRankListenControl} = require("../controller/rangkingSongListen.js");
+const {getPlaylistRankListenControl} = require("../controller/rangkingPlaylistListen.js");
+
+
+const {getbanData} = require("../controller/getBan.js");
 
 
 const router = express.Router();
@@ -96,8 +104,13 @@ const initApiRouter = (app) => {
     router.post('/clone', fetchclone);
     router.post('/cloneplaylist', fetchplaylistclone);
     router.post('/clonepArtists', fetchArtistsClone);
+    
     router.get('/getrankingservice/:id', getSongRankControl);
     router.get('/getrankingplservice/:id', getPlaylistRankControl);
+
+    router.get('/getrankingservicelisten/:id', getSongRankListenControl);
+    router.get('/getrankingplservicelisten/:id', getPlaylistRankListenControl);
+
 
 
     // history
@@ -119,6 +132,7 @@ const initApiRouter = (app) => {
     router.post("/admin/restartists", adminA);
     router.post("/admin/restplaylist", adminP);
     router.post("/admin/searchsong", adminSearch);
+    router.get("/admin/getbanData", getbanData);
 
     return app.use("/api", router);
 };
