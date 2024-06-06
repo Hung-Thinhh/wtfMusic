@@ -70,31 +70,29 @@ const initApiRouter = (app) => {
     router.post("/logout", handleLogout);
 
     //user
-    router.get("/getInfor", Infor);
-    router.post("/editInfor", editInfor);
-    router.post("/changepass", changePass);
-    router.post("/banSong", updateBanSongs);
-    router.post("/addlike", addLikeSomething);
-    router.post("/unlike", unLikeSomething);
-    router.post("/createplaylist", createMyPl);
-    router.post("/getuserplaylist", getMyPl);
-    router.post("/getuserlikesong", userGetLikeSongs);
-    router.post("/addtoplaylist", addToPlaylist);
-
+    router.get("/getInfor",Infor);
+    router.post("/editInfor",editInfor);
+    router.post("/changepass",changePass);
+    router.post("/banSong",updateBanSongs);
+    router.post('/addlike', addLikeSomething);
+    router.post('/unlike', unLikeSomething);
+    router.post('/createplaylist', createMyPl);
+    router.post('/getuserplaylist', getMyPl);
+    router.post('/getuserlikesong', userGetLikeSongs);
+    router.post('/addtoplaylist', addToPlaylist);
     //music
-    router.get("/getartist", getartist);
-    router.get("/songdetail/:id", songdetail);
-    router.get("/songPage/:id", songPage);
-    router.get("/songurl/:id", songurl);
-    router.get("/songly/:id", songly);
-    router.get("/search/:id", search);
-    router.get("/home", getHome);
-    router.get("/rating", getRating);
-    router.get("/artist/:id", getArtist);
-    router.get("/get100", get100);
-    router.get("/getgenres", fetchGenres);
-    router.get("/getplaylist/:id", fetchPlaylist);
+    router.get('/getartist', getartist);
+    router.get('/songdetail/:id', songdetail);
+    router.get('/songPage/:id', songPage);
+    router.get('/songurl/:id', songurl);
+    router.get('/songly/:id', songly);
+    router.get('/search/:id', search);
+    router.get('/home', getHome);
+    router.get('/rating', getRating);
+    router.get('/artist/:id', getArtist);
+    router.get('/get100', get100);
     router.get('/getplaylist/:id', fetchPlaylist);
+    router.get("/getgenres", fetchGenres);
     router.post('/clone', fetchclone);
     router.post('/cloneplaylist', fetchplaylistclone);
     router.post('/clonepArtists', fetchArtistsClone);
@@ -103,10 +101,8 @@ const initApiRouter = (app) => {
 
 
     // history
-    router.post("/addnewhistory", addToHistory);
-    router.get("/getHistory", getHistory);
-
-
+    router.post('/addnewhistory', addToHistory);
+    router.get('/getHistory', getHistory);
     // admin
     router.get("/getallsong", fetchAutoCloneGenre);
     router.post("/postsong", fetchSongData);
