@@ -495,10 +495,10 @@ const adminSerachService = async (data) => {
   try {
     const songs = await Song.find({
       $or: [
-        { songname: { $regex: data, $options: 'i' } },
-        { artists: { $regex: data, $options: 'i' } }
+      { songname: { $regex: data, $options: 'i' } },
+      { artists: { $regex: data, $options: 'i' } }
       ]
-    });
+    }, { lyric: 0 });
     const Genre = await genre.find({
       $or: [
         { genrename: { $regex: data, $options: 'i' } },
@@ -568,7 +568,6 @@ const adminHomeService = async () => {
     };
   }
 };
-
 const getMylikesSongs = async (idUser) => {
   try {
     const getUser = await User.findOne({ id: idUser });
