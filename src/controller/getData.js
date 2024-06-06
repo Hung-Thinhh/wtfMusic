@@ -71,11 +71,7 @@ const getArtist = async (req, res) => {
     });
 };
 
-<<<<<<< HEAD
-=======
-}
 
->>>>>>> d009b70eae5e1c47206aed510a9cfb5680b72a22
 const get100 = async (req, res) => {
     const getSongmp3 = async () => {
         const songly = await Nuxtify.getTop100();
