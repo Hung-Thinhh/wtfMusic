@@ -38,12 +38,14 @@ const restCommentService = async (data, userId) => {
                     return {
                         ...comment._doc,
                         isOwnComment: true,
-                        userName: user.username
+                        userName: user.username,
+                        userAvt: user.avt
                     };
                 } else {
                     return {
                         ...comment._doc,
-                        userName: user.username
+                        userName: user.username,
+                        userAvt: user.avt
                     };
                 }
             });
