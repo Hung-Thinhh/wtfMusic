@@ -1,17 +1,23 @@
 
-import {restCommentService} from "../services/restComment-service"
+import { restCommentService } from "../services/restComment-service"
 const restComment = async (req, res) => {
     const data = req.body.data;
     const userId = req.user.id
-    console.log("sdsdsdsdsdsds",userId)
-    const datas = await restCommentService(data,userId)
+    console.log("sdsdsdsdsdsds", userId)
+    const datas = await restCommentService(data, userId)
 
     if (data.EC == "0") {
         return res.status(200).json({
             EM: data.EM,
             EC: "0",
-            DT:datas.DT,
-          });
+            DT: datas.DT,
+        });
+    } else {
+        return res.status(400).json({
+            EM: data.EM,
+            EC: "-1",
+            DT: datas.DT,
+        });
     }
 }
 
