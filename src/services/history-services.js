@@ -1,9 +1,48 @@
 import History from "../models/history.js";
+import Song from "../models/sonng_model.js";
 import Playlist from "../models/playlist_model.js";
+import SongRanking from "../models/songRanking_model";
 
 const addHistory = async (idUser, data) => {
   let roles;
   if (data.type == "song") {
+    await Song.findOneAndUpdate(
+      { id: data.id },
+      { $inc: { listen: 1 } },
+      { upsert: true }
+    );
+    let songRanking = await SongRanking.findOne({ songId: data.id });
+    if (songRanking) {
+      if (songRanking.rankingDate.getDate() === new Date().getDate()) {
+        songRanking.listenCount += 1;
+        await songRanking.save();
+        ;
+      } else {
+        const newRanking = new SongRanking({
+          songId: songRanking.songId,
+          listenCount: 1,
+          rankingDate: new Date()
+        });
+        await newRanking.save();
+        ;
+      }
+    } else {
+      const newRanking = new SongRanking({
+        songId: data.id,
+        listenCount: 1,
+        rankingDate: new Date()
+      });
+      await newRanking.save();
+      ;
+    }
+
+  //   db.SongRanking.insertOne({
+  //     rankingDate: new Date(),
+  //     songId: data.id,
+  //     listenCount: 1,
+  //     likeCount: 10,
+  //     rank: 1
+  // });
     roles = await History.findOneAndUpdate(
       { userId: idUser },
       { $addToSet: { SongHistory: data.id } },

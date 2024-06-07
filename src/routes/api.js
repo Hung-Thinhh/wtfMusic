@@ -21,6 +21,7 @@ const {
     fetchSongData,
 } = require("../controller/clonedata.js");
 const { addToHistory, getHistory } = require("../controller/history.js");
+const { getRankMonth } = require("../controller/rankingCliend.js");
 const {
     handleRegister,
     handleLogin,
@@ -117,6 +118,10 @@ const initApiRouter = (app) => {
 
     router.get('/getrankingservicelisten/:id', getSongRankListenControl);
     router.get('/getrankingplservicelisten/:id', getPlaylistRankListenControl);
+
+
+    //Bảng xếp hạng
+    router.get('/getRankCliend', getRankMonth);
 
 
 

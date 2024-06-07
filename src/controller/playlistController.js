@@ -17,7 +17,6 @@ const fetchPlaylist = async (req, res) => {
 }
 
 const getRelatedPlaylist = async (req, res) => {
-    const id = req.params.id;
     try {
         const data = await RelatedPlaylist()
         return res.status(200).json({
