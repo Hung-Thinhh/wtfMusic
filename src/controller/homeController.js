@@ -7,37 +7,28 @@ import  {getNewRelease,getSongHot,getSongRemix,getSongChill,getSongTop100,getAlb
 
 const Song = require("../models/sonng_model");
 const Playlist = require("../models/playlist_model");
+const Ar = require('../models/artists_model');
 
 
 const handleHome = async (req, res) => {
   try {
     // Lấy tất cả các document từ collection
-    const documents = await Playlist.find();
+    const documents = await Ar.find();
 
-    // Mảng để lưu các document không đúng định dạng
-    const invalidDocuments = [];
+    // Mảng để lưu các document trùng id
+    const duplicateDocuments = [];
 
     // Kiểm tra từng document
-    documents.forEach((document) => {
-      // Kiểm tra nếu các trường bị thiếu hoặc không đúng kiểu dữ liệu
-      if (
-        !document.playlistId ||
-        !document.playlistname ||
-        !document.genresid ||
-        !document.artistsId ||
-        !document.thumbnail ||
-        !document.type ||
-        !document.description ||
-        !document.songid ||
-        !document.like ||
-        !document.listen 
-      ) {
-        invalidDocuments.push(document);
+    documents.forEach((document, index) => {
+      // Kiểm tra nếu document có id trùng với các document trước đó
+      const isDuplicate = documents.slice(0, index).some((prevDocument) => prevDocument.id === document.id);
+      if (isDuplicate) {
+        duplicateDocuments.push(document);
       }
     });
 
-    // Xoá các document không đúng định dạng
-    const result = await Playlist.deleteMany({ _id: { $in: invalidDocuments.map(invalid => invalid._id) } });
+    // Xoá các document trùng id
+    const result = await Ar.deleteMany({ _id: { $in: duplicateDocuments.map(duplicate => duplicate._id) } });
 
     console.log(`${result.deletedCount} document đã được xoá.`);
 
@@ -48,7 +39,6 @@ const handleHome = async (req, res) => {
     console.log(error);
     res.status(500).json({ message: "Gặp lỗi khi xoá các document không đúng định dạng." });
   }
-
 };
 
 const getHome = async (req, res) => {
