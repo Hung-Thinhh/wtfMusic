@@ -13,7 +13,9 @@ const ArtistsSchema = new Schema({
         type: String,
         required: true,
         trim: true,
-        index: true
+        index: true,
+        unique: true,
+
     },
     alias: {
         type: String,

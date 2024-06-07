@@ -108,7 +108,7 @@ const initApiRouter = (app) => {
     router.get('/getplaylist/:id', fetchPlaylist);
     router.get('/getRelatedPlaylist', getRelatedPlaylist);
     router.get("/getgenres", fetchGenres);
-    router.post('/clone', fetchclone);
+    router.get('/clone', fetchclone);
     router.post('/cloneplaylist', fetchplaylistclone);
     router.post('/clonepArtists', fetchArtistsClone);
     router.post("/restcomment", restComment);

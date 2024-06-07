@@ -4,17 +4,47 @@ const Ar = require('../models/artists_model');
 const genre = require('../models/genre_model')
 const moment = require('moment');
 const { Nuxtify } = require("nuxtify-api");
-const { response } = require('express');
-const fetchclone = async (req, res) => {
+const fetchclone = async (_, res) => {
     try {
-        const id = req.body.data.id;
-        const songData = req.body.data;
-      
-        const updatedSong = await Song.findOneAndUpdate({ id: id }, songData, { upsert: true });
-        
-        res.json(updatedSong);
+        const allPlaylist = await Playlist.find({}, { songid: 1, _id: 0 });
+        const getSong = await Promise.all(allPlaylist.map(async (datapl) => {
+            const songDetails = await Promise.all(datapl.songid.map(async (id) => {
+                try {
+                    const response = await Nuxtify.song.getDetail(id);
+                    if (response && response.data) {
+                        const song = response.data;
+                        const ar = await Nuxtify.getArtist(song.artists[0].alias);
+                        const jj = {
+                            id: ar.data.id,
+                            artistsName: ar.data.name,
+                            alias: ar.data.alias,
+                            biography: ar.data.biography ? ar.data.biography : 'nô tiểu sử',
+                            avt: ar.data.thumbnailM,
+                            birthday: ar.data.birthday ? ar.data.birthday : '02/05/2024',
+                            realName: ar.data.realname ? ar.data.realname : 'nô tên thật',
+                            totalFollow: ar.data.totalFollow,
+                            songListId: [id],
+                            playListId: ar.data.playlistId ? [ar.data.playlistId] : ["6B7W7EU8"],
+                            state: 0,
+                        };
+                        return jj;
+                    }
+                    return null; // Trả về null nếu không có dữ liệu response
+                } catch (error) {
+                    console.log(`Error fetching song detail for id ${id}:`, error);
+                    return null;
+                }
+            }));
+            return songDetails.filter(song => song !== null); // Loại bỏ các bản ghi null
+        }));
+
+    const fuck = await Promise.all(getSong.map(async (data) => {
+        await Ar.insertMany(data.flat());
+    }));
+        res.json(fuck);
     } catch (err) {
         console.log(err);
+        res.status(500).send('Internal Server Error');
     }
 };
 const fetchplaylistclone = async (req, res) => {
@@ -71,8 +101,8 @@ const fetchSongData = async (req, res) => {
             const result = await Promise.all(artists.map(async ar => {
                 const sections = ar.data.sections;
                 const songListIds = sections.flatMap(section => section.items ? section.items.map(item => item.encodeId ? item.encodeId : null) : []);
-                const filteredSongListIds = songListIds.filter(id => id !== null);
-
+                const filteredSongListIds = await Song.find({ id: { $in: songListIds } }, { id: 1, _id: 0 }).distinct('id');
+            
                 return {
                     id: ar.data.id,
                     artistsName: ar.data.name,

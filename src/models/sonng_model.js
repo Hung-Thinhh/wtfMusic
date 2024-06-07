@@ -21,7 +21,6 @@ const songSchema = new Schema({
   },
   alias: {
     type: String,
-    required: true,
     trim: true,
     index: true,
   },
