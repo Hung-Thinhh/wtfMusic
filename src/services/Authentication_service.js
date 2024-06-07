@@ -131,6 +131,8 @@ const handleCheckAccount = async (id) => {
   const user = await User.findOne({
     id: id,
   });
+  console.log(user);
+  console.log(id);
   if (user) {
     return {
       EM: "ok!",
