@@ -1,7 +1,6 @@
 import { getSongRank } from "../services/getdateSongRank_service.js"
 const getSongRankControl = async (req, res) => {
   const songId = req.params.id;
-  console.log(songId)
   const data = await getSongRank(songId)
   if (data.EC == "0") {
     return res.status(200).json({

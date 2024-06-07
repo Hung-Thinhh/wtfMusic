@@ -47,7 +47,6 @@ const getSongRank = async (id) => {
         }
         const completeSongRankings = Array.from(dateMap, ([date, likeCount]) => ({ date, likeCount }));
 
-        console.log(completeSongRankings);
         return {
             EM: "thêm vào lịch sử thành công!",
             EC: "0",
@@ -66,7 +65,6 @@ const getSongRank = async (id) => {
                 $lte: today,
             },
         });
-        console.log("sd",songRankings);
         return {
             EM: "thêm vào lịch sử thành công!",
             EC: "0",
@@ -74,5 +72,7 @@ const getSongRank = async (id) => {
         };
     }
 };
+
+
 
 module.exports = { getSongRank };

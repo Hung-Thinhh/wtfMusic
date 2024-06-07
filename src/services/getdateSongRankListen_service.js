@@ -1,13 +1,13 @@
-import PlaylistRanking from "../models/playlistRanking_model";
+import SongRanking from "../models/songRanking_model";
 
-const getPlaylistRank = async (id) => {
+const getSongRankListen = async (id) => {
     if (id === "all") {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-        const playlistRankings = await PlaylistRanking.aggregate([
+        const songRankings = await SongRanking.aggregate([
             {
                 $match: {
                     rankingDate: {
@@ -19,14 +19,14 @@ const getPlaylistRank = async (id) => {
             {
                 $group: {
                     _id: { $dateToString: { format: "%Y-%m-%d", date: "$rankingDate" } },
-                    likeCount: { $sum: "$likeCount" },
+                    listenCount: { $sum: "$listenCount" },
                 },
             },
             {
                 $project: {
                     _id: 0,
                     date: "$_id",
-                    likeCount: { $ifNull: ["$likeCount", 0] },
+                    listenCount: { $ifNull: ["$listenCount", 0] },
                 },
             },
             {
@@ -34,6 +34,7 @@ const getPlaylistRank = async (id) => {
             },
         ]);
 
+        // Fill in missing dates with zero listenCount
         const startDate = new Date(thirtyDaysAgo);
         const endDate = new Date(today);
         const dateMap = new Map();
@@ -41,36 +42,37 @@ const getPlaylistRank = async (id) => {
             const formattedDate = date.toISOString().split('T')[0];
             dateMap.set(formattedDate, 0);
         }
-        for (const ranking of playlistRankings) {
-            dateMap.set(ranking.date, ranking.likeCount);
+        for (const ranking of songRankings) {
+            dateMap.set(ranking.date, ranking.listenCount);
         }
-        const completePlaylistRankings = Array.from(dateMap, ([date, likeCount]) => ({ date, likeCount }));
+        const completeSongRankings = Array.from(dateMap, ([date, listenCount]) => ({ date, listenCount }));
 
         return {
             EM: "thêm vào lịch sử thành công!",
             EC: "0",
-            DT: completePlaylistRankings,
+            DT: completeSongRankings,
         };
     } else {
         const today = new Date();
-        today.setHours(0, 0, 0, 0); 
+        today.setHours(0, 0, 0, 0);
         const tenDaysAgo = new Date();
-        tenDaysAgo.setDate(tenDaysAgo.getDate() - 10); 
+        tenDaysAgo.setDate(tenDaysAgo.getDate() - 5);
 
-        const playlistRanking = await PlaylistRanking.find({
-            playlistId: id,
+        const songRankings = await SongRanking.find({
+            songId: id,
             rankingDate: {
-                $gte: tenDaysAgo, 
+                $gte: tenDaysAgo,
                 $lte: today,
             },
         });
-
         return {
             EM: "thêm vào lịch sử thành công!",
             EC: "0",
-            DT: playlistRanking,
+            DT: songRankings,
         };
     }
 };
 
-module.exports = { getPlaylistRank };
+
+
+module.exports = { getSongRankListen };

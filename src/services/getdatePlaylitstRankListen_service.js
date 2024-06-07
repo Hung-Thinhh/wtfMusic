@@ -1,6 +1,7 @@
 import PlaylistRanking from "../models/playlistRanking_model";
 
-const getPlaylistRank = async (id) => {
+const getPlaylistRankListen = async (id) => {
+    console.log("DÔ");
     if (id === "all") {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -19,14 +20,14 @@ const getPlaylistRank = async (id) => {
             {
                 $group: {
                     _id: { $dateToString: { format: "%Y-%m-%d", date: "$rankingDate" } },
-                    likeCount: { $sum: "$likeCount" },
+                    listenCount: { $sum: "$listenCount" },
                 },
             },
             {
                 $project: {
                     _id: 0,
                     date: "$_id",
-                    likeCount: { $ifNull: ["$likeCount", 0] },
+                    listenCount: { $ifNull: ["$listenCount", 0] },
                 },
             },
             {
@@ -42,9 +43,9 @@ const getPlaylistRank = async (id) => {
             dateMap.set(formattedDate, 0);
         }
         for (const ranking of playlistRankings) {
-            dateMap.set(ranking.date, ranking.likeCount);
+            dateMap.set(ranking.date, ranking.listenCount);
         }
-        const completePlaylistRankings = Array.from(dateMap, ([date, likeCount]) => ({ date, likeCount }));
+        const completePlaylistRankings = Array.from(dateMap, ([date, listenCount]) => ({ date, listenCount }));
 
         return {
             EM: "thêm vào lịch sử thành công!",
@@ -73,4 +74,4 @@ const getPlaylistRank = async (id) => {
     }
 };
 
-module.exports = { getPlaylistRank };
+module.exports = { getPlaylistRankListen };

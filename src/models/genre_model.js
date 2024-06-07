@@ -18,6 +18,18 @@ const genreSchema = new Schema({
         type: String,
         required: true
     },
+    thumbnailHasText: {
+        type: String,
+        required: true
+    },
+    thumbnailR: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
     playListId: {
         type: Array,
         required: true,
@@ -34,7 +46,7 @@ const genreSchema = new Schema({
         type: Number,
         required: true,
         trim: true,
-      },
+    },
     createdAt: {
         type: Date,
         default: Date.now
