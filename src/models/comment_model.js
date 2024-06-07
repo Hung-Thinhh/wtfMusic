@@ -20,8 +20,8 @@ const commentSchema = new mongoose.Schema({
         default: Date.now
     },
     ban: {
-        type: Boolean,
-        default: false
+        type: Array,
+        default: []
     },
     reportCount: {
         type: Number,
