@@ -95,7 +95,7 @@ const checkAccount = async (req, res) => {
         // groupWithRole:req.user.groupWithRole,
         email: req.user.email,
         username: req.user.username,
-        avt: account.DT.avt,
+        avt: account.DT.avt|| '',
         myPlayLists: account.DT.myPlayLists,
         likedSongs: account.DT.likedSongs,
         likedPlayLists: account.DT.likedPlayLists,

@@ -76,5 +76,22 @@ const getPlaylist = async (id) => {
     };
   }
 };
+const RelatedPlaylist = async () => {
+  const all = await Song.find({ state: { $ne: 1 } }).sort({ createdAt: -1 }).limit(12);
+  if (all) {
+    return {
+      EM: "thêm vào lịch sử thành công!",
+      EC: "0",
+      DT: {  song: all },
+    };
+  } else {
+    return {
+      EM: "thêm vào lịch sử thất bại!",
+      EC: "-1",
+      DT: "",
+    };
+}
+  
+};
 
-module.exports = { getPlaylist };
+module.exports = { getPlaylist,RelatedPlaylist };
