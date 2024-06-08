@@ -85,7 +85,6 @@ const handleLogout = async (req, res) => {
 };
 const checkAccount = async (req, res) => {
   if (req.user.id) {
-    
     const account = await Authentication_service.handleCheckAccount(req.user.id)
     return res.status(200).json({
       EM: "ok!",
@@ -100,6 +99,7 @@ const checkAccount = async (req, res) => {
         likedSongs: account.DT.likedSongs,
         likedPlayLists: account.DT.likedPlayLists,
         isAdmin: account.DT.role == "0" ? true: false,
+        isBan: account.DT.role == "2" ? true: false,
       },
     });
   } else {

@@ -12,6 +12,11 @@ const Gr = require('../models/genre_model');
 const { Nuxtify } = require("nuxtify-api");
 
 
+const getRandomIds = (array, count) => {
+  const shuffled = array.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+};
+
 const handleHome = async (req, res) => {
   try {
     const haha = await Nuxtify.getPlaylist('ZWZCOE6B');

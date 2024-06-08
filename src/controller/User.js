@@ -12,7 +12,8 @@ import {
   getGenres,
   adminSerachService,
   adminHomeService,
-  getMylikesSongs
+  getMylikesSongs,
+  changeRole
 } from "../services/User_service";
 const cloudinary = require("cloudinary").v2;
 cloudinary.config({
@@ -24,9 +25,7 @@ const multer = require("multer");
 
 const Infor = async (req, res) => {
   try {
-
     let data = await getInfor(req.user.id);
-
     if (data && data.EC == "0") {
       return res.status(200).json({
         EM: "Infor User get successfully",
@@ -380,7 +379,6 @@ const getAlGenre = async(req, res) => {
     });
   }
 }
-
 const adminSearch = async(req, res) => {
   const datac = req.body.data
   try {
@@ -408,7 +406,6 @@ const adminSearch = async(req, res) => {
     });
   }
 }
-
 const adminHome= async(req, res) => {
   try {
     let data = await adminHomeService();
@@ -434,13 +431,36 @@ const adminHome= async(req, res) => {
     });
   }
 }
-
-
-
 const userGetLikeSongs= async(req, res) => {
 
   try {
     let data = await getMylikesSongs(req.user.id);
+    if (data && data.EC == "0") {
+      return res.status(200).json({
+        EM: data.EM,
+        EC: "0",
+        DT: data.DT,
+      });
+    } else {
+      return res.status(200).json({
+        EM: data.EM,
+        EC: "-1",
+        DT: "",
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(200).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+}
+
+const changeRoleCtrl= async(req, res) => {
+  try {
+    let data = await changeRole(req.body.data);
     if (data && data.EC == "0") {
       return res.status(200).json({
         EM: data.EM,
@@ -477,5 +497,6 @@ module.exports = {
   getAlGenre,
   adminSearch,
   adminHome,
-  userGetLikeSongs
+  userGetLikeSongs,
+  changeRoleCtrl
 };

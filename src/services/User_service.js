@@ -328,14 +328,14 @@ const createMyPlaylist = async (user, playlistname) => {
     const playlists = await Promise.all(playlistPromises);
     const isDuplicateName = async (newPlaylistName) => {
       const hasDuplicate = await playlists.some((playlist) => {
-        return playlist &&  playlist.playlistname === newPlaylistName;
+        return playlist && playlist.playlistname === newPlaylistName;
       });
       return hasDuplicate;
     };
     const hasDuplicate = await isDuplicateName(playlistname);
     if (!hasDuplicate) {
       const newPlaylistID = uuidv4().substring(0, 8).toUpperCase();
-console.log('nowwwwwwwwwwwwwwwwwwwwwww');
+      console.log('nowwwwwwwwwwwwwwwwwwwwwww');
       //Tạo playlist mới với các thông tin tương ứng
       const createdPlaylist = new Playlist({
         playlistId: newPlaylistID,
@@ -496,8 +496,8 @@ const adminSerachService = async (data) => {
   try {
     const songs = await Song.find({
       $or: [
-      { songname: { $regex: data, $options: 'i' } },
-      { artists: { $regex: data, $options: 'i' } }
+        { songname: { $regex: data, $options: 'i' } },
+        { artists: { $regex: data, $options: 'i' } }
       ]
     }, { lyric: 0 });
     const Genre = await genre.find({
@@ -610,6 +610,47 @@ const getMylikesSongs = async (idUser) => {
     };
   }
 };
+const changeRole = async (data) => {
+  let updateData;
+  if (data.status === "delete") {
+    const userID = data.id
+    if (data.role === "admin") {
+      const result = await User.updateOne({ id: userID }, { role: "0" }, { upsert: true });
+      if (result.modifiedCount > 0) {
+        updateData = data.role;
+      }
+    } else if (data.role === "user") {
+      const result = await User.updateOne({ id: userID }, { role: "1" }, { upsert: true });
+      if (result.modifiedCount > 0) {
+        updateData = data.role;
+      }
+    } else if (data.role === "ban") {
+      const result = await User.updateOne({ id: userID }, { role: "2" }, { upsert: true });
+      if (result.modifiedCount > 0) {
+        updateData = data.role;
+      }
+    } else {
+      return {
+        EM: "quyền không hợp lệ",
+        EC: "-1",
+        DT: "",
+      };
+    }
+    if (updateData) {
+      return {
+        EM: `đã cập nhật quyền thành công : quyền >> ${updateData}`,
+        EC: "0",
+        DT: "",
+      };
+    } else {
+      return {
+        EM: "error from server",
+        EC: "-1",
+        DT: "",
+      };
+    }
+  }
+};
 module.exports = {
   getInfor,
   updateInfor,
@@ -624,5 +665,6 @@ module.exports = {
   getGenres,
   adminSerachService,
   adminHomeService,
-  getMylikesSongs
+  getMylikesSongs,
+  changeRole
 };

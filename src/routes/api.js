@@ -44,6 +44,7 @@ import {
     adminSearch,
     adminHome,
     userGetLikeSongs,
+    changeRoleCtrl
 } from "../controller/User.js";
 const { adminSong } = require("../controller/admin/listStong.js");
 const { adminPlaylist } = require("../controller/admin/listPlaylist.js");
@@ -143,6 +144,7 @@ const initApiRouter = (app) => {
     router.post("/admin/restgenre", adminG);
     router.post("/admin/restartists", adminA);
     router.post("/admin/restplaylist", adminP);
+    router.post("/admin/restuser", changeRoleCtrl);
     router.post("/admin/searchsong", adminSearch);
     router.get("/admin/getbanData", getbanData);
 
