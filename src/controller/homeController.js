@@ -8,32 +8,27 @@ import  {getNewRelease,getSongHot,getSongRemix,getSongChill,getSongTop100,getAlb
 const Song = require("../models/sonng_model");
 const Playlist = require("../models/playlist_model");
 const Ar = require('../models/artists_model');
+const Genres = require('../models/genre_model');
 
+
+const getRandomIds = (array, count) => {
+  const shuffled = array.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+};
 
 const handleHome = async (req, res) => {
   try {
-    // Lấy tất cả các document từ collection
-    const documents = await Ar.find();
-
-    // Mảng để lưu các document trùng id
-    const duplicateDocuments = [];
-
-    // Kiểm tra từng document
-    documents.forEach((document, index) => {
-      // Kiểm tra nếu document có id trùng với các document trước đó
-      const isDuplicate = documents.slice(0, index).some((prevDocument) => prevDocument.id === document.id);
-      if (isDuplicate) {
-        duplicateDocuments.push(document);
+    const listID = await Playlist.find({}).select("playlistId -_id");
+    const fffv = listID.map((p) => p.playlistId);
+    const genres = await Genres.find({});
+    for (const genre of genres) {
+      if (genre.playListId.length === 0) {
+        const randomIds = getRandomIds(fffv, 6);
+        genre.playListId.push(...randomIds);
+        await genre.save();
       }
-    });
-
-    // Xoá các document trùng id
-    const result = await Ar.deleteMany({ _id: { $in: duplicateDocuments.map(duplicate => duplicate._id) } });
-
-    console.log(`${result.deletedCount} document đã được xoá.`);
-
-    // Tiếp tục xử lý các tác vụ khác trong hàm handleHome
-
+    }
+    // console.log("more",fffv);
     res.status(200).json({ message: "Xoá các document không đúng định dạng thành công." });
   } catch (error) {
     console.log(error);
