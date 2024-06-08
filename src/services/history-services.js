@@ -74,6 +74,7 @@ const addHistory = async (idUser, data) => {
 const getMyHistory = async (idUser) => {
   let PlaylistHistory = await History.findOne({ userId: idUser });
   if (PlaylistHistory) {
+    console.log(PlaylistHistory)
     const playlistIds = PlaylistHistory.PlaylistHistory;
     const playlistInfoArray = [];
   
@@ -84,6 +85,7 @@ const getMyHistory = async (idUser) => {
         .then((playlist) => {
           // Nếu tìm thấy playlist, thêm thông tin vào mảng playlistInfoArray
           if (playlist) {
+            console.log('jajaja',playlist);
             const playlistInfo = playlist;
             playlistInfoArray.push(playlistInfo);
           }

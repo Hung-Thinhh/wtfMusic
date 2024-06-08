@@ -8,33 +8,37 @@ import  {getNewRelease,getSongHot,getSongRemix,getSongChill,getSongTop100,getAlb
 const Song = require("../models/sonng_model");
 const Playlist = require("../models/playlist_model");
 const Ar = require('../models/artists_model');
+const Gr = require('../models/genre_model');
+const { Nuxtify } = require("nuxtify-api");
 
 
 const handleHome = async (req, res) => {
   try {
+    const haha = await Nuxtify.getPlaylist('ZWZCOE6B');
+
     // Lấy tất cả các document từ collection
-    const documents = await Ar.find();
+    // const documents = await Gr.find();
 
-    // Mảng để lưu các document trùng id
-    const duplicateDocuments = [];
+    // // Mảng để lưu các document trùng id
+    // const duplicateDocuments = [];
 
-    // Kiểm tra từng document
-    documents.forEach((document, index) => {
-      // Kiểm tra nếu document có id trùng với các document trước đó
-      const isDuplicate = documents.slice(0, index).some((prevDocument) => prevDocument.id === document.id);
-      if (isDuplicate) {
-        duplicateDocuments.push(document);
-      }
-    });
+    // // Kiểm tra từng document
+    // documents.forEach((document, index) => {
+    //   // Kiểm tra nếu document có id trùng với các document trước đó
+    //   const isDuplicate = documents.slice(0, index).some((prevDocument) => prevDocument.genreId === document.genreId);
+    //   if (isDuplicate) {
+    //     duplicateDocuments.push(document);
+    //   }
+    // });
 
-    // Xoá các document trùng id
-    const result = await Ar.deleteMany({ _id: { $in: duplicateDocuments.map(duplicate => duplicate._id) } });
+    // // Xoá các document trùng id
+    // const result = await Gr.deleteMany({ _id: { $in: duplicateDocuments.map(duplicate => duplicate._id) } });
 
-    console.log(`${result.deletedCount} document đã được xoá.`);
+    // console.log(`${result.deletedCount} document đã được xoá.`);
 
-    // Tiếp tục xử lý các tác vụ khác trong hàm handleHome
+    // // Tiếp tục xử lý các tác vụ khác trong hàm handleHome
 
-    res.status(200).json({ message: "Xoá các document không đúng định dạng thành công." });
+    res.status(200).json(haha);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Gặp lỗi khi xoá các document không đúng định dạng." });
