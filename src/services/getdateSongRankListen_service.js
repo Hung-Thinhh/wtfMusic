@@ -66,7 +66,7 @@ const getSongRankListen = async (id) => {
             },
         });
         return {
-            EM: "thêm vào lịch sử thành công!",
+            EM: "Ranking!",
             EC: "0",
             DT: songRankings,
         };
