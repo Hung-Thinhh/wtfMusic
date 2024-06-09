@@ -348,6 +348,7 @@ const createMyPlaylist = async (user, playlistname) => {
         songid: [],
         like: 0,
         listen: 0,
+        state:0,
         type: "user",
       });
 
@@ -356,8 +357,13 @@ const createMyPlaylist = async (user, playlistname) => {
       console.log('nvvvvvvvvvvvvvvvvvvvvvvvvvvv');
 
       //Thêm playlistId vào mảng playlistId của user
-      getUser.myPlayLists.push(newPlaylistID);
-      const data2 = await getUser.save();
+      // getUser.myPlayLists.push(newPlaylistID);
+      // const data2 = await getUser.save();
+      const data2 = await User.findOneAndUpdate(
+        { id: user.id }, // Điều kiện tìm kiếm người dùng
+        { $addToSet: { myPlayLists: newPlaylistID } }, // Thêm newPlaylistID vào mảng myPlayLists (không trùng lặp)
+        {  new: true } // Tạo mới nếu không tìm thấy và trả về đối tượng người dùng đã được cập nhật
+      );
 
       console.log("Thêm playlist vào myPlaylists:", data2, data1);
       return {
@@ -598,8 +604,8 @@ const getMylikesSongs = async (idUser) => {
     } else {
       return {
         EM: "Lấy danh sách nhạc đã thich thành công!",
-        EC: "1",
-        DT: [],
+        EC: "0",
+        DT: { songs: [], playlist: [] },
       };
     }
   } catch (err) {

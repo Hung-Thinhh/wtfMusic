@@ -268,6 +268,7 @@ const getMyPl = async (req, res) => {
 const createMyPl = async (req, res) => {
   try {
     const playlistname = req.body.data.playlistname
+    
     if (playlistname) {
       let data = await createMyPlaylist(req.user,playlistname);
 
