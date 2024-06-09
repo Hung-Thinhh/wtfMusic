@@ -341,7 +341,7 @@ const createMyPlaylist = async (user, playlistname) => {
         playlistId: newPlaylistID,
         playlistname: playlistname,
         genresid: [],
-        artistsId: [user.username],
+        artistsId: [user.id],
         thumbnail:
           "https://photo-resize-zmp3.zmdcdn.me/w240_r1x1_jpeg/cover/f/3/a/f/f3af71df0b7a68ec44955faa5dc7d0ce.jpg",
         description: "/",
@@ -657,6 +657,43 @@ const changeRole = async (data) => {
     }
   }
 };
+
+const deleteMyPlaylist = async (user, id) => {
+  try {
+    const getUser = await User.findOne({ id: user });
+    if(getUser.myPlayLists.indexOf(id) === -1){
+      return {
+        EM: "Không tìm thấy playlist này!",
+        EC: "-1",
+        DT: "",
+      };
+    } else {
+      const result = await Playlist.deleteOne({ playlistId: id });
+      if (result.deletedCount > 0) {
+        getUser.myPlayLists = getUser.myPlayLists.filter((playlistId) => playlistId !== id);
+        await getUser.save();
+        return {
+          EM: "Xóa playlist thành công!",
+          EC: "0",
+          DT: "",
+        };
+      } else {
+        return {
+          EM: "Không thể xóa playlist!",
+          EC: "-1",
+          DT: "",
+        };
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    return {
+      EM: "Không thể tạo danh sách nhạc!!",
+      EC: "-1",
+      DT: "",
+    };
+  }
+};
 module.exports = {
   getInfor,
   updateInfor,
@@ -672,5 +709,6 @@ module.exports = {
   adminSerachService,
   adminHomeService,
   getMylikesSongs,
-  changeRole
+  changeRole,
+  deleteMyPlaylist
 };

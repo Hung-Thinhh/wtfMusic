@@ -13,7 +13,9 @@ import {
   adminSerachService,
   adminHomeService,
   getMylikesSongs,
-  changeRole
+  changeRole,
+  myPlayLists,
+  deleteMyPlaylist
 } from "../services/User_service";
 const cloudinary = require("cloudinary").v2;
 cloudinary.config({
@@ -484,6 +486,34 @@ const changeRoleCtrl= async(req, res) => {
     });
   }
 }
+
+const deleteMyPl = async (req, res) => {
+  try {
+    const dataAdd = req.body.data.playlistId;
+    console.log("adasdasdasdas",dataAdd);
+    let data = await deleteMyPlaylist(req.user.id,dataAdd);
+    if (data && data.EC == "0") {
+      return res.status(200).json({
+        EM: data.EM,
+        EC: "0",
+        DT: data.DT,
+      });
+    } else {
+      return res.status(200).json({
+        EM: data.EM,
+        EC: "-1",
+        DT: "",
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(200).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+}
 module.exports = {
   Infor,
   editInfor,
@@ -499,5 +529,6 @@ module.exports = {
   adminSearch,
   adminHome,
   userGetLikeSongs,
-  changeRoleCtrl
+  changeRoleCtrl,
+  deleteMyPl  
 };

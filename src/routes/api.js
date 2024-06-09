@@ -44,7 +44,8 @@ import {
     adminSearch,
     adminHome,
     userGetLikeSongs,
-    changeRoleCtrl
+    changeRoleCtrl,
+    deleteMyPl
 } from "../controller/User.js";
 const { adminSong } = require("../controller/admin/listStong.js");
 const { adminPlaylist } = require("../controller/admin/listPlaylist.js");
@@ -113,6 +114,7 @@ const initApiRouter = (app) => {
     router.post('/cloneplaylist', fetchplaylistclone);
     router.post('/clonepArtists', fetchArtistsClone);
     router.post("/restcomment", restComment);
+    router.post("/delemyplaylist", deleteMyPl);
     
     router.get('/getrankingservice/:id', getSongRankControl);
     router.get('/getrankingplservice/:id', getPlaylistRankControl);
