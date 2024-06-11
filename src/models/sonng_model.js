@@ -85,6 +85,7 @@ const songSchema = new Schema({
   },
 });
 
+songSchema.index({ songname: 'text' });
 const Song = mongoose.model("Song", songSchema);
 
 module.exports = Song;

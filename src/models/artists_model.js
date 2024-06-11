@@ -80,6 +80,8 @@ const ArtistsSchema = new Schema({
 
 
 ArtistsSchema.index({ id: 1, ArtistsName: 1 }, { unique: true });
+ArtistsSchema.index({ ArtistsName: 'text' });
+
 
 
 const Ar = mongoose.model('Artists', ArtistsSchema);
