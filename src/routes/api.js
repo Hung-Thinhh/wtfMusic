@@ -6,13 +6,14 @@ const {
     songurl,
     gethome,
     getArtist,
-    get100,
+   
     search,
 } = require("../controller/getData.js");
 const { getRating } = require("../controller/RatingController.js");
 const { getHome } = require("../controller/homeController.js");
 const { fetchPlaylist,getRelatedPlaylist } = require("../controller/playlistController.js");
-const { fetchGenres } = require("../controller/genresController.js");
+const { fetchGenres,getGenresbyId } = require("../controller/genresController.js");
+const { get100} = require("../controller/getTop100.js");
 const {
     fetchclone,
     fetchplaylistclone,
@@ -110,6 +111,7 @@ const initApiRouter = (app) => {
     router.get('/getplaylist/:id', fetchPlaylist);
     router.get('/getRelatedPlaylist', getRelatedPlaylist);
     router.get("/getgenres", fetchGenres);
+    router.get("/getGenresbyId/:id", getGenresbyId);
     router.get('/clone', fetchclone);
     router.post('/cloneplaylist', fetchplaylistclone);
     router.post('/clonepArtists', fetchArtistsClone);
