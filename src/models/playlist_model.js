@@ -74,6 +74,8 @@ const playlistSchema = new Schema({
     }
 });
 
+playlistSchema.index({ playlistname: 'text' });
+
 const Playlist = mongoose.model('Playlist', playlistSchema);
 
 module.exports = Playlist;

@@ -1,6 +1,7 @@
 const { Nuxtify } = require("nuxtify-api");
 const Ar = require("../models/artists_model");
 const Song = require("../models/sonng_model");
+const Playlist = require("../models/playlist_model");
 
 const getartist = async (req, res) => {
     const getSongmp3 = async () => {
@@ -61,7 +62,7 @@ const getArtist = async (req, res) => {
         if (data) {
             const songListId = data.songListId;
             const songList = await Song.find({ id: { $in: songListId } }).select("songname thumbnail id");
-            if(songList){
+            if (songList) {
                 data.songListId = songList;
             }
             return res.json(data);
@@ -84,12 +85,28 @@ const get100 = async (req, res) => {
 };
 
 const search = async (req, res) => {
-    const getSongmp3 = async () => {
-        const songId = req.params.id;
-        const songly = await Nuxtify.search.getSuggestion(songId);
-        return res.json(songly);
+    // const getSongmp3 = async () => {
+    //     const songId = req.params.id;
+    //     const songly = await Nuxtify.search.getSuggestion(songId);
+    //     return res.json(songly);
+    // };
+    // getSongmp3();
+    const searchterm = async () => {
+        try {
+            const keyword = req.params.id;
+            const artistResults = await Ar.find({ alias: { $regex: keyword, $options: "i" } },{artistsName:1,avt:1,id:1}).limit(5);
+            const playlistResults = await Playlist.find({ playlistname: { $regex: keyword, $options: "i" } },{thumbnail:1,playlistId:1,playlistname:1, artistsId:1}).limit(5);
+            const songResults = await Song.find({ songname: { $regex: keyword, $options: "i" } },{thumbnail:1,songname:1,id:1, artists:1}).limit(5);
+
+            const results = [...artistResults.map(artist => ({...artist._doc, type: 4})), ...playlistResults.map(playlist => ({...playlist._doc, type: 3})), ...songResults.map(song => ({...song._doc, type: 1}))];
+            return res.json(results);
+
+        } catch (error) {
+            console.error(error);
+            return res.json(error);
+        }
     };
-    getSongmp3();
+    searchterm()
 };
 
 module.exports = {
