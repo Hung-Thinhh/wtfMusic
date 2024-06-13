@@ -76,8 +76,11 @@ const getPlaylist = async (id) => {
     };
   }
 };
-const RelatedPlaylist = async () => {
-  const all = await Song.find({ state: { $ne: 1 } }).sort({ createdAt: -1 }).limit(12);
+const RelatedPlaylist = async (id) => {
+  const nowSong = await Song.findOne({id: id,state: { $ne: 1 } }, { id: 1, artist: 1, songname: 1,artists:1 ,thumbnail:1, } )
+  console.log('kaaaaaaaaaaaaaaa',nowSong);
+  const all = await Song.find({ state: { $ne: 1 } }).sort({ createdAt: -1 }).limit(15);
+   await all.unshift(nowSong);
   if (all) {
     return {
       EM: "thêm vào lịch sử thành công!",
