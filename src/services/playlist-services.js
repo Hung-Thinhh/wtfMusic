@@ -77,10 +77,18 @@ const getPlaylist = async (id) => {
   }
 };
 const RelatedPlaylist = async (id) => {
+  
+  const all = await Song.find({ state: { $ne: 1 } }).sort({ createdAt: -1 }).limit(15);
+  const isIDExist = await all.some(song => song.id == id);
+
+if (isIDExist) {
+  console.log("ID '8787' đã tồn tại trong kết quả trả về.");
+} else {
   const nowSong = await Song.findOne({id: id,state: { $ne: 1 } }, { id: 1, artist: 1, songname: 1,artists:1 ,thumbnail:1, } )
   console.log('kaaaaaaaaaaaaaaa',nowSong);
-  const all = await Song.find({ state: { $ne: 1 } }).sort({ createdAt: -1 }).limit(15);
-   await all.unshift(nowSong);
+  await all.unshift(nowSong);
+  console.log("ID '8787' không tồn tại trong kết quả trả về.");
+}
   if (all) {
     return {
       EM: "thêm vào lịch sử thành công!",
