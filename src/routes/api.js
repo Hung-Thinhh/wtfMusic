@@ -53,6 +53,7 @@ const { adminPlaylist } = require("../controller/admin/listPlaylist.js");
 const { adminAr } = require("../controller/admin/listSinger.js");
 const { songdetail, songPage } = require("../controller/songController.js");
 
+const {search_Controller} = require("../controller/searchController.js");
 const {adminS} = require("../controller/admin/song.js");
 const {adminG} = require("../controller/admin/genre.js");
 const {adminA} = require("../controller/admin/artists.js");
@@ -133,6 +134,9 @@ const initApiRouter = (app) => {
     // history
     router.post('/addnewhistory', addToHistory);
     router.get('/getHistory', getHistory);
+    // search page
+    router.get('/searchpage/:id', search_Controller);
+
     // admin
     router.get("/getallsong", fetchAutoCloneGenre);
     router.post("/postsong", fetchSongData);
