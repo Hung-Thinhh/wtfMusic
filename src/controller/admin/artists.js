@@ -71,7 +71,7 @@ const adminA = async (req, res) => {
 
         if (data) {
           return res.status(200).json({
-            EM: data.EM,
+            EM: "thêm mới nghệ sĩ thành công",
             EC: "0",
             DT: data.DT
           });
@@ -148,7 +148,7 @@ const adminA = async (req, res) => {
 
         if (data) {
           return res.status(200).json({
-            EM: data.EM,
+            EM: "cập nhật thông tin thành công",
             EC: "0",
             DT: data.DT
           });

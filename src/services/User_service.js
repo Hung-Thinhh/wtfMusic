@@ -450,7 +450,8 @@ const getAllUser = async (data) => {
       likedSongs: 1,
       myPlayLists: 1,
       banSongs: 1,
-      createdAt: 1
+      createdAt: 1,
+      role: 1,
     }).sort({ _id: -1 }).skip(+limit).limit(10);
 
 
@@ -620,39 +621,55 @@ const changeRole = async (data) => {
   let updateData;
   if (data.status === "delete") {
     const userID = data.id
+    const user = await User.findOne({ id: userID });
+    let checkrole
+    if (user.role === "admin") {
+      checkrole = "0";
+    } else if (user.role === "user") {
+      checkrole = "1";
+    } else if (user.role === "ban") {
+      checkrole = "2";
+    }
+    if (checkrole === data.role) {
+      return {
+      EM: "lỗi đổi quyền",
+      EC: "-1",
+      DT: "",
+      };
+    }
     if (data.role === "admin") {
       const result = await User.updateOne({ id: userID }, { role: "0" }, { upsert: true });
       if (result.modifiedCount > 0) {
-        updateData = data.role;
+      updateData = data.role;
       }
     } else if (data.role === "user") {
       const result = await User.updateOne({ id: userID }, { role: "1" }, { upsert: true });
       if (result.modifiedCount > 0) {
-        updateData = data.role;
+      updateData = data.role;
       }
     } else if (data.role === "ban") {
       const result = await User.updateOne({ id: userID }, { role: "2" }, { upsert: true });
       if (result.modifiedCount > 0) {
-        updateData = data.role;
+      updateData = data.role;
       }
     } else {
       return {
-        EM: "quyền không hợp lệ",
-        EC: "-1",
-        DT: "",
+      EM: "quyền không hợp lệ",
+      EC: "-1",
+      DT: "",
       };
     }
     if (updateData) {
       return {
-        EM: `đã cập nhật quyền thành công : quyền >> ${updateData}`,
-        EC: "0",
-        DT: "",
+      EM: `đã cập nhật quyền thành công : quyền >> ${updateData}`,
+      EC: "0",
+      DT: "",
       };
     } else {
       return {
-        EM: "error from server",
-        EC: "-1",
-        DT: "",
+      EM: "lỗi cập nhật quyền",
+      EC: "-1",
+      DT: "",
       };
     }
   }

@@ -67,6 +67,7 @@ const ArtistsSchema = new Schema({
         type: Number,
         required: true,
         trim: true,
+        default:0
     },
     createdAt: {
         type: Date,

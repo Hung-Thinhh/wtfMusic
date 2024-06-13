@@ -330,7 +330,7 @@ const adminG = async (req, res) => {
         const data = await genre.updateOne({ genreId: req.body.genreId }, form);
         if (data) {
           return res.status(200).json({
-            EM: data.EM,
+            EM: "cập nhật thông tin thành công",
             EC: "0",
             DT: data.DT
           });
@@ -361,14 +361,27 @@ const adminG = async (req, res) => {
           EC: "-1",
           DT: ""
         });
-      } else {
+      }
+      else if (!req.files.thumbnail || !req.files.thumbnailHasText || !req.files.thumbnailR) {
+        return res.status(200).json({
+          EM: "ảnh không được để trống",
+          EC: "-1",
+          DT: ""
+        });
+      } else if (req.body.genrename === "" || req.body.genrename === null || req.body.genrename === undefined) {
+        return res.status(200).json({
+          EM: "không được để trống",
+          EC: "-1",
+          DT: ""
+        });
+      }
+      else {
         const genrename = req.body.genrename;
         const state = req.body.state;
         const description = req.body.description;
         const thumbnailFile = req.files.thumbnail[0];
         const thumbnailHasTextFile = req.files.thumbnailHasText[0];
         const thumbnailRFile = req.files.thumbnailR[0];
-
 
         const thumbnailBase64 = thumbnailFile.buffer.toString("base64");
         const thumbnailHasTextBase64 = thumbnailHasTextFile.buffer.toString("base64");
@@ -412,7 +425,7 @@ const adminG = async (req, res) => {
 
       if (data) {
         return res.status(200).json({
-          EM: data.EM,
+          EM: "thêm mới thể loại thành công",
           EC: "0",
           DT: data.DT
         });
@@ -428,13 +441,12 @@ const adminG = async (req, res) => {
       let data;
       const genres = await genre.findOne({ genreId: req.body.genreId });
       if (genres) {
-        const newState = genre.state === 1 ? 0 : 1;
+        const newState = genres.state === 1 ? 0 : 1;
         data = await genre.updateOne({ genreId: req.body.genreId }, { state: newState });
-        console.log("bannnnnnnnn",genres);
         // Kiểm tra xem cập nhật đã thành công hay không
         if (data.modifiedCount > 0) {
           return res.status(200).json({
-            EM: "success",
+            EM: `đã chuyển trạng thái từ ${genres.state===1 ? "ẩn" : "hiển thị"} sang ${newState === 1 ? "ẩn" : "hiển thị"}`,
             EC: "0",
             DT: data
           });
@@ -447,7 +459,7 @@ const adminG = async (req, res) => {
         }
       } else {
         return res.status(200).json({
-          EM: "error from server",
+          EM: "error from server 1",
           EC: "-1",
           DT: "Song not found"
         });
