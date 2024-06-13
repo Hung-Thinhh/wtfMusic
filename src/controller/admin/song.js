@@ -194,7 +194,6 @@ const adminS = async (req, res) => {
       }
       // create +++++++++++++++++++++++++++++++++++++++++++++++++++++++
       else if (req.body.status === "create") {
-        console.log(req.body.status)
         let form;
         if (err) {
           console.log(err);
@@ -203,12 +202,23 @@ const adminS = async (req, res) => {
             EC: "-1",
             DT: ""
           });
-        } else {
-          const id = req.body.id;
+        } else if (!req.files || !req.files.songLink) {
+          return res.status(200).json({
+            EM: "ảnh không được để trống",
+            EC: "-1",
+            DT: ""
+          });
+        } else if (req.body.songname=== "" || req.body.artists === "" || req.body.genresid === "" || req.body.songLink === "") {
+          return res.status(200).json({
+            EM: "không được để trống",
+            EC: "-1",
+            DT: ""
+          });
+        }
+        else {
           const songname = req.body.songname;
           const artists = req.body.artists;
           const genresid = req.body.genresid;
-          const songLink = req.body.songLink;
           const file = req.files.file[0];
           const songLinkFile = req.files.songLink[0];
 
@@ -225,7 +235,6 @@ const adminS = async (req, res) => {
             console.log("lonk1", fileUrl)
 
             const songLinkResult = await cloudinary.uploader.upload(
-
               "data:audio/mp3;base64," + songLinkBase64,
               { resource_type: "auto" }
             );
@@ -250,9 +259,8 @@ const adminS = async (req, res) => {
             }
           };
         }
-
+        console.log(form.infor);
         let data = await Song.create(form.infor);
-        console.log(data);
         if (data) {
           return res.status(200).json({
             EM: data.EM,

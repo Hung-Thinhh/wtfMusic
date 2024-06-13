@@ -24,14 +24,14 @@ const adminAr = async (req, res) => {
             _id: 0,
         }).sort({ _id: -1 }).skip(+limit).limit(10);
 
-        const songData = await Promise.all(artistData.map(async (artist) => {
-            const songListNames = await Promise.all(artist.songListId.map(async (songId) => {
-                await Song.findOne({ id: songId }, { alias: 1, _id: 0 });
-            }));
-            return { ...artist.toObject(), songListId: songListNames };
-        }));
+        // const songData = await Promise.all(artistData.map(async (artist) => {
+        //     const songListNames = await Promise.all(artist.songListId.map(async (songId) => {
+        //         await Song.findOne({ id: songId }, { alias: 1, _id: 0 });
+        //     }));
+        //     return { ...artist.toObject(), songListId: songListNames };
+        // }));
 
-        const responseData = { handleData: songData, maxPage: artistCount };
+        const responseData = { handleData: artistData, maxPage: artistCount };
         res.json(responseData);
     } catch (err) {
         console.error(err);

@@ -25,7 +25,20 @@ const adminP = async (req, res) => {
             EC: "-1",
             DT: ""
           });
-        } else {
+        } else if (!req.file) {
+          return res.status(200).json({
+            EM: "ảnh không được để trống",
+            EC: "-1",
+            DT: ""
+          });
+        } else if (!req.body.playlistname || !req.body.genresid || !req.body.artistsId || !req.body.type || !req.body.description || !req.body.songid || !req.body.playlistname.trim() === "" || !req.body.genresid.trim() === "" || !req.body.artistsId.trim() === "" || !req.body.type.trim() === "" || !req.body.description.trim() === "" || !req.body.songid.trim() === ""){
+          return res.status(200).json({
+            EM: "không được để trống",
+            EC: "-1",
+            DT: ""
+          });
+        } 
+        else {
           const playlistname = req.body.playlistname
           const genresid = req.body.genresid
           const artistsId = req.body.artistsId
@@ -64,7 +77,7 @@ const adminP = async (req, res) => {
 
         if (data) {
           return res.status(200).json({
-            EM: data.EM,
+            EM: "thêm mới Playlist thành công",
             EC: "0",
             DT: data.DT
           });
@@ -140,7 +153,7 @@ const adminP = async (req, res) => {
 
         if (data) {
           return res.status(200).json({
-            EM: data.EM,
+            EM: "cập nhât thông tin thành công",
             EC: "0",
             DT: data.DT
           });
@@ -165,7 +178,7 @@ const adminP = async (req, res) => {
         }
         if (data) {
           return res.status(200).json({
-            EM: "success",
+            EM: "cập nhật thông tin thành công",
             EC: "0",
             DT: data
           });
