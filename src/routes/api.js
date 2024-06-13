@@ -51,6 +51,7 @@ import {
 const { adminSong } = require("../controller/admin/listStong.js");
 const { adminPlaylist } = require("../controller/admin/listPlaylist.js");
 const { adminAr } = require("../controller/admin/listSinger.js");
+const { adminComment } = require("../controller/admin/listcomment.js");
 const { songdetail, songPage } = require("../controller/songController.js");
 
 const {search_Controller} = require("../controller/searchController.js");
@@ -58,6 +59,7 @@ const {adminS} = require("../controller/admin/song.js");
 const {adminG} = require("../controller/admin/genre.js");
 const {adminA} = require("../controller/admin/artists.js");
 const {adminP} = require("../controller/admin/playlist.js");
+const {bancomment} = require("../controller/admin/comment.js");
 const {adminSS} = require("../controller/admin/searchSong.js");
 
 
@@ -146,12 +148,14 @@ const initApiRouter = (app) => {
     router.get("/admin/artist/:id", adminAr);
     router.get("/admin/user/:id", getAllUs);
     router.get("/admin/genres/:id", getAlGenre);
+    router.get("/admin/comment/:id", adminComment);
     router.get("/admin/home/", adminHome);
 
     router.post("/admin/restsong", adminS);
     router.post("/admin/restgenre", adminG);
     router.post("/admin/restartists", adminA);
     router.post("/admin/restplaylist", adminP);
+    router.post("/admin/bancomment", bancomment);
     router.post("/admin/restuser", changeRoleCtrl);
     router.post("/admin/searchsong", adminSearch);
     router.get("/admin/getbanData", getbanData);
