@@ -109,7 +109,7 @@ const initApiRouter = (app) => {
     router.get('/artist/:id', getArtist);
     router.get('/get100', get100);
     router.get('/getplaylist/:id', fetchPlaylist);
-    router.get('/getRelatedPlaylist', getRelatedPlaylist);
+    router.get('/getRelatedPlaylist/:id', getRelatedPlaylist);
     router.get("/getgenres", fetchGenres);
     router.get("/getGenresbyId/:id", getGenresbyId);
     router.get('/clone', fetchclone);
