@@ -26,6 +26,10 @@ const commentSchema = new mongoose.Schema({
     reportCount: {
         type: Number,
         default: 0
+    },
+    state: {
+        type: Number,
+        default: 0
     }
 });
 

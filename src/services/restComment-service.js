@@ -31,37 +31,37 @@ const restCommentService = async (data, userId) => {
             }
         }
     } else if (data.status === "read") {
-        const datas = await Comment.find({ songId: data.data, reportCount: { $lte: 5 } }).then(comments => {
+        const datas = await Comment.find({ songId: data.data, reportCount: { $lte: 5 }, state: { $ne: 1 } }).then(comments => {
             const modifiedComments = comments.map(async comment => {
-                const user = await User.findOne({ id: comment.userId });
-                if (comment.userId === userId) {
-                    return {
-                        ...comment._doc,
-                        isOwnComment: true,
-                        userName: user.username,
-                        userAvt: user.avt
-                    };
-                } else {
-                    return {
-                        ...comment._doc,
-                        userName: user.username,
-                        userAvt: user.avt
-                    };
-                }
+            const user = await User.findOne({ id: comment.userId });
+            if (comment.userId === userId) {
+                return {
+                ...comment._doc,
+                isOwnComment: true,
+                userName: user.username,
+                userAvt: user.avt
+                };
+            } else {
+                return {
+                ...comment._doc,
+                userName: user.username,
+                userAvt: user.avt
+                };
+            }
             });
             return Promise.all(modifiedComments);
         });
         if (!datas) {
             return {
-                EM: "lấy comment thất bại!",
-                EC: "-1",
-                DT: "",
+            EM: "lấy comment thất bại!",
+            EC: "-1",
+            DT: "",
             };
         } else {
             return {
-                EM: "lấy comment thành công!",
-                EC: "0",
-                DT: datas,
+            EM: "lấy comment thành công!",
+            EC: "0",
+            DT: datas,
             };
         }
     } else if (data.status === "report") {
