@@ -21,6 +21,7 @@ const adminG = async (req, res) => {
     if (req.body.status === "update") {
       let form;
       if (err) {
+        console.log("Failed to upsddddddddddddddddddđload file:233");
         return res.status(200).json({
           EM: "error from server",
           EC: "-1",
@@ -323,39 +324,35 @@ const adminG = async (req, res) => {
           description: description,
           playListId: []
         };
+      } else if (!req.files.thumbnail && !req.files.thumbnailHasText && !req.files.thumbnailR) {
+        console.log("Failed to upsddddddddddddddddddđload file:");
+        const genreId = req.body.genreId;
+        const genrename = req.body.genrename;
+        const description = req.body.description;
+        const listen = req.body.listen;
+        const state = req.body.state;
+        form = {
+          genreId: genreId,
+          genrename: genrename,
+          listen: listen,
+          description: description,
+          state: state
+        };
       }
       try {
-        const existingGenre = await genre.findOne({ genrename: req.body.genrename });
-        if (existingGenre) {
+        const data = await genre.updateOne({ genreId: req.body.genreId }, form, {upsert : true});
+        if (data) {
           return res.status(200).json({
-            EM: "Tên thể loại đã tồn tại",
+            EM: "cập nhật thông tin thành công",
+            EC: "0",
+            DT: form
+          });
+        } else {
+          return res.status(200).json({
+            EM: "error from server",
             EC: "-1",
             DT: ""
           });
-        } else {
-          try {
-            const data = await genre.updateOne({ genreId: req.body.genreId }, form);
-            if (data) {
-              return res.status(200).json({
-                EM: "cập nhật thông tin thành công",
-                EC: "0",
-                DT: data.DT
-              });
-            } else {
-              return res.status(200).json({
-                EM: "error from server",
-                EC: "-1",
-                DT: ""
-              });
-            }
-          } catch (error) {
-            console.log("Failed to update song:", error);
-            return res.status(200).json({
-              EM: "error from server",
-              EC: "-1",
-              DT: ""
-            });
-          }
         }
       } catch (error) {
         console.log("Failed to update song:", error);
@@ -435,15 +432,14 @@ const adminG = async (req, res) => {
           playListId: []
         };
       }
-
-      let data;
+      let data
       try {
         const existingGenre = await genre.findOne({ genrename: form.genrename });
         if (existingGenre) {
           return res.status(200).json({
-        EM: "Tên thể loại đã tồn tại",
-        EC: "-1",
-        DT: ""
+            EM: "Tên thể loại đã tồn tại",
+            EC: "-1",
+            DT: ""
           });
         } else {
           data = await genre.create(form);
@@ -462,7 +458,7 @@ const adminG = async (req, res) => {
         return res.status(200).json({
           EM: "thêm mới thể loại thành công",
           EC: "0",
-          DT: data
+          DT: data.DT
         });
       } else {
         return res.status(200).json({

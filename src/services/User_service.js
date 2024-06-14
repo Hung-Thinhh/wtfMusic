@@ -482,6 +482,7 @@ const getGenres = async (data) => {
       playListId: 1,
       state: 1,
       listen: 1,
+      description: 1,
     }).sort({ _id: -1 }).skip(+limit).limit(10);
 
 
