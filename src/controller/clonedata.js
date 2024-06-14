@@ -7,9 +7,9 @@ const { Nuxtify } = require("nuxtify-api");
 const fetchclone = async (_, res) => {
     try {
         try {
-            const response = await Nuxtify.song.getDetail("Z7UCU9FF");
-            const Lyric = await Nuxtify.song.getLyrics("Z7UCU9FF");
-            const LinkSong = await Nuxtify.song.getUrl("Z7UCU9FF");
+            const response = await Nuxtify.song.getDetail("Z6FE8WOC");
+            const Lyric = await Nuxtify.song.getLyrics("Z6FE8WOC");
+            const LinkSong = await Nuxtify.song.getUrl("Z6FE8WOC");
             if (response && response.data) {
                 const song = response.data;
                 console.log(song.like);
@@ -43,7 +43,7 @@ const fetchclone = async (_, res) => {
                     like: like,
                     duration: duration,
                     lyric: Li,
-                    genresid: ["IWZ9Z089"],
+                    genresid: ["IWZ9Z0BO"],
                 };
 
                 try {
