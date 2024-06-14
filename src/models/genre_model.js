@@ -13,7 +13,8 @@ const genreSchema = new Schema({
         type: String,
         required: true,
         trim: true,
-        index: true
+        index: true,
+        unique: true,
     },
     thumbnail: {
         type: String,

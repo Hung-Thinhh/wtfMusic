@@ -20,9 +20,7 @@ const adminG = async (req, res) => {
     // upate !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if (req.body.status === "update") {
       let form;
-      console.log("Failed to upsddddddddddddddddddđload file:23sss3", req.body);
       if (err) {
-        console.log("Failed to upsddddddddddddddddddđload file:233");
         return res.status(200).json({
           EM: "error from server",
           EC: "-1",
@@ -327,19 +325,37 @@ const adminG = async (req, res) => {
         };
       }
       try {
-        const data = await genre.updateOne({ genreId: req.body.genreId }, form);
-        if (data) {
+        const existingGenre = await genre.findOne({ genrename: req.body.genrename });
+        if (existingGenre) {
           return res.status(200).json({
-            EM: "cập nhật thông tin thành công",
-            EC: "0",
-            DT: data.DT
-          });
-        } else {
-          return res.status(200).json({
-            EM: "error from server",
+            EM: "Tên thể loại đã tồn tại",
             EC: "-1",
             DT: ""
           });
+        } else {
+          try {
+            const data = await genre.updateOne({ genreId: req.body.genreId }, form);
+            if (data) {
+              return res.status(200).json({
+                EM: "cập nhật thông tin thành công",
+                EC: "0",
+                DT: data.DT
+              });
+            } else {
+              return res.status(200).json({
+                EM: "error from server",
+                EC: "-1",
+                DT: ""
+              });
+            }
+          } catch (error) {
+            console.log("Failed to update song:", error);
+            return res.status(200).json({
+              EM: "error from server",
+              EC: "-1",
+              DT: ""
+            });
+          }
         }
       } catch (error) {
         console.log("Failed to update song:", error);
@@ -420,14 +436,33 @@ const adminG = async (req, res) => {
         };
       }
 
-      let data = await genre.create(form);
-      console.log("data", data);
+      let data;
+      try {
+        const existingGenre = await genre.findOne({ genrename: form.genrename });
+        if (existingGenre) {
+          return res.status(200).json({
+        EM: "Tên thể loại đã tồn tại",
+        EC: "-1",
+        DT: ""
+          });
+        } else {
+          data = await genre.create(form);
+          console.log("data", data);
+        }
+      } catch (error) {
+        console.log("Failed to create genre:", error);
+        return res.status(200).json({
+          EM: "error from server",
+          EC: "-1",
+          DT: ""
+        });
+      }
 
       if (data) {
         return res.status(200).json({
           EM: "thêm mới thể loại thành công",
           EC: "0",
-          DT: data.DT
+          DT: data
         });
       } else {
         return res.status(200).json({
@@ -446,7 +481,7 @@ const adminG = async (req, res) => {
         // Kiểm tra xem cập nhật đã thành công hay không
         if (data.modifiedCount > 0) {
           return res.status(200).json({
-            EM: `đã chuyển trạng thái từ ${genres.state===1 ? "ẩn" : "hiển thị"} sang ${newState === 1 ? "ẩn" : "hiển thị"}`,
+            EM: `đã chuyển trạng thái từ ${genres.state === 1 ? "ẩn" : "hiển thị"} sang ${newState === 1 ? "ẩn" : "hiển thị"}`,
             EC: "0",
             DT: data
           });
