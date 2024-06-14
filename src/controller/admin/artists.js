@@ -101,8 +101,8 @@ const adminA = async (req, res) => {
             biography: req.body.biography,
             birthday: req.body.birthday,
             realName: req.body.realName,
-            songListId: req.body.songListId,
-            playListId: req.body.playListId,
+            songListId: req.body.songListId.split(","),
+            playListId: req.body.playListId.split(","),
 
           };
           console.log("dell up", form.infor);
@@ -136,8 +136,8 @@ const adminA = async (req, res) => {
             biography: biography,
             birthday: birthday,
             realName: realName,
-            songListId: songListId,
-            playListId: playListId,
+            songListId: songListId.split(","),
+            playListId: playListId.split(","),
             totalFollow: 0
           }
 
