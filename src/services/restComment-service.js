@@ -4,8 +4,8 @@ import mongoose, { Types } from "mongoose";
 
 const restCommentService = async (data, userId) => {
   if (userId) {
-      console.log(data)
-      if (data.status === "create") {
+    console.log(data)
+    if (data.status === "create") {
       if (
         data.data.comments === "" ||
         data.data.comments === null ||
@@ -111,7 +111,6 @@ const restCommentService = async (data, userId) => {
       }
     }
   } else {
-
     if (data.status === "create") {
       return {
         EM: "không thể cmt !",
@@ -122,7 +121,17 @@ const restCommentService = async (data, userId) => {
       const datas = await Comment.find({
         songId: data.data,
         reportCount: { $lte: 5 },
-      })
+      }).then((comments) => {
+        const modifiedComments = comments.map(async (comment) => {
+          const user = await User.findOne({ id: comment.userId });
+          return {
+            ...comment._doc,
+            userName: user.username,
+            userAvt: user.avt,
+          }
+        });
+        return Promise.all(modifiedComments);
+      });
       if (!datas) {
         return {
           EM: "lấy comment thất bại!",
@@ -137,12 +146,12 @@ const restCommentService = async (data, userId) => {
         };
       }
     } else if (data.status === "report") {
-        return {
-          EM: "chua dang nhap!",
-          EC: "-1",
-          DT: "",
-        };
-      } 
+      return {
+        EM: "chua dang nhap!",
+        EC: "-1",
+        DT: "",
+      };
+    }
   }
 };
 

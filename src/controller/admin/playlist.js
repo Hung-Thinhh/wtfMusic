@@ -68,7 +68,7 @@ const adminP = async (req, res) => {
             thumbnail: fileUrl,
             type: type,
             description: description,
-            songid: songid,
+            songid: songid.split(","),
           };
         }
 
@@ -104,13 +104,12 @@ const adminP = async (req, res) => {
           form = {
             playlistId: req.body.playlistId,
             playlistname: req.body.playlistname,
-            genresid: req.body.genresid,
-            artistsId: req.body.artistsId,
+            genresid: req.body.genresid.split(","),
+            artistsId: req.body.artistsId.split(","),
             type: req.body.type,
             description: req.body.description,
-            songid: req.body.songid,
+            songid: req.body.songid.split(","),
           };
-          console.log("dell up", form.infor);
         } else {
           const playlistId = req.body.playlistId;
           const playlistname = req.body.playlistname
@@ -139,17 +138,17 @@ const adminP = async (req, res) => {
             playlistId: playlistId,
             thumbnail: fileUrl,
             playlistname: playlistname,
-            genresid: genresid,
-            artistsId: artistsId,
+            genresid: genresid.split(","),
+            artistsId: artistsId.split(","),
             type: type,
             description: description,
-            songid: songid,
+            songid: songid.split(","),
           }
 
         }
 
-        console.log("coas up", req.body.id, form);
-        let data = await Playlist.updateOne({ playlistId: req.body.playlistId }, form);
+        console.log("coas up", req.body.playlistId, form);
+        let data = await Playlist.updateOne({ playlistId: form.playlistId }, form);
 
         if (data) {
           return res.status(200).json({
