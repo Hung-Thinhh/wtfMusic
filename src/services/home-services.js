@@ -12,8 +12,7 @@ const getNewRelease = async () => {
 
   const others = await Song.find({
     $and: [
-      { genresid: { $elemMatch: { $eq: "IWZ9Z086" } } },
-      { genresid: { $elemMatch: { $eq: "IWZ9Z08U" } } },
+      { genresid: { $in: ['IWZ9Z086','IWZ9Z08U'] }, },
       { state: { $ne: 1 } }
     ],
   }).limit(12);
