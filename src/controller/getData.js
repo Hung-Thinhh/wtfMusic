@@ -70,7 +70,7 @@ const getArtist = async (req, res) => {
                 }
             }
             for (let i = 0; i < playListId.length; i++) {
-                const playlist = await Playlist.findOne({ playlistId: playListId[i] }).select("playlistname thumbnail id");
+                const playlist = await Playlist.findOne({ playlistId: playListId[i] }).select("playlistname thumbnail playlistId");
                 if (playlist) {
                     data.playListId[i] = playlist;
                 }
