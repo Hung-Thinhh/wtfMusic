@@ -64,7 +64,7 @@ const getArtist = async (req, res) => {
             const playListId = data.playListId;
             console.log(songListId);
             for (let i = 0; i < songListId.length; i++) {
-                const song = await Song.findOne({ id: songListId[i] }).select("songname thumbnail id");
+                const song = await Song.findOne({ id: songListId[i] }).select("songname thumbnail id artists");
                 if (song) {
                     data.songListId[i] = song;
                 }

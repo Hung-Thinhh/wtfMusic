@@ -8,138 +8,25 @@ const getPlaylistRankMonth = async () => {
     dateToday.getMonth(),
     1
   ); // Ngày đầu tiên của tháng
-  let item = [];
+
   // Tìm ngày gần nhất trước ngày đầu tiên của tháng mà có dữ liệu
   let closestDateWithData = await SongRanking.findOne({
     rankingDate: { $gte: firstDayOfMonth },
   })
     .sort({ rankingDate: -1 })
     .limit(1);
-  let songRankings = [];
-  // console.log(closestDateWithData);
-  if (closestDateWithData) {
-    songRankings = await SongRanking.aggregate([
-      {
-        $match: {
-          $or: [
-            {
-              rankingDate: {
-                $gte: closestDateWithData.rankingDate,
-                $lte: dateToday,
-              },
-            },
-            { rankingDate: { $lt: closestDateWithData.rankingDate } },
-          ],
-        },
-      },
-      {
-        $group: {
-          _id: { songId: "$songId" },
-          totalListenCount: { $sum: "$listenCount" },
-        },
-      },
-      {
-        $sort: { totalListenCount: -1, "_id.songId": 1 }, // Sắp xếp theo lượt nghe giảm dần
-      },
-      {
-        $limit: 10, // Giới hạn kết quả trả về 10 bản ghi
-      },
-    ]);
 
-    if (songRankings) {
-      const promiseSong = Promise.all(
-        songRankings.map(async (id) => {
-          try {
-            const songItem = await Song.findOne({
-              id: id._id.songId,
-              state: { $ne: 1 },
-            });
-            if (songItem) {
-              item.push(songItem);
-            }
-          } catch (error) {
-            console.log("Error retrieving playlist:", error);
-          }
-        })
-      )
-      try {
-        const results = await Promise.all([promiseSong]);
-
-        if (results.some((result) => result instanceof Error)) {
-          console.log("Error retrieving playlist info:", results);
-
-          return {
-            EM: "thêm vào lịch sử thất bại!",
-            EC: "-1",
-            DT: "",
-          };
-        } else {
-          item.sort((a, b) => {
-            const totalListenCountA = songRankings.find(item => item._id.songId === a.id)?.totalListenCount || 9999;
-            const totalListenCountB = songRankings.find(item => item._id.songId === b.id)?.totalListenCount || 9999;
-          
-            return totalListenCountB - totalListenCountA;
-          });
-          return {
-            EM: "thêm vào lịch sử thành công!",
-            EC: "0",
-            DT: { items: item },
-          };
-        }
-      } catch (error) {
-        console.log("Error retrieving playlist info:", error);
-
-        return {
-          EM: "thêm vào lịch sử thất bại!",
-          EC: "1",
-          DT: "",
-        };
-      }
-    }
-    // Xử lý kết quả của truy vấn ở đây
-  } else {
-    console.log("lõiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
-  }
-
-  return {
-    EM: "thêm vào lịch sử thành công!",
-    EC: "0",
-    DT: songRankings,
-  };
-};
-const getPlaylistRankWeek = async (title) => {
-  let genres = "";
-  if (title == "vn") {
-    genres = "IWZ9Z087";
-  } else if (title == "us-uk") {
-    genres = "IWZ9Z086";
-  } else {
-    genres = "IWZ9Z08U";
-  }
-  const dateToday = new Date(); // Ngày hiện tại
-  const firstDayOfWeek = new Date(dateToday);
-  const dayOfWeek = firstDayOfWeek.getDay();
-  firstDayOfWeek.setDate(firstDayOfWeek.getDate() - dayOfWeek);
-  let item = [];
-  // Tìm ngày gần nhất trước ngày đầu tiên của tháng mà có dữ liệu
-  let closestDateWithData = await SongRanking.findOne({
-    rankingDate: { $gte: firstDayOfWeek },
-  })
-    .sort({ rankingDate: -1 })
-    .limit(1);
-  let songRankings = [];
-  // console.log(firstDayOfWeek);
   if (!closestDateWithData) {
-    // console.log("lõiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
-
-    firstDayOfWeek.setDate(firstDayOfWeek.getDate() - dayOfWeek - 7);
-    closestDateWithData = await SongRanking.findOne({
-      rankingDate: { $gte: firstDayOfWeek },
-    })
-      .sort({ rankingDate: -1 })
-      .limit(1);
+    console.log("Không có dữ liệu gần nhất cho tháng này.");
+    return {
+      EM: "Không có dữ liệu gần nhất cho tháng này.",
+      EC: "1",
+      DT: [],
+    };
   }
-  songRankings = await SongRanking.aggregate([
+
+  // Lấy danh sách xếp hạng bài hát
+  const songRankings = await SongRanking.aggregate([
     {
       $match: {
         $or: [
@@ -160,76 +47,140 @@ const getPlaylistRankWeek = async (title) => {
       },
     },
     {
-      $sort: {
-        totalListenCount: -1,
-        "_id.songId": 1,
-      }, // Sắp xếp theo lượt nghe giảm dần
+      $sort: { totalListenCount: -1, "_id.songId": 1 }, // Sắp xếp theo lượt nghe giảm dần
     },
-    // {
-    //   $limit: 10, // Giới hạn kết quả trả về 10 bản ghi
-    // },
+    {
+      $lookup: {
+        from: "songs",
+        localField: "_id.songId",
+        foreignField: "id",
+        as: "songInfo",
+      },
+    },
+    { $unwind: "$songInfo" },
+    {
+      $limit: 10, // Giới hạn kết quả trả về 10 bản ghi
+    },
   ]);
 
-  if (songRankings) {
-    console.log(songRankings);
-    const promiseSong = Promise.all(
-      songRankings.map(async (id) => {
-        try {
-          const songItem = await Song.findOne({
-            id: id._id.songId,
-            $and: [
-              { state: { $ne: 1 } },
-              { genresid: { $in: [genres] } },
-              // Thêm điều kiện mới tại đây nếu cần
-            ],
-          });
-          if (songItem) {
-            item.push(songItem);
-            
-          }
-        } catch (error) {
-          console.log("Error retrieving playlist:", error);
-        }
-      }
-      
-      )
-    );
-   
-    try {
-      const results = await Promise.all([promiseSong]);
-
-      if (results.some((result) => result instanceof Error)) {
-        console.log("Error retrieving playlist info:", results);
-
-        return {
-          EM: "thêm vào lịch sử thất bại!",
-          EC: "-1",
-          DT: "",
-        };
-      } else {
-        item.sort((a, b) => {
-          const totalListenCountA = songRankings.find(item => item._id.songId === a.id)?.totalListenCount || 9999;
-          const totalListenCountB = songRankings.find(item => item._id.songId === b.id)?.totalListenCount || 9999;
-        
-          return totalListenCountB - totalListenCountA;
-        });
-        return {
-          EM: "thêm vào lịch sử thành công!",
-          EC: "0",
-          DT: { items: item },
-        };
-      }
-    } catch (error) {
-      console.log("Error retrieving playlist info:", error);
-
-      return {
-        EM: "thêm vào lịch sử thất bại!",
-        EC: "1",
-        DT: "",
-      };
-    }
+  if (!songRankings.length) {
+    return {
+      EM: "Không có bài hát nào trong bảng xếp hạng.",
+      EC: "1",
+      DT: [],
+    };
   }
-  // Xử lý kết quả của truy vấn ở đây
+
+  const items = songRankings.map((ranking) => {
+    return { ...ranking.songInfo };
+  });
+
+  return {
+    EM: "Thêm vào lịch sử thành công!",
+    EC: "0",
+    DT: { items },
+  };
 };
+
+const getPlaylistRankWeek = async () => {
+  const genresMap = {
+    week_vn: "IWZ9Z087",
+    week_us: "IWZ9Z086",
+    week_korea: "IWZ9Z08U",
+  };
+
+  const dateToday = new Date(); // Ngày hiện tại
+  const firstDayOfWeek = new Date(dateToday);
+  const dayOfWeek = firstDayOfWeek.getDay();
+  firstDayOfWeek.setDate(firstDayOfWeek.getDate() - dayOfWeek);
+
+  // Tìm ngày gần nhất trước ngày đầu tiên của tuần mà có dữ liệu
+  let closestDateWithData = await SongRanking.findOne({
+    rankingDate: { $gte: firstDayOfWeek },
+  })
+    .sort({ rankingDate: -1 })
+    .limit(1);
+
+  if (!closestDateWithData) {
+    firstDayOfWeek.setDate(firstDayOfWeek.getDate() - 7);
+    closestDateWithData = await SongRanking.findOne({
+      rankingDate: { $gte: firstDayOfWeek },
+    })
+      .sort({ rankingDate: -1 })
+      .limit(1);
+  }
+
+  // Lấy danh sách xếp hạng bài hát
+  const songRankings = await SongRanking.aggregate([
+    {
+      $match: {
+        $or: [
+          {
+            rankingDate: {
+              $gte: closestDateWithData.rankingDate,
+              $lte: dateToday,
+            },
+          },
+          { rankingDate: { $lt: closestDateWithData.rankingDate } },
+        ],
+      },
+    },
+    {
+      $group: {
+        _id: { songId: "$songId" },
+        totalListenCount: { $sum: "$listenCount" },
+      },
+    },
+    {
+      $sort: { totalListenCount: -1, "_id.songId": 1 }, // Sắp xếp theo lượt nghe giảm dần
+    },
+  ]);
+
+  if (!songRankings.length) {
+    return {
+      EM: "Không có bài hát nào trong bảng xếp hạng.",
+      EC: "1",
+      DT: [],
+    };
+  }
+
+  // Lấy thông tin bài hát
+  const getSongsByGenre = async (genreId) => {
+    try {
+      const songItems = await Song.find({
+        state: { $ne: 1 },
+        genresid: genreId,
+      }).lean(); // Sử dụng lean() để trả về plain JavaScript object thay vì Mongoose document
+
+      return songItems;
+    } catch (error) {
+      console.log(`Error retrieving songs for genre ${genreId}:`, error);
+      return [];
+    }
+  };
+
+  const getAllSongsByGenres = async () => {
+    const results = await Promise.all(
+      Object.entries(genresMap).map(async ([genreKey, genreId]) => {
+        const songs = await getSongsByGenre(genreId);
+        return { items: songs };
+      })
+    );
+
+    // Kết hợp mảng các đối tượng thành một đối tượng duy nhất
+    return results
+  };
+
+  // Gọi hàm và xử lý kết quả
+  const songsByGenres = await getAllSongsByGenres();
+  console.log(songsByGenres);
+  return {
+    EM: "Thêm vào lịch sử thành công!",
+    EC: "0",
+    DT:  songsByGenres ,
+  };
+};
+
+// Giả sử getSongRankingsByGenre và getSongDetails là các hàm đã được định nghĩa để lấy ranking và thông tin chi tiết của bài hát
 
 module.exports = { getPlaylistRankMonth, getPlaylistRankWeek };

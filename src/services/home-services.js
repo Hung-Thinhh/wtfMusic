@@ -3,23 +3,29 @@ import Song from "../models/sonng_model.js";
 import Playlist from "../models/playlist_model.js";
 
 const getNewRelease = async () => {
-  const vPop = await Song.find({
-    $and: [
-      { genresid: { $elemMatch: { $eq: "IWZ9Z087" } } },
-      { state: { $ne: 1 } }
-    ]
-  }).limit(12);
+  try {
+    const [vPop, others, all] = await Promise.all([
+      Song.find({
+        $and: [
+          { genresid: { $elemMatch: { $eq: "IWZ9Z087" } } },
+          { state: { $ne: 1 } }
+        ]
+      }).limit(12),
+      Song.find({
+        $and: [
+          { genresid: { $in: ['IWZ9Z086','IWZ9Z08U'] } },
+          { state: { $ne: 1 } }
+        ],
+      }).limit(12),
+      Song.find({ state: { $ne: 1 } }).sort({ createdAt: -1 }).limit(12)
+    ]);
 
-  const others = await Song.find({
-    $and: [
-      { genresid: { $in: ['IWZ9Z086','IWZ9Z08U'] }, },
-      { state: { $ne: 1 } }
-    ],
-  }).limit(12);
-  const all = await Song.find({ state: { $ne: 1 } }).sort({ createdAt: -1 }).limit(12);
-
-  const newRelease = { all: all, vPop: vPop, others: others };
-  return newRelease;
+    const newRelease = { all, vPop, others };
+    return newRelease;
+  } catch (error) {
+    console.error("Error fetching new releases:", error);
+    throw error; // Hoặc xử lý lỗi theo cách bạn muốn
+  }
 };
 
 const getSongHot = async () => {
