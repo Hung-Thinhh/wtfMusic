@@ -507,31 +507,31 @@ const adminSerachService = async (data) => {
         { songname: { $regex: data, $options: 'i' } },
         { artists: { $regex: data, $options: 'i' } }
       ]
-    }, { lyric: 0 });
+    }, { lyric: 0 }).limit(10);
     const Genre = await genre.find({
       $or: [
         { genrename: { $regex: data, $options: 'i' } },
       ]
-    });
+    }).limit(10);
     const playlist = await Playlist.find({
       $or: [
         { description: { $regex: data, $options: 'i' } },
         { playlistname: { $regex: data, $options: 'i' } }
       ]
-    });
+    }).limit(10);
     const user = await User.find({
       $or: [
         { email: { $regex: data, $options: 'i' } },
         { username: { $regex: data, $options: 'i' } }
       ]
-    });
+    }).limit(10);
     const ar = await Ar.find({
       $or: [
         { artistsName: { $regex: data, $options: 'i' } },
         { alias: { $regex: data, $options: 'i' } },
         { realName: { $regex: data, $options: 'i' } }
       ]
-    });
+    }).limit(10);
     return {
       EM: "Lấy danh thể tìm kiếm thành công!",
       EC: "0",
