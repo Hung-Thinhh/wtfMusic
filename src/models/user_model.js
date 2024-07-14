@@ -73,6 +73,16 @@ const userSchema = new Schema({
         trim: true,
         index: true
     },
+    type_login: {
+        type: String,
+        trim: true,
+        index: true
+    },
+    token: {
+        type: String,
+        trim: true,
+        index: true
+    },
     createdAt: {
         type: Date,
         default: Date.now,

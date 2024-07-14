@@ -23,22 +23,47 @@ const getInfor = async (id) => {
 };
 const updateInfor = async (data, id) => {
   const newInfor = data.infor;
-  const updateUser = await User.findOneAndUpdate({ id: id }, newInfor, {
-    upsert: true,
-    new: true,
-  }).select("-_id username email birthday avt");
-  if (updateUser) {
-    return {
-      EM: "updated successfully",
-      EC: "0",
-      DT: updateUser,
-    };
+  const existingUser = await User.findOne({ email: newInfor.email});
+  if (existingUser) {
+    if (existingUser.id === newInfor.id) {
+      const updateUser = await User.findOneAndUpdate({ id: id }, newInfor, {
+        upsert: true,
+        new: true,
+      }).select("-_id username email birthday avt");
+      if (updateUser) {
+        return {
+          EM: "updated successfully",
+          EC: "0",
+          DT: updateUser,
+        };
+      } else {
+        console.log(
+          "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
+        );
+        return false;
+      }
+    }
+    // Nếu đã có tài khoản sử dụng địa chỉ email này, xử lý logic trả về thông báo hoặc hành động phù hợp.
   } else {
-    console.log(
-      "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
-    );
-    return false;
-  }
+    const updateUser = await User.findOneAndUpdate({ id: id }, newInfor, {
+      upsert: true,
+      new: true,
+    }).select("-_id username email birthday avt");
+    if (updateUser) {
+      return {
+        EM: "updated successfully",
+        EC: "0",
+        DT: updateUser,
+      };
+    } else {
+      console.log(
+        "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
+      );
+      return false;
+    }
+}
+ 
+ 
 };
 const changepassword = async (data, id) => {
   const newInfor = data;

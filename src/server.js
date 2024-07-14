@@ -5,6 +5,8 @@ import  initWebRouter from "./routes/web.js";
 import initApiRouter from "./routes/api.js";
 import cors from 'cors';
 import bodyParser from 'body-parser';
+require('../passport.js')
+
 require('dotenv').config()
 
 
@@ -22,6 +24,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
 configViewEngine(app);
 //conect database
 db.connect()

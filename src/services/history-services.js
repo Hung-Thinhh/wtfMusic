@@ -74,72 +74,50 @@ const getMyHistory = async (idUser) => {
     console.log(user);
     const playlistIds = user.PlaylistHistory;
     const songId = user.SongHistory;
-    const playlistInfoArray = [];
-    const songInfoArray = [];
-    // Lặp qua từng id playlist
-    const promises = playlistIds.map((playlistId) => {
-      // Tìm playlist dựa trên id
+    const playlistInfoArray = new Array(playlistIds.length);
+    const songInfoArray = new Array(songId.length);
+
+    // Lặp qua từng id playlist và tìm playlist dựa trên id
+    const playlistPromises = playlistIds.map((playlistId, index) => {
       return Playlist.findOne({ playlistId: playlistId })
         .then((playlist) => {
-          // Nếu tìm thấy playlist, thêm thông tin vào mảng playlistInfoArray
           if (playlist) {
-            const playlistInfo = playlist;
-            playlistInfoArray.push(playlistInfo);
+            playlistInfoArray[index] = playlist;
           }
         })
         .catch((error) => {
           console.log("Error retrieving playlist:", error);
         });
     });
-    let promiseSong = [];
-    if (songId.length > 0 && songId[0]) {
-      console.log("jajaja", songId);
 
-      promiseSong = Promise.all(
-        songId.map(async (id) => {
-          try {
-            const songItem = await Song.findOne({ id: id, state: { $ne: 1 } });
-            if (songItem) {
-              songInfoArray.push(songItem);
-            }
-          } catch (error) {
-            console.log("Error retrieving playlist:", error);
+    // Lặp qua từng id song và tìm song dựa trên id
+    const songPromises = songId.map((id, index) => {
+      return Song.findOne({ id: id, state: { $ne: 1 } })
+        .then((songItem) => {
+          if (songItem) {
+            songInfoArray[index] = songItem;
           }
         })
-      ).then(() => {
-        const validSongs = songInfoArray.filter((song) => song); // Loại bỏ những giá trị null hoặc undefined
+        .catch((error) => {
+          console.log("Error retrieving song:", error);
+        });
+    });
 
-        // validSongs.sort((a, b) => {
-        //   const totalListenCountA =
-        //     songId.find((item) => item === a.id)?.totalListenCount || 9999;
-        //   const totalListenCountB =
-        //     songId.find((item) => item === b.id)?.totalListenCount || 9999;
-
-        //   return totalListenCountB - totalListenCountA;
-      // });
-          validSongs.sort((a, b) => songId.indexOf(a.__v) - songId.indexOf(b.__v));
-      });
-    }
-
-    // Đợi cho tất cả các yêu cầu tìm kiếm playlist hoàn thành trước khi xử lý kết quả
+    // Đợi cho tất cả các yêu cầu tìm kiếm playlist và song hoàn thành trước khi xử lý kết quả
     try {
-      const results = await Promise.all([...promises, promiseSong]);
-      if (results.some((result) => result instanceof Error)) {
-        console.log("Error retrieving playlist info:", results);
-        return {
-          EM: "thêm vào lịch sử thất bại!",
-          EC: "1",
-          DT: "",
-        };
-      } else {
-        return {
-          EM: "thêm vào lịch sử thành công!",
-          EC: "0",
-          DT: { playlist: playlistInfoArray, song: songInfoArray.reverse() },
-        };
-      }
+      await Promise.all([...playlistPromises, ...songPromises]);
+      
+      // Loại bỏ những giá trị null hoặc undefined trong mảng
+      const validPlaylists = playlistInfoArray.filter((playlist) => playlist);
+      const validSongs = songInfoArray.filter((song) => song);
+
+      return {
+        EM: "thêm vào lịch sử thành công!",
+        EC: "0",
+        DT: { playlist: validPlaylists, song: validSongs.reverse() },
+      };
     } catch (error) {
-      console.log("Error retrieving playlist info:", error);
+      console.log("Error retrieving playlist or song info:", error);
       return {
         EM: "thêm vào lịch sử thất bại!",
         EC: "1",

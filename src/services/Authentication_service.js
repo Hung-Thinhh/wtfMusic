@@ -57,6 +57,7 @@ const handleRegister = async (data) => {
         avt: "",
         birthday: "",
         role: "1",
+        type_login: "normal",
       });
       await newUser.save();
 
@@ -88,8 +89,7 @@ const handleLogin = async (data) => {
         let payload = {
           id: user.id,
           email: user.email,
-          // groupWithRole,
-          // email: user.email,
+          type_login: user.type_login,
           username: user.username,
         };
         let token = createToken(payload);
@@ -127,24 +127,69 @@ const handleLogin = async (data) => {
     };
   }
 };
+const handleAuthGG = async (token) => {
+  try {
+    const user = await User.findOne({
+      token: token,
+    });
+    if (user) {
+      user.token = generateId();
+      await user.save();
+      // let groupWithRole = await getGroupWithRole(user);
+      let payload = {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        type_login: user.type_login,
+      };
+      let token = createToken(payload);
+      return {
+        EM: "ok!",
+        EC: "0",
+        DT: {
+          access_token: token,
+          avt: user.avt,
+          email: user.email,
+          username: user.username || "",
+        },
+      };
+    } else {
+      console.log("hahah");
+      return {
+        EM: "Your email/phone or password is incorrect!",
+        EC: "2",
+        DT: "",
+      };
+    }
+  } catch (error) {
+    console.log("error: >>>>", error);
+    return {
+      EM: "error creating user",
+      EC: "2",
+      DT: "",
+    };
+  }
+};
 const handleCheckAccount = async (id) => {
   const user = await User.findOne({
     id: id,
   });
-  console.log(user);
-  console.log(id);
+  // console.log(user);
+  // console.log(id);
   if (user) {
     return {
       EM: "ok!",
       EC: "0",
       DT: user,
     };
-  } 
+  }
 };
 module.exports = {
   handleRegister,
   handleLogin,
+  handleAuthGG,
   checkEmail,
+  generateId,
   checkPassword,
   hashPassword,
   handleCheckAccount,
