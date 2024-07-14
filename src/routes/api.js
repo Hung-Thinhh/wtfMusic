@@ -8,14 +8,14 @@ const {
     songurl,
     gethome,
     getArtist,
-   
+
     search,
 } = require("../controller/getData.js");
 const { getRating } = require("../controller/RatingController.js");
 const { getHome } = require("../controller/homeController.js");
-const { fetchPlaylist,getRelatedPlaylist } = require("../controller/playlistController.js");
-const { fetchGenres,getGenresbyId } = require("../controller/genresController.js");
-const { get100} = require("../controller/getTop100.js");
+const { fetchPlaylist, getRelatedPlaylist } = require("../controller/playlistController.js");
+const { fetchGenres, getGenresbyId } = require("../controller/genresController.js");
+const { get100 } = require("../controller/getTop100.js");
 const {
     fetchclone,
     fetchplaylistclone,
@@ -57,28 +57,31 @@ const { adminAr } = require("../controller/admin/listSinger.js");
 const { adminComment } = require("../controller/admin/listcomment.js");
 const { songdetail, songPage } = require("../controller/songController.js");
 
-const {search_Controller} = require("../controller/searchController.js");
-const {adminS} = require("../controller/admin/song.js");
-const {adminG} = require("../controller/admin/genre.js");
-const {adminA} = require("../controller/admin/artists.js");
-const {adminP} = require("../controller/admin/playlist.js");
-const {bancomment} = require("../controller/admin/comment.js");
-const {adminSS} = require("../controller/admin/searchSong.js");
+const { search_Controller } = require("../controller/searchController.js");
+const { adminS } = require("../controller/admin/song.js");
+const { adminG } = require("../controller/admin/genre.js");
+const { adminA } = require("../controller/admin/artists.js");
+const { adminP } = require("../controller/admin/playlist.js");
+const { bancomment } = require("../controller/admin/comment.js");
 
 
-const {getSongRankControl} = require("../controller/rangkingSong.js");
-const {getPlaylistRankControl} = require("../controller/rangkingPlaylist.js");
+const { getSongRankControl } = require("../controller/rangkingSong.js");
+const { getPlaylistRankControl } = require("../controller/rangkingPlaylist.js");
 
-const {getSongRankListenControl} = require("../controller/rangkingSongListen.js");
-const {getPlaylistRankListenControl} = require("../controller/rangkingPlaylistListen.js");
-
-
-
-const {restComment} = require("../controller/restComment.js");
+const { getSongRankListenControl } = require("../controller/rangkingSongListen.js");
+const { getPlaylistRankListenControl } = require("../controller/rangkingPlaylistListen.js");
+const { restComment } = require("../controller/restComment.js");
+const { getbanData } = require("../controller/getBan.js");
 
 
+const {
+    searchSongsCtrl,
+    searchGenreCtrl,
+    searchPlaylistCtrl,
+    searchUserCtrl,
+    searchArtistsCtrl,
+} = require("../controller/admin/adminSearch.js");
 
-const {getbanData} = require("../controller/getBan.js");
 
 
 const router = express.Router();
@@ -125,10 +128,10 @@ const initApiRouter = (app) => {
     router.post("/login-gg-success",handleLogingg);
 
     //user
-    router.get("/getInfor",Infor);
-    router.post("/editInfor",editInfor);
-    router.post("/changepass",changePass);
-    router.post("/banSong",updateBanSongs);
+    router.get("/getInfor", Infor);
+    router.post("/editInfor", editInfor);
+    router.post("/changepass", changePass);
+    router.post("/banSong", updateBanSongs);
     router.post('/addlike', addLikeSomething);
     router.post('/unlike', unLikeSomething);
     router.post('/createplaylist', createMyPl);
@@ -155,7 +158,7 @@ const initApiRouter = (app) => {
     router.post('/clonepArtists', fetchArtistsClone);
     router.post("/restcomment", restComment);
     router.post("/delemyplaylist", deleteMyPl);
-    
+
     router.get('/getrankingservice/:id', getSongRankControl);
     router.get('/getrankingplservice/:id', getPlaylistRankControl);
 
@@ -192,8 +195,14 @@ const initApiRouter = (app) => {
     router.post("/admin/restplaylist", adminP);
     router.post("/admin/bancomment", bancomment);
     router.post("/admin/restuser", changeRoleCtrl);
-    router.post("/admin/searchsong", adminSearch);
     router.get("/admin/getbanData", getbanData);
+    router.post("/admin/searchsong", adminSearch);
+
+    router.post("/admin/searchSongs", searchSongsCtrl);
+    router.post("/admin/searchGenre", searchGenreCtrl);
+    router.post("/admin/searchPlaylist", searchPlaylistCtrl);
+    router.post("/admin/searchUser", searchUserCtrl);
+    router.post("/admin/searchArtists", searchArtistsCtrl);
 
     return app.use("/api", router);
 };
