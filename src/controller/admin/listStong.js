@@ -2,6 +2,7 @@ const Song = require('../../models/sonng_model');
 
 const adminSong = async (req, res) => {
     const limit = req.params.id;
+    console.log(limit);
     try {
         // Truy vấn dữ liệu bài hát sau khi xóa trùng lặp
         const songCount = await Song.countDocuments({});
@@ -18,7 +19,7 @@ const adminSong = async (req, res) => {
             createdAt: 1,
             state: 1,
             _id: 0
-        }).sort({ _id: -1 }).skip(+limit).limit(10);
+        }).sort({ _id: -1 }).skip(+limit).limit(20);
 
         const handledata = await Promise.all(songdata.map(async (song) => {
             // const genresNames = await Promise.all(
