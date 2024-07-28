@@ -2,7 +2,6 @@ const Song = require('../../models/sonng_model');
 
 const adminSong = async (req, res) => {
     const limit = req.params.id;
-    console.log(limit);
     try {
         // Truy vấn dữ liệu bài hát sau khi xóa trùng lặp
         const songCount = await Song.countDocuments({});
