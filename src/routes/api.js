@@ -24,13 +24,10 @@ const {
     fetchSongData,
 } = require("../controller/clonedata.js");
 const { addToHistory, getHistory } = require("../controller/history.js");
-const { getRankMonth } = require("../controller/rankingCliend.js");
+const { getRankMonth,addHistoryRank } = require("../controller/rankingCliend.js");
 const {
-    handleRegister,
-    handleLogin,
-    handleLogingg,
-    checkAccount,
-    handleLogout,
+    handleRegister, handleLogin, handleLogingg, checkAccount,
+    handleLogout, handleForgotPassword, handleVerifyOtp,RequestOTP
 } = require("../controller/Authentication.js");
 
 import {
@@ -49,7 +46,8 @@ import {
     adminHome,
     userGetLikeSongs,
     changeRoleCtrl,
-    deleteMyPl
+    deleteMyPl,
+    resetPass
 } from "../controller/User.js";
 const { adminSong } = require("../controller/admin/listStong.js");
 const { adminPlaylist } = require("../controller/admin/listPlaylist.js");
@@ -92,6 +90,11 @@ const initApiRouter = (app) => {
     //register
     router.post("/register", handleRegister);
     router.post("/login", handleLogin);
+    router.post("/forgot-password", handleForgotPassword);
+    router.post("/reset-pass", resetPass);
+    router.get("/requestOTP", RequestOTP);
+
+    router.post("/verifyOtp", handleVerifyOtp);
     router.get("/account", checkAccount);
     router.post("/logout", handleLogout);
     router.get('/google',
@@ -173,6 +176,7 @@ const initApiRouter = (app) => {
 
     // history
     router.post('/addnewhistory', addToHistory);
+    router.post('/addRanking', addHistoryRank);
     router.get('/getHistory', getHistory);
     // search page
     router.get('/searchpage/:id', search_Controller);

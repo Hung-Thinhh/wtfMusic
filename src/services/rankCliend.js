@@ -5,17 +5,17 @@ const getPlaylistRankMonth = async () => {
   const dateToday = new Date(); // Ngày hiện tại
   const firstDayOfMonth = new Date(
     dateToday.getFullYear(),
-    dateToday.getMonth(),
+    dateToday.getMonth() - 1,
     1
   ); // Ngày đầu tiên của tháng
-
+  console.log(firstDayOfMonth);
   // Tìm ngày gần nhất trước ngày đầu tiên của tháng mà có dữ liệu
   let closestDateWithData = await SongRanking.findOne({
     rankingDate: { $gte: firstDayOfMonth },
   })
     .sort({ rankingDate: -1 })
     .limit(1);
-
+  console.log("1", closestDateWithData);
   if (!closestDateWithData) {
     console.log("Không có dữ liệu gần nhất cho tháng này.");
     return {
@@ -93,14 +93,14 @@ const getPlaylistRankWeek = async () => {
   const firstDayOfWeek = new Date(dateToday);
   const dayOfWeek = firstDayOfWeek.getDay();
   firstDayOfWeek.setDate(firstDayOfWeek.getDate() - dayOfWeek);
-
+console.log('cc',firstDayOfWeek);
   // Tìm ngày gần nhất trước ngày đầu tiên của tuần mà có dữ liệu
   let closestDateWithData = await SongRanking.findOne({
     rankingDate: { $gte: firstDayOfWeek },
   })
     .sort({ rankingDate: -1 })
     .limit(1);
-
+  console.log('2',closestDateWithData);
   if (!closestDateWithData) {
     firstDayOfWeek.setDate(firstDayOfWeek.getDate() - 7);
     closestDateWithData = await SongRanking.findOne({
@@ -168,7 +168,7 @@ const getPlaylistRankWeek = async () => {
     );
 
     // Kết hợp mảng các đối tượng thành một đối tượng duy nhất
-    return results
+    return results;
   };
 
   // Gọi hàm và xử lý kết quả
@@ -177,10 +177,40 @@ const getPlaylistRankWeek = async () => {
   return {
     EM: "Thêm vào lịch sử thành công!",
     EC: "0",
-    DT:  songsByGenres ,
+    DT: songsByGenres,
+  };
+};
+const addRanking = async (id) => {
+  let songRanking = await SongRanking.findOne({ songId: id }).sort({ rankingDate: -1 });
+  console.log(songRanking);
+    if (songRanking) {
+      if (songRanking.rankingDate.getDate() === new Date().getDate()) {
+        songRanking.listenCount += 1;
+        await songRanking.save();
+      } else {
+        console.log('sai time',songRanking.rankingDate,'aaa',new Date().getDate());
+        const newRanking = new SongRanking({
+          songId: songRanking.songId,
+          listenCount: 1,
+          rankingDate: new Date(),
+        });
+        await newRanking.save();
+      }
+    } else {
+      const newRanking = new SongRanking({
+        songId: id,
+        listenCount: 1,
+        rankingDate: new Date(),
+      });
+      await newRanking.save();
+    }
+  return {
+    EM: "Thêm vào lịch sử thành công!",
+    EC: "0",
+    DT: [],
   };
 };
 
 // Giả sử getSongRankingsByGenre và getSongDetails là các hàm đã được định nghĩa để lấy ranking và thông tin chi tiết của bài hát
 
-module.exports = { getPlaylistRankMonth, getPlaylistRankWeek };
+module.exports = { getPlaylistRankMonth, getPlaylistRankWeek,addRanking };

@@ -74,7 +74,7 @@ const handleRegister = async (data) => {
     };
   }
 };
-const checkPassword = (inputPassword, hashPassword) => {
+const checkPassword = async(inputPassword, hashPassword) => {
   return bcrypt.compareSync(inputPassword, hashPassword);
 };
 const handleLogin = async (data) => {

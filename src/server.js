@@ -5,6 +5,7 @@ import  initWebRouter from "./routes/web.js";
 import initApiRouter from "./routes/api.js";
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 require('../passport.js')
 
 require('dotenv').config()
@@ -24,7 +25,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
+app.use(cookieParser());
 configViewEngine(app);
 //conect database
 db.connect()

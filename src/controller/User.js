@@ -2,6 +2,7 @@ import {
   getInfor,
   updateInfor,
   changepassword,
+  resetpassword,
   addBanSong,
   addLike,
   unLike,
@@ -15,7 +16,7 @@ import {
   getMylikesSongs,
   changeRole,
   myPlayLists,
-  deleteMyPlaylist
+  deleteMyPlaylist,
 } from "../services/User_service";
 const cloudinary = require("cloudinary").v2;
 cloudinary.config({
@@ -161,10 +162,50 @@ const changePass = async (req, res) => {
     });
   }
 };
+const resetPass = async (req, res) => {
+  try {
+    if (
+      !req.body.cfPassword ||
+      !req.body.newPassword ||
+      req.body.cfPassword !== req.body.newPassword
+    ) {
+      return res.status(404).json({
+        EM: data.EM,
+        EC: "-1",
+        DT: "Dữ liệu không đúng",
+      });
+    } else {
+      const id = req.cookies.userIdentifier;
+      let data = await resetpassword(req.body, id);
+
+      if (data && data.EC == "0") {
+        res.clearCookie("userIdentifier");
+        return res.status(200).json({
+          EM: data.EM,
+          EC: "0",
+          DT: data.DT,
+        });
+      } else {
+        return res.status(200).json({
+          EM: data.EM,
+          EC: "-1",
+          DT: "",
+        });
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(200).json({
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
 const updateBanSongs = async (req, res) => {
   try {
     const songId = req.body.songId;
-  
+
     let data = await addBanSong(songId, req.user.id);
     if (data && data.EC == "0") {
       return res.status(200).json({
@@ -269,10 +310,10 @@ const getMyPl = async (req, res) => {
 };
 const createMyPl = async (req, res) => {
   try {
-    const playlistname = req.body.data.playlistname
-    
+    const playlistname = req.body.data.playlistname;
+
     if (playlistname) {
-      let data = await createMyPlaylist(req.user,playlistname);
+      let data = await createMyPlaylist(req.user, playlistname);
 
       if (data && data.EC == "0") {
         return res.status(200).json({
@@ -306,7 +347,7 @@ const createMyPl = async (req, res) => {
 const addToPlaylist = async (req, res) => {
   try {
     const dataAdd = req.body.data;
-    let data = await addToMyPlaylist(req.user.id,dataAdd);
+    let data = await addToMyPlaylist(req.user.id, dataAdd);
 
     if (data && data.EC == "0") {
       return res.status(200).json({
@@ -330,7 +371,7 @@ const addToPlaylist = async (req, res) => {
     });
   }
 };
-const getAllUs = async(req, res) => {
+const getAllUs = async (req, res) => {
   try {
     let data = await getAllUser(req.params.id);
 
@@ -355,8 +396,8 @@ const getAllUs = async(req, res) => {
       DT: "",
     });
   }
-}
-const getAlGenre = async(req, res) => {
+};
+const getAlGenre = async (req, res) => {
   try {
     let data = await getGenres(req.params.id);
 
@@ -381,9 +422,9 @@ const getAlGenre = async(req, res) => {
       DT: "",
     });
   }
-}
-const adminSearch = async(req, res) => {
-  const datac = req.body.data
+};
+const adminSearch = async (req, res) => {
+  const datac = req.body.data;
   try {
     let data = await adminSerachService(datac);
 
@@ -408,8 +449,8 @@ const adminSearch = async(req, res) => {
       DT: "",
     });
   }
-}
-const adminHome= async(req, res) => {
+};
+const adminHome = async (req, res) => {
   try {
     let data = await adminHomeService();
     if (data && data.EC == "0") {
@@ -433,9 +474,8 @@ const adminHome= async(req, res) => {
       DT: "",
     });
   }
-}
-const userGetLikeSongs= async(req, res) => {
-
+};
+const userGetLikeSongs = async (req, res) => {
   try {
     let data = await getMylikesSongs(req.user.id);
     if (data && data.EC == "0") {
@@ -459,9 +499,9 @@ const userGetLikeSongs= async(req, res) => {
       DT: "",
     });
   }
-}
+};
 
-const changeRoleCtrl= async(req, res) => {
+const changeRoleCtrl = async (req, res) => {
   try {
     let data = await changeRole(req.body.data);
     if (data && data.EC == "0") {
@@ -485,13 +525,13 @@ const changeRoleCtrl= async(req, res) => {
       DT: "",
     });
   }
-}
+};
 
 const deleteMyPl = async (req, res) => {
   try {
     const dataAdd = req.body.data.playlistId;
-    console.log("adasdasdasdas",dataAdd);
-    let data = await deleteMyPlaylist(req.user.id,dataAdd);
+    console.log("adasdasdasdas", dataAdd);
+    let data = await deleteMyPlaylist(req.user.id, dataAdd);
     if (data && data.EC == "0") {
       return res.status(200).json({
         EM: data.EM,
@@ -513,7 +553,7 @@ const deleteMyPl = async (req, res) => {
       DT: "",
     });
   }
-}
+};
 module.exports = {
   Infor,
   editInfor,
@@ -530,5 +570,6 @@ module.exports = {
   adminHome,
   userGetLikeSongs,
   changeRoleCtrl,
-  deleteMyPl  
+  deleteMyPl,
+  resetPass,
 };

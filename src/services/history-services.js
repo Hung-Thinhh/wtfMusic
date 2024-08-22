@@ -1,7 +1,7 @@
 import History from "../models/history.js";
 import Song from "../models/sonng_model.js";
 import Playlist from "../models/playlist_model.js";
-import SongRanking from "../models/songRanking_model";
+import addRanking from "./rankCliend.js"
 
 const addHistory = async (idUser, data) => {
   let roles;
@@ -11,27 +11,8 @@ const addHistory = async (idUser, data) => {
       { $inc: { listen: 1 } },
       { upsert: true }
     );
-    let songRanking = await SongRanking.findOne({ songId: data.id });
-    if (songRanking) {
-      if (songRanking.rankingDate.getDate() === new Date().getDate()) {
-        songRanking.listenCount += 1;
-        await songRanking.save();
-      } else {
-        const newRanking = new SongRanking({
-          songId: songRanking.songId,
-          listenCount: 1,
-          rankingDate: new Date(),
-        });
-        await newRanking.save();
-      }
-    } else {
-      const newRanking = new SongRanking({
-        songId: data.id,
-        listenCount: 1,
-        rankingDate: new Date(),
-      });
-      await newRanking.save();
-    }
+    addRanking(data.id)
+   
 
     //   db.SongRanking.insertOne({
     //     rankingDate: new Date(),

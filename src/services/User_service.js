@@ -2,12 +2,12 @@ import User from "../models/user_model.js";
 import Song from "../models/sonng_model.js";
 import Playlist from "../models/playlist_model.js";
 import genre from "../models/genre_model.js";
-const Ar = require('../models/artists_model');
+const Ar = require("../models/artists_model");
 import { checkPassword, hashPassword } from "./Authentication_service.js";
 const { v4: uuidv4 } = require("uuid");
 const { Nuxtify } = require("nuxtify-api");
-const SongRanking = require('../models/songRanking_model.js');
-const PlaylistRanking = require('../models/playlistRanking_model.js');
+const SongRanking = require("../models/songRanking_model.js");
+const PlaylistRanking = require("../models/playlistRanking_model.js");
 
 const getInfor = async (id) => {
   let user = await User.findOne({ id: id });
@@ -23,7 +23,7 @@ const getInfor = async (id) => {
 };
 const updateInfor = async (data, id) => {
   const newInfor = data.infor;
-  const existingUser = await User.findOne({ email: newInfor.email});
+  const existingUser = await User.findOne({ email: newInfor.email });
   if (existingUser) {
     if (existingUser.id === newInfor.id) {
       const updateUser = await User.findOneAndUpdate({ id: id }, newInfor, {
@@ -61,9 +61,7 @@ const updateInfor = async (data, id) => {
       );
       return false;
     }
-}
- 
- 
+  }
 };
 const changepassword = async (data, id) => {
   const newInfor = data;
@@ -90,6 +88,50 @@ const changepassword = async (data, id) => {
         DT: "",
       };
     }
+  }
+  if (updateUser) {
+    return {
+      EM: "ok!",
+      EC: "0",
+      DT: "",
+    };
+  } else {
+    return {
+      EM: "error from server",
+      EC: "-1",
+      DT: "",
+    };
+  }
+};
+const resetpassword = async (data, id) => {
+  const newInfor = data;
+  let updateUser;
+  const user = await User.findOne({
+    id: id,
+  });
+  if (user) {
+    let checkNewPass = await checkPassword(newInfor.newPassword, user.password);
+    if (!checkNewPass) {
+      
+      let hashPass = hashPassword(newInfor.newPassword);
+      updateUser = await User.findOneAndUpdate(
+        { id: id },
+        { password: hashPass },
+        { upsert: true }
+      );
+    } else {
+      return {
+        EM: "Mật khẩu mới trùng với các mật khẩu trước!",
+        EC: "3",
+        DT: "",
+      };
+    }
+  } else {
+    return {
+      EM: "Không tồn tại tài khoản này!",
+      EC: "1",
+      DT: "",
+    };
   }
   if (updateUser) {
     return {
@@ -140,24 +182,21 @@ const addLike = async (data, id) => {
         if (songRanking.rankingDate.getDate() === new Date().getDate()) {
           songRanking.likeCount += 1;
           await songRanking.save();
-          ;
         } else {
           const newRanking = new SongRanking({
             songId: songRanking.songId,
             likeCount: 1,
-            rankingDate: new Date()
+            rankingDate: new Date(),
           });
           await newRanking.save();
-          ;
         }
       } else {
         const newRanking = new SongRanking({
           songId: data.id,
           likeCount: 1,
-          rankingDate: new Date()
+          rankingDate: new Date(),
         });
         await newRanking.save();
-        ;
       }
     } else {
       return {
@@ -168,7 +207,9 @@ const addLike = async (data, id) => {
     }
   } else {
     let ps = await Playlist.findOne({ playlistId: data.id });
-    let playlistRanking = await PlaylistRanking.findOne({ playlistId: data.id });
+    let playlistRanking = await PlaylistRanking.findOne({
+      playlistId: data.id,
+    });
     if (ps) {
       updateData = await User.findOneAndUpdate(
         { id: id },
@@ -183,7 +224,7 @@ const addLike = async (data, id) => {
           const newRanking = new PlaylistRanking({
             playlistId: playlistRanking.playlistId,
             likeCount: 1,
-            rankingDate: new Date()
+            rankingDate: new Date(),
           });
           await newRanking.save();
         }
@@ -191,7 +232,7 @@ const addLike = async (data, id) => {
         const newRanking = new PlaylistRanking({
           playlistId: data.id,
           likeCount: 1,
-          rankingDate: new Date()
+          rankingDate: new Date(),
         });
         await newRanking.save();
       }
@@ -238,7 +279,7 @@ const unLike = async (data, id) => {
           const newRanking = new SongRanking({
             songId: data.id,
             likeCount: 1,
-            rankingDate: new Date()
+            rankingDate: new Date(),
           });
           await newRanking.save();
         }
@@ -246,7 +287,7 @@ const unLike = async (data, id) => {
         const newRanking = new SongRanking({
           songId: data.id,
           likeCount: 1,
-          rankingDate: new Date()
+          rankingDate: new Date(),
         });
         await newRanking.save();
       }
@@ -259,7 +300,9 @@ const unLike = async (data, id) => {
     }
   } else {
     let ps = await Playlist.findOne({ playlistId: data.id });
-    let playlistRanking = await PlaylistRanking.findOne({ playlistId: data.id });
+    let playlistRanking = await PlaylistRanking.findOne({
+      playlistId: data.id,
+    });
 
     if (ps) {
       updateData = await User.findOneAndUpdate(
@@ -275,7 +318,7 @@ const unLike = async (data, id) => {
           const newRanking = new PlaylistRanking({
             playlistId: data.id,
             likeCount: 1,
-            rankingDate: new Date()
+            rankingDate: new Date(),
           });
           await newRanking.save();
         }
@@ -283,7 +326,7 @@ const unLike = async (data, id) => {
         const newRanking = new PlaylistRanking({
           playlistId: data.id,
           likeCount: 1,
-          rankingDate: new Date()
+          rankingDate: new Date(),
         });
         await newRanking.save();
       }
@@ -360,7 +403,7 @@ const createMyPlaylist = async (user, playlistname) => {
     const hasDuplicate = await isDuplicateName(playlistname);
     if (!hasDuplicate) {
       const newPlaylistID = uuidv4().substring(0, 8).toUpperCase();
-      console.log('nowwwwwwwwwwwwwwwwwwwwwww');
+      console.log("nowwwwwwwwwwwwwwwwwwwwwww");
       //Tạo playlist mới với các thông tin tương ứng
       const createdPlaylist = new Playlist({
         playlistId: newPlaylistID,
@@ -373,13 +416,13 @@ const createMyPlaylist = async (user, playlistname) => {
         songid: [],
         like: 0,
         listen: 0,
-        state:0,
+        state: 0,
         type: "user",
       });
 
       // Lưu playlist
       const data1 = await createdPlaylist.save();
-      console.log('nvvvvvvvvvvvvvvvvvvvvvvvvvvv');
+      console.log("nvvvvvvvvvvvvvvvvvvvvvvvvvvv");
 
       //Thêm playlistId vào mảng playlistId của user
       // getUser.myPlayLists.push(newPlaylistID);
@@ -387,7 +430,7 @@ const createMyPlaylist = async (user, playlistname) => {
       const data2 = await User.findOneAndUpdate(
         { id: user.id }, // Điều kiện tìm kiếm người dùng
         { $addToSet: { myPlayLists: newPlaylistID } }, // Thêm newPlaylistID vào mảng myPlayLists (không trùng lặp)
-        {  new: true } // Tạo mới nếu không tìm thấy và trả về đối tượng người dùng đã được cập nhật
+        { new: true } // Tạo mới nếu không tìm thấy và trả về đối tượng người dùng đã được cập nhật
       );
 
       console.log("Thêm playlist vào myPlaylists:", data2, data1);
@@ -429,13 +472,13 @@ const addToMyPlaylist = async (idUser, data) => {
         DT: "",
       };
     } else {
-      console.log('hahaha', data.songId);
+      console.log("hahaha", data.songId);
       // Chuyển đổi các songId trong playlist thành một tập hợp (set)
       const existingSongIds = new Set(playlist.songid);
 
       // Tạo một mảng mới chứa các songId cần thêm
       const songsToAdd = data.songId.filter((id) => !existingSongIds.has(id));
-      console.log('songsToAdd', songsToAdd)
+      console.log("songsToAdd", songsToAdd);
       // Thêm các bài hát mới vào playlist
       await Playlist.updateOne(
         { playlistId: data.playlistId },
@@ -464,21 +507,26 @@ const getAllUser = async (data) => {
   try {
     // Truy vấn dữ liệu user sau khi xóa trùng lặp
     const UserCount = await User.countDocuments({});
-    const Userdata = await User.find({}, {
-      _id: 1,
-      id: 1,
-      username: 1,
-      birthday: 1,
-      avt: 1,
-      email: 1,
-      likedPlayLists: 1,
-      likedSongs: 1,
-      myPlayLists: 1,
-      banSongs: 1,
-      createdAt: 1,
-      role: 1,
-    }).sort({ _id: -1 }).skip(+limit).limit(10);
-
+    const Userdata = await User.find(
+      {},
+      {
+        _id: 1,
+        id: 1,
+        username: 1,
+        birthday: 1,
+        avt: 1,
+        email: 1,
+        likedPlayLists: 1,
+        likedSongs: 1,
+        myPlayLists: 1,
+        banSongs: 1,
+        createdAt: 1,
+        role: 1,
+      }
+    )
+      .sort({ _id: -1 })
+      .skip(+limit)
+      .limit(10);
 
     const responseData = { handledata: Userdata, maxPage: UserCount };
     return {
@@ -499,17 +547,23 @@ const getGenres = async (data) => {
   try {
     // Truy vấn dữ liệu user sau khi xóa trùng lặp
     const genreCount = await genre.countDocuments({});
-    const genredata = await genre.find({}, {
-      _id: 1,
-      genreId: 1,
-      genrename: 1,
-      thumbnail: 1,
-      playListId: 1,
-      state: 1,
-      listen: 1,
-      description: 1,
-    }).sort({ _id: -1 }).skip(+limit).limit(10);
-
+    const genredata = await genre
+      .find(
+        {},
+        {
+          _id: 1,
+          genreId: 1,
+          genrename: 1,
+          thumbnail: 1,
+          playListId: 1,
+          state: 1,
+          listen: 1,
+          description: 1,
+        }
+      )
+      .sort({ _id: -1 })
+      .skip(+limit)
+      .limit(10);
 
     const responseData = { handledata: genredata, maxPage: genreCount };
     return {
@@ -527,35 +581,38 @@ const getGenres = async (data) => {
 };
 const adminSerachService = async (data) => {
   try {
-    const songs = await Song.find({
-      $or: [
-        { songname: { $regex: data, $options: 'i' } },
-        { artists: { $regex: data, $options: 'i' } }
-      ]
-    }, { lyric: 0 }).limit(10);
-    const Genre = await genre.find({
-      $or: [
-        { genrename: { $regex: data, $options: 'i' } },
-      ]
-    }).limit(10);
+    const songs = await Song.find(
+      {
+        $or: [
+          { songname: { $regex: data, $options: "i" } },
+          { artists: { $regex: data, $options: "i" } },
+        ],
+      },
+      { lyric: 0 }
+    ).limit(10);
+    const Genre = await genre
+      .find({
+        $or: [{ genrename: { $regex: data, $options: "i" } }],
+      })
+      .limit(10);
     const playlist = await Playlist.find({
       $or: [
-        { description: { $regex: data, $options: 'i' } },
-        { playlistname: { $regex: data, $options: 'i' } }
-      ]
+        { description: { $regex: data, $options: "i" } },
+        { playlistname: { $regex: data, $options: "i" } },
+      ],
     }).limit(10);
     const user = await User.find({
       $or: [
-        { email: { $regex: data, $options: 'i' } },
-        { username: { $regex: data, $options: 'i' } }
-      ]
+        { email: { $regex: data, $options: "i" } },
+        { username: { $regex: data, $options: "i" } },
+      ],
     }).limit(10);
     const ar = await Ar.find({
       $or: [
-        { artistsName: { $regex: data, $options: 'i' } },
-        { alias: { $regex: data, $options: 'i' } },
-        { realName: { $regex: data, $options: 'i' } }
-      ]
+        { artistsName: { $regex: data, $options: "i" } },
+        { alias: { $regex: data, $options: "i" } },
+        { realName: { $regex: data, $options: "i" } },
+      ],
     }).limit(10);
     return {
       EM: "Lấy danh thể tìm kiếm thành công!",
@@ -646,9 +703,9 @@ const getMylikesSongs = async (idUser) => {
 const changeRole = async (data) => {
   let updateData;
   if (data.status === "delete") {
-    const userID = data.id
+    const userID = data.id;
     const user = await User.findOne({ id: userID });
-    let checkrole
+    let checkrole;
     if (user.role === "admin") {
       checkrole = "0";
     } else if (user.role === "user") {
@@ -658,44 +715,56 @@ const changeRole = async (data) => {
     }
     if (checkrole === data.role) {
       return {
-      EM: "lỗi đổi quyền",
-      EC: "-1",
-      DT: "",
+        EM: "lỗi đổi quyền",
+        EC: "-1",
+        DT: "",
       };
     }
     if (data.role === "admin") {
-      const result = await User.updateOne({ id: userID }, { role: "0" }, { upsert: true });
+      const result = await User.updateOne(
+        { id: userID },
+        { role: "0" },
+        { upsert: true }
+      );
       if (result.modifiedCount > 0) {
-      updateData = data.role;
+        updateData = data.role;
       }
     } else if (data.role === "user") {
-      const result = await User.updateOne({ id: userID }, { role: "1" }, { upsert: true });
+      const result = await User.updateOne(
+        { id: userID },
+        { role: "1" },
+        { upsert: true }
+      );
       if (result.modifiedCount > 0) {
-      updateData = data.role;
+        updateData = data.role;
       }
     } else if (data.role === "ban") {
-      const result = await User.updateOne({ id: userID }, { role: "2" }, { upsert: true });
+      const result = await User.updateOne(
+        { id: userID },
+        { role: "2" },
+        { upsert: true }
+      );
       if (result.modifiedCount > 0) {
-      updateData = data.role;
+        updateData = data.role;
       }
     } else {
       return {
-      EM: "quyền không hợp lệ",
-      EC: "-1",
-      DT: "",
+        EM: "quyền không hợp lệ",
+        EC: "-1",
+        DT: "",
       };
     }
     if (updateData) {
       return {
-      EM: `đã cập nhật quyền thành công : quyền >> ${updateData}`,
-      EC: "0",
-      DT: "",
+        EM: `đã cập nhật quyền thành công : quyền >> ${updateData}`,
+        EC: "0",
+        DT: "",
       };
     } else {
       return {
-      EM: "lỗi cập nhật quyền",
-      EC: "-1",
-      DT: "",
+        EM: "lỗi cập nhật quyền",
+        EC: "-1",
+        DT: "",
       };
     }
   }
@@ -704,7 +773,7 @@ const changeRole = async (data) => {
 const deleteMyPlaylist = async (user, id) => {
   try {
     const getUser = await User.findOne({ id: user });
-    if(getUser.myPlayLists.indexOf(id) === -1){
+    if (getUser.myPlayLists.indexOf(id) === -1) {
       return {
         EM: "Không tìm thấy playlist này!",
         EC: "-1",
@@ -713,7 +782,9 @@ const deleteMyPlaylist = async (user, id) => {
     } else {
       const result = await Playlist.deleteOne({ playlistId: id });
       if (result.deletedCount > 0) {
-        getUser.myPlayLists = getUser.myPlayLists.filter((playlistId) => playlistId !== id);
+        getUser.myPlayLists = getUser.myPlayLists.filter(
+          (playlistId) => playlistId !== id
+        );
         await getUser.save();
         return {
           EM: "Xóa playlist thành công!",
@@ -753,5 +824,6 @@ module.exports = {
   adminHomeService,
   getMylikesSongs,
   changeRole,
-  deleteMyPlaylist
+  deleteMyPlaylist,
+  resetpassword,
 };
