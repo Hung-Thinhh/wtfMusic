@@ -18,7 +18,7 @@ const adminSong = async (req, res) => {
             createdAt: 1,
             state: 1,
             _id: 0
-        }).sort({ _id: -1 }).skip(+limit).limit(10);
+        }).sort({ _id: -1 }).skip(+limit).limit(20);
 
         const handledata = await Promise.all(songdata.map(async (song) => {
             // const genresNames = await Promise.all(

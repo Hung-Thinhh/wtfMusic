@@ -579,60 +579,6 @@ const getGenres = async (data) => {
     };
   }
 };
-const adminSerachService = async (data) => {
-  try {
-    const songs = await Song.find(
-      {
-        $or: [
-          { songname: { $regex: data, $options: "i" } },
-          { artists: { $regex: data, $options: "i" } },
-        ],
-      },
-      { lyric: 0 }
-    ).limit(10);
-    const Genre = await genre
-      .find({
-        $or: [{ genrename: { $regex: data, $options: "i" } }],
-      })
-      .limit(10);
-    const playlist = await Playlist.find({
-      $or: [
-        { description: { $regex: data, $options: "i" } },
-        { playlistname: { $regex: data, $options: "i" } },
-      ],
-    }).limit(10);
-    const user = await User.find({
-      $or: [
-        { email: { $regex: data, $options: "i" } },
-        { username: { $regex: data, $options: "i" } },
-      ],
-    }).limit(10);
-    const ar = await Ar.find({
-      $or: [
-        { artistsName: { $regex: data, $options: "i" } },
-        { alias: { $regex: data, $options: "i" } },
-        { realName: { $regex: data, $options: "i" } },
-      ],
-    }).limit(10);
-    return {
-      EM: "Lấy danh thể tìm kiếm thành công!",
-      EC: "0",
-      DT: {
-        songs: songs,
-        genre: Genre,
-        Playlist: playlist,
-        User: user,
-        ar: ar,
-      },
-    };
-  } catch (err) {
-    return {
-      EM: "Không lấy tìm được!",
-      EC: "-1",
-      DT: "",
-    };
-  }
-};
 const adminHomeService = async () => {
   try {
     const songs = await Song.countDocuments({});
@@ -820,7 +766,6 @@ module.exports = {
   addToMyPlaylist,
   getAllUser,
   getGenres,
-  adminSerachService,
   adminHomeService,
   getMylikesSongs,
   changeRole,

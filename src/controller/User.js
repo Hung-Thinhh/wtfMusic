@@ -11,7 +11,6 @@ import {
   addToMyPlaylist,
   getAllUser,
   getGenres,
-  adminSerachService,
   adminHomeService,
   getMylikesSongs,
   changeRole,
@@ -422,35 +421,9 @@ const getAlGenre = async (req, res) => {
       DT: "",
     });
   }
-};
-const adminSearch = async (req, res) => {
-  const datac = req.body.data;
-  try {
-    let data = await adminSerachService(datac);
+}
 
-    if (data && data.EC == "0") {
-      return res.status(200).json({
-        EM: data.EM,
-        EC: "0",
-        DT: data.DT,
-      });
-    } else {
-      return res.status(200).json({
-        EM: data.EM,
-        EC: "-1",
-        DT: "",
-      });
-    }
-  } catch (err) {
-    console.log(err);
-    return res.status(200).json({
-      EM: "error from server",
-      EC: "-1",
-      DT: "",
-    });
-  }
-};
-const adminHome = async (req, res) => {
+const adminHome= async(req, res) => {
   try {
     let data = await adminHomeService();
     if (data && data.EC == "0") {
@@ -566,7 +539,6 @@ module.exports = {
   addToPlaylist,
   getAllUs,
   getAlGenre,
-  adminSearch,
   adminHome,
   userGetLikeSongs,
   changeRoleCtrl,

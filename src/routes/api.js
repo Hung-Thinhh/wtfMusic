@@ -42,7 +42,6 @@ import {
     addToPlaylist,
     getAllUs,
     getAlGenre,
-    adminSearch,
     adminHome,
     userGetLikeSongs,
     changeRoleCtrl,
@@ -200,8 +199,7 @@ const initApiRouter = (app) => {
     router.post("/admin/bancomment", bancomment);
     router.post("/admin/restuser", changeRoleCtrl);
     router.get("/admin/getbanData", getbanData);
-    router.post("/admin/searchsong", adminSearch);
-
+    // new sear
     router.post("/admin/searchSongs", searchSongsCtrl);
     router.post("/admin/searchGenre", searchGenreCtrl);
     router.post("/admin/searchPlaylist", searchPlaylistCtrl);
