@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require("uuid");
 const { Nuxtify } = require("nuxtify-api");
 const SongRanking = require("../models/songRanking_model.js");
 const PlaylistRanking = require("../models/playlistRanking_model.js");
-
+import { AssemblyAI } from 'assemblyai'
 const getInfor = async (id) => {
   let user = await User.findOne({ id: id });
   if (user) {
@@ -112,7 +112,7 @@ const resetpassword = async (data, id) => {
   if (user) {
     let checkNewPass = await checkPassword(newInfor.newPassword, user.password);
     if (!checkNewPass) {
-      
+
       let hashPass = hashPassword(newInfor.newPassword);
       updateUser = await User.findOneAndUpdate(
         { id: id },
@@ -580,6 +580,36 @@ const getGenres = async (data) => {
   }
 };
 const adminHomeService = async () => {
+
+  // kfjgkjf
+  // npm install assemblyai
+
+
+  const client = new AssemblyAI({
+    apiKey: '7a136dfcb51d4e579a8b13d3405b9b5a'
+  })
+
+  const audioUrl =
+    'https://res.cloudinary.com/dyk4plxlj/video/upload/v1717775620/chuy%E1%BB%85nthuign_rbtlwh.mp3'
+
+  const params = {
+    audio: audioUrl,
+    punctuate: false,
+    format_text: false,
+    language_detection: true,
+    word_boost: ['aws', 'azure', 'google cloud'],
+    boost_param: 'high'
+  }
+  const run = async () => {
+    const transcript = await client.transcripts.transcribe(params)
+    console.log(transcript.text)
+    console.log(transcript.words)
+  }
+
+  run()
+  // kdjfkdjfk
+
+
   try {
     const songs = await Song.countDocuments({});
     const Genre = await genre.countDocuments({});

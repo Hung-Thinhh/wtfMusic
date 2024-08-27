@@ -16,6 +16,7 @@
     "@babel/core": "^7.24.3",
     "@babel/node": "^7.23.9",
     "@google-cloud/local-auth": "^2.1.0",
+    "assemblyai": "^4.6.1",
     "babel-node": "^0.0.1-security",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
