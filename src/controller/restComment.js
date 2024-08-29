@@ -1,4 +1,85 @@
-import { restCommentService } from "../services/restComment-service";
+import { restCommentService,getComments,editComments,createComments } from "../services/restComment-service";
+const getComment = async (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+  
+
+    const datas = await getComments(id);
+
+  if (datas && datas.EC == "0") {
+    return res.status(200).json({
+      EM: datas.EM,
+      EC: "0",
+      DT: datas.DT,
+    });
+  } else {
+    return res.status(200).json({
+      EM: datas.EM,
+      EC: datas.EC,
+      DT: "",
+    });
+  }
+};
+const editComment = async (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+  
+
+    const datas = await editComments(req.body.data, req.user.id);
+
+  if (datas && datas.EC == "0") {
+    return res.status(200).json({
+      EM: datas.EM,
+      EC: "0",
+      DT: datas.DT,
+    });
+  } else {
+    return res.status(200).json({
+      EM: datas.EM,
+      EC: datas.EC,
+      DT: "",
+    });
+  }
+};
+const createComment = async (req, res) => {
+const data = req.body.data
+    const datas = await createComments(data,req.user.id);
+
+  if (datas && datas.EC == "0") {
+    return res.status(200).json({
+      EM: datas.EM,
+      EC: "0",
+      DT: datas.DT,
+    });
+  } else {
+    return res.status(200).json({
+      EM: datas.EM,
+      EC: datas.EC,
+      DT: "",
+    });
+  }
+};
+const deleteComment = async (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+  
+
+    const datas = await editComments(id);
+
+  if (datas && datas.EC == "0") {
+    return res.status(200).json({
+      EM: datas.EM,
+      EC: "0",
+      DT: datas.DT,
+    });
+  } else {
+    return res.status(200).json({
+      EM: datas.EM,
+      EC: datas.EC,
+      DT: "",
+    });
+  }
+};
 const restComment = async (req, res) => {
   const data = req.body.data;
   const userId = data.userId;
@@ -25,5 +106,5 @@ const restComment = async (req, res) => {
 };
 
 module.exports = {
-  restComment,
+  restComment,getComment,editComment,createComment,deleteComment
 };

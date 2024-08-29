@@ -4,7 +4,7 @@ import mongoose, { Types } from "mongoose";
 
 const restCommentService = async (data, userId) => {
   if (userId) {
-    console.log(data)
+    console.log(data);
     if (data.status === "create") {
       if (
         data.data.comments === "" ||
@@ -128,7 +128,7 @@ const restCommentService = async (data, userId) => {
             ...comment._doc,
             userName: user.username,
             userAvt: user.avt,
-          }
+          };
         });
         return Promise.all(modifiedComments);
       });
@@ -154,5 +154,122 @@ const restCommentService = async (data, userId) => {
     }
   }
 };
+const getComments = async (id) => {
+  console.log("hahahai", id);
 
-module.exports = { restCommentService };
+  const datas = await Comment.find({
+    songId: id,
+  }).sort({ createdAt: -1 }).then((comments) => {
+    const modifiedComments = comments.map(async (comment) => {
+      const user = await User.findOne({ id: comment.userId });
+
+      return {
+        ...comment._doc,
+        userID: user.id,
+        userName: user.username,
+        userAvt: user.avt,
+      };
+    });
+    return Promise.all(modifiedComments);
+  });
+  if (!datas) {
+    return {
+      EM: "lấy comment thất bại!",
+      EC: "-1",
+      DT: "",
+    };
+  } else {
+    return {
+      EM: "lấy comment thành công!",
+      EC: "0",
+      DT: datas,
+    };
+  }
+};
+const editComments = async (data,userId) => {
+  try {
+    console.log("hahahai", data);
+    const oldComment = await Comment.findOne({ _id: data.commentId });
+    if (oldComment && oldComment.userId === userId && data.text.length>0) {
+      oldComment.content = data.text;
+      await oldComment.save();
+
+      return {
+        EM: "lấy comment thành công!",
+        EC: "0",
+        DT: oldComment,
+      };
+    } else {
+      return {
+        EM: "!",
+        EC: "-1",
+        DT: [],
+      };
+    }
+  } catch (error) {
+    console.error("Lỗi khi sửa bình luận:", error);
+    return {
+      EM: error,
+      EC: "-1",
+      DT: [],
+    };
+  }
+};
+const createComments = async (data,userId) => {
+  try {
+    console.log("hahahai", data);
+    if (!data.text) {
+      return {
+        EM: "comment không được để trống!",
+        EC: "-1",
+        DT: "",
+      };
+    } 
+
+    const commentData = await Comment.create({
+      songId: data.id,
+      content: data.text,
+      userId: userId,
+      parentId: data.parentId || null,
+    });
+
+    // Sử dụng _id để tìm người dùng. Giả định rằng userId là _id của User trong MongoDB
+    const user = await User.findOne({ id: commentData.userId });
+const replies =  await Comment.find({ parentId: commentData.parentId});
+    if (!user) {
+      return {
+        EM: "Không tìm thấy người dùng!",
+        EC: "-1",
+        DT: "",
+      };
+    }
+
+    const responseData = {
+      ...commentData._doc,
+      userID: user._id, // Đảm bảo sử dụng _id nếu là MongoDB
+      userName: user.username,
+      userAvt: user.avt,
+      replies:replies
+    };
+
+    return {
+      EM: "thêm comment thành công!",
+      EC: "0",
+      DT: responseData,
+    };  
+  } catch (error) {
+    console.error("Lỗi khi thêm bình luận:", error);
+    return {
+      EM: String(error),
+      EC: "-1",
+      DT: [],
+    };
+  }
+};
+
+module.exports = {
+  restCommentService,
+  getComments,
+  editComments,
+  createComments,
+};
