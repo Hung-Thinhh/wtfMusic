@@ -61,6 +61,7 @@ const { adminA } = require("../controller/admin/artists.js");
 const { adminP } = require("../controller/admin/playlist.js");
 const { bancomment } = require("../controller/admin/comment.js");
 
+const {getSongEditPage_Controller} =require("../controller/admin/getSongCrtl[editPage].js");
 
 const { getSongRankControl } = require("../controller/rangkingSong.js");
 const { getPlaylistRankControl } = require("../controller/rangkingPlaylist.js");
@@ -69,7 +70,6 @@ const { getSongRankListenControl } = require("../controller/rangkingSongListen.j
 const { getPlaylistRankListenControl } = require("../controller/rangkingPlaylistListen.js");
 const { restComment,getComment,editComment,createComment } = require("../controller/restComment.js");
 const { getbanData } = require("../controller/getBan.js");
-
 
 const {
     searchSongsCtrl,
@@ -208,6 +208,9 @@ const initApiRouter = (app) => {
     router.post("/admin/searchPlaylist", searchPlaylistCtrl);
     router.post("/admin/searchUser", searchUserCtrl);
     router.post("/admin/searchArtists", searchArtistsCtrl);
+
+
+    router.get("/admin/editpage/:id", getSongEditPage_Controller);
 
     return app.use("/api", router);
 };
