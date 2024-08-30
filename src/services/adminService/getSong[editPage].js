@@ -2,7 +2,8 @@ import User from "../../models/user_model.js";
 import Song from "../../models/sonng_model.js";
 import Playlist from "../../models/playlist_model.js";
 import genre from "../../models/genre_model.js";
-const Ar = require('../../models/artists_model');
+import Ar from "../../models/artists_model.js";
+
 
 const getSongEditPage = async (id) => {
     try {
@@ -12,8 +13,8 @@ const getSongEditPage = async (id) => {
             const format = {
                 id: song.id,
                 songname: song.songname,
-   
-                genre: await genre.find({ genreId: { $in:song.genre} }),
+                artist: song.artists,
+                genre:song.genre,
                 lyric: song.lyric,
                 link: song.link,
                 thumbnail: song.thumbnail,
