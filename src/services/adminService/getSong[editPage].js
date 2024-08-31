@@ -10,8 +10,8 @@ const getSongEditPage = async (id) => {
             const format = {
                 id: song.id,
                 songname: song.songname,
-                // artist: await Ar.find({ artistId: { $in: song.artists } }) ? await Ar.find({ artistId: { $in: song.artists } }) : "",
-                // genre: await genre.find({ genreId: { $in: song.genre } }) ? await genre.find({ genreId: { $in: song.genre } }) : "",
+                artist: await Ar.find({ artistId: { $in: song.artists } }) ? await Ar.find({ id: { $in: song.artists } }) : "",
+                genre: await genre.find({ genreId: { $in: song.genre } }) ? await genre.find({ genreId: { $in: song.genre } }) : "",
                 lyric: song.lyric,
                 link: song.link,
                 thumbnail: song.thumbnail,
