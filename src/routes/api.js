@@ -68,7 +68,7 @@ const { getPlaylistRankControl } = require("../controller/rangkingPlaylist.js");
 
 const { getSongRankListenControl } = require("../controller/rangkingSongListen.js");
 const { getPlaylistRankListenControl } = require("../controller/rangkingPlaylistListen.js");
-const { restComment,getComment,editComment,createComment } = require("../controller/restComment.js");
+const { restComment,getComment,editComment,createComment,deleteComment,reportComment } = require("../controller/restComment.js");
 const { getbanData } = require("../controller/getBan.js");
 
 const {
@@ -159,9 +159,11 @@ const initApiRouter = (app) => {
     router.post('/cloneplaylist', fetchplaylistclone);
     router.post('/clonepArtists', fetchArtistsClone);
     router.post("/restcomment", restComment);
-    router.get("/getComment/:id", getComment);
+    router.get("/getComment/:id/:page", getComment);
     router.post("/createComment", createComment);
     router.post("/editComment", editComment);
+    router.post("/deleteComment", deleteComment);
+    router.post("/reportComment", reportComment);
     router.post("/delemyplaylist", deleteMyPl);
 
     router.get('/getrankingservice/:id', getSongRankControl);

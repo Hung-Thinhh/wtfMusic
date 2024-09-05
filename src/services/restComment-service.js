@@ -1,3 +1,4 @@
+import { ideahub } from "googleapis/build/src/apis/ideahub";
 import Comment from "../models/comment_model";
 import User from "../models/user_model";
 import mongoose, { Types } from "mongoose";
@@ -154,17 +155,40 @@ const restCommentService = async (data, userId) => {
     }
   }
 };
-const getComments = async (id) => {
+const getComments = async (id,page) => {
   console.log("hahahai", id);
-
-  const datas = await Comment.find({
+  const limit = 10;
+  const skip = (page - 1) * limit;
+  const countComment =  await Comment.countDocuments({
     songId: id,
-  }).sort({ createdAt: -1 }).then((comments) => {
+    state: 0,
+    parentId: null
+  })
+  const datas = await Comment.find({
+    songId: id,state:0,parentId: null
+  }) .skip(skip)
+    .limit(limit).
+    sort({ createdAt: -1 }).then((comments) => {
     const modifiedComments = comments.map(async (comment) => {
       const user = await User.findOne({ id: comment.userId });
-
+      const replies = await Comment.find({
+        parentId: comment._id, state: 0
+      }).sort({ createdAt: 1 }).then((comments) => {
+        const modifiedComments = comments.map(async (comment) => {
+          const user = await User.findOne({ id: comment.userId });
+          return {
+            ...comment._doc,
+            reply:replies,
+            userID: user.id,
+            userName: user.username,
+            userAvt: user.avt,
+          };
+        })
+        return Promise.all(modifiedComments);
+      })
       return {
         ...comment._doc,
+        reply:replies,
         userID: user.id,
         userName: user.username,
         userAvt: user.avt,
@@ -179,11 +203,20 @@ const getComments = async (id) => {
       DT: "",
     };
   } else {
-    return {
-      EM: "lấy comment thành công!",
-      EC: "0",
-      DT: datas,
-    };
+    if (countComment > skip + 10) {
+      return {
+        EM: "lấy comment thành công!",
+        EC: "0",
+        DT: {comments:datas,hasMore:true},
+      };
+    } else {
+      return {
+        EM: "lấy comment thành công!",
+        EC: "0",
+        DT: {comments:datas,hasMore:false},
+      };
+    }
+   
   }
 };
 const editComments = async (data,userId) => {
@@ -266,10 +299,76 @@ const replies =  await Comment.find({ parentId: commentData.parentId});
     };
   }
 };
+const deleteComments = async (id,userId) => {
+  try {
+    console.log("hahahai", userId);
+    const oldComment = await Comment.findOne({ _id: id, userId: userId });
+    const parentId = oldComment.parentId || 'no parent';
+    if (oldComment) {
+      oldComment.state = 2;
+      await oldComment.save();
+
+      return {
+        EM: "lấy comment thành công!",
+        EC: "0",
+        DT: parentId,
+      };
+    } else {
+      return {
+        EM: "!",
+        EC: "-1",
+        DT: [],
+      };
+    }
+  } catch (error) {
+    console.error("Lỗi khi sửa bình luận:", error);
+    return {
+      EM: error,
+      EC: "-1",
+      DT: [],
+    };
+  }
+};
+const reportComments = async (id,userId) => {
+  try {
+    const comment = await Comment.findOne({ _id: id});
+    if (!comment) {
+      return {
+        EM: "Không tìm thấy comment!",
+        EC: "-1",
+        DT: "",
+      };
+    }
+    const userIdIndex = comment.ban.indexOf(userId);
+    if (userIdIndex === -1) {
+      comment.ban.push(userId);
+      comment.reportCount += 1;
+      await comment.save();
+    } else {
+      return {
+        EM: "Bạn đã báo cáo comment này rồi!",
+        EC: "2",
+        DT: "",
+      };
+    }
+    return {
+      EM: "Báo cáo comment thành công!",
+      EC: "0",
+      DT: "",
+    };
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    return {
+      EM: "Lỗi khi báo cáo comment!",
+      EC: "-1",
+      DT: "",
+    };
+  }
+};
 
 module.exports = {
   restCommentService,
   getComments,
   editComments,
-  createComments,
+  createComments,deleteComments,reportComments
 };
