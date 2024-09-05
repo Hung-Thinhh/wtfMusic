@@ -1,19 +1,17 @@
-import User from "../../models/user_model.js";
 import Song from "../../models/sonng_model.js";
-import Playlist from "../../models/playlist_model.js";
 import genre from "../../models/genre_model.js";
-const Ar = require('../../models/artists_model');
+import Ar from "../../models/artists_model.js";
+
 
 const getSongEditPage = async (id) => {
     try {
-
         const song = await Song.findOne({ id: id });
         if (song) {
             const format = {
                 id: song.id,
                 songname: song.songname,
-   
-                genre: await genre.find({ genreId: { $in:song.genre} }),
+                // artist: await Ar.find({ artistId: { $in: song.artists } }) ? await Ar.find({ artistId: { $in: song.artists } }) : "",
+                // genre: await genre.find({ genreId: { $in: song.genre } }) ? await genre.find({ genreId: { $in: song.genre } }) : "",
                 lyric: song.lyric,
                 link: song.link,
                 thumbnail: song.thumbnail,
@@ -22,7 +20,6 @@ const getSongEditPage = async (id) => {
                 dislike: song.dislike,
                 createdAt: song.createdAt
             };
-
             return {
                 EM: "Lấy danh thể tìm kiếm thành công!",
                 EC: "0",
@@ -37,14 +34,15 @@ const getSongEditPage = async (id) => {
                 DT: "",
             };
         }
+        
     } catch (err) {
-        console.log(err);
-        return {
-            EM: "Không lấy tìm được!",
-            EC: "-1",
-            DT: "",
-        };
-    }
+    console.log(err);
+    return {
+        EM: "Không lấy tìm được!",
+        EC: "-1",
+        DT: "",
+    };
+}
 };
 
 
