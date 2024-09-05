@@ -1,10 +1,11 @@
-import { restCommentService,getComments,editComments,createComments } from "../services/restComment-service";
+import { restCommentService,getComments,editComments,createComments,deleteComments,reportComments } from "../services/restComment-service";
 const getComment = async (req, res) => {
   const id = req.params.id;
+  const page = req.params.page;
   console.log(id);
   
 
-    const datas = await getComments(id);
+    const datas = await getComments(id,page);
 
   if (datas && datas.EC == "0") {
     return res.status(200).json({
@@ -60,12 +61,29 @@ const data = req.body.data
   }
 };
 const deleteComment = async (req, res) => {
-  const id = req.params.id;
-  console.log(id);
+  const id = req.body.id;
+  console.log(req.user);
   
-
-    const datas = await editComments(id);
-
+    const datas = await deleteComments(id,req.user.id);
+  if (datas && datas.EC == "0") {
+    return res.status(200).json({
+      EM: datas.EM,
+      EC: "0",
+      DT: datas.DT,
+    });
+  } else {
+    return res.status(200).json({
+      EM: datas.EM,
+      EC: datas.EC,
+      DT: "",
+    });
+  }
+};
+const reportComment = async (req, res) => {
+  const id = req.body.id;
+  console.log(req.user);
+  
+    const datas = await reportComments(id,req.user.id);
   if (datas && datas.EC == "0") {
     return res.status(200).json({
       EM: datas.EM,
@@ -106,5 +124,5 @@ const restComment = async (req, res) => {
 };
 
 module.exports = {
-  restComment,getComment,editComment,createComment,deleteComment
+  restComment,getComment,editComment,createComment,deleteComment,reportComment
 };

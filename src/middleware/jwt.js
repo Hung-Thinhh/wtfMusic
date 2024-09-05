@@ -25,7 +25,8 @@ const verifyToken = (token) => {
 
 const SecurePaths = ["/user", "/account", "/getInfor", "/editInfor", "/changepass",
   "/banSong", "/addlike", "/unlike", "/createplaylist", "/getuserplaylist", "/addtoplaylist",
-  "/getuserlikesong", "/addnewhistory","/getHistory","/delemyplaylist","/editComment","/createComment"];
+  "/getuserlikesong", "/addnewhistory", "/getHistory", "/delemyplaylist",
+  "/editComment", "/createComment", "/deleteComment","/reportComment"];
 
 const extractToken = (req) => { 
   if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
@@ -35,7 +36,6 @@ const extractToken = (req) => {
 }
 const checkUserJWT = (req, res, next) => {
   if (!SecurePaths.includes(req.path)) return next();
-
   let cookies = req.cookies;
   let tokenFromHeader = extractToken(req);
   if ((cookies && cookies.jwt) || tokenFromHeader) {
