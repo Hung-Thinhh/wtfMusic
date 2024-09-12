@@ -54,7 +54,6 @@ passport.use(new FacebookStrategy({
   profileFields: ['email','photos','id', 'displayName']
 },
 async function(accessToken, refreshToken, profile, cb) {
-  console.log(profile)
   const user = await User.findOne({
     email: profile.emails[0].value,
   });

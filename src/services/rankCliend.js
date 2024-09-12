@@ -8,7 +8,7 @@ const getPlaylistRankMonth = async () => {
     dateToday.getMonth() - 1,
     1
   ); // Ngày đầu tiên của tháng
-  console.log(firstDayOfMonth);
+  // console.log(firstDayOfMonth);
   // Tìm ngày gần nhất trước ngày đầu tiên của tháng mà có dữ liệu
   let closestDateWithData = await SongRanking.findOne({
     rankingDate: { $gte: firstDayOfMonth },
@@ -173,7 +173,7 @@ console.log('cc',firstDayOfWeek);
 
   // Gọi hàm và xử lý kết quả
   const songsByGenres = await getAllSongsByGenres();
-  console.log(songsByGenres);
+  // console.log(songsByGenres);
   return {
     EM: "Thêm vào lịch sử thành công!",
     EC: "0",
@@ -182,7 +182,7 @@ console.log('cc',firstDayOfWeek);
 };
 const addRanking = async (id) => {
   let songRanking = await SongRanking.findOne({ songId: id }).sort({ rankingDate: -1 });
-  console.log(songRanking);
+  // console.log(songRanking);
     if (songRanking) {
       if (songRanking.rankingDate.getDate() === new Date().getDate()) {
         songRanking.listenCount += 1;

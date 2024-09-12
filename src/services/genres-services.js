@@ -95,7 +95,7 @@ const getGenresById = async (id) => {
     const albums = await getAlbumHot();
     const songs = await getSongHot();
     const genres = await getGenres();
-    console.log(genres);
+    // console.log(genres);
 
     if (albums.length > 0) {
       const listArtist = albums.map((item) => item.artistsId[0]);

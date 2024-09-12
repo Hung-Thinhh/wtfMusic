@@ -82,12 +82,12 @@ const RelatedPlaylist = async (id) => {
   const isIDExist = await all.some(song => song.id == id);
 
 if (isIDExist) {
-  console.log("ID '8787' đã tồn tại trong kết quả trả về.");
+  console.log("ID đã tồn tại trong kết quả trả về.");
 } else {
   const nowSong = await Song.findOne({id: id,state: { $ne: 1 } }, { id: 1, artist: 1, songname: 1,artists:1 ,thumbnail:1, } )
   console.log('kaaaaaaaaaaaaaaa',nowSong);
   await all.unshift(nowSong);
-  console.log("ID '8787' không tồn tại trong kết quả trả về.");
+  console.log("ID không tồn tại trong kết quả trả về.");
 }
   if (all) {
     return {

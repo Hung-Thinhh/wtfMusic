@@ -21,10 +21,10 @@ const getartist = async (req, res) => {
         const seconds2 = date2.getSeconds();
         const seconds1 = date1.getSeconds();
 
-        console.log("Seconds1:", seconds1);
-        console.log("Seconds2:", seconds2);
+        // console.log("Seconds1:", seconds1);
+        // console.log("Seconds2:", seconds2);
 
-        console.log(date2);
+        // console.log(date2);
         return res.json(url);
     };
     getSongmp3();
@@ -62,7 +62,9 @@ const getArtist = async (req, res) => {
         if (data) {
             const songListId = data.songListId;
             const playListId = data.playListId;
-            console.log(songListId);
+            
+            // console.log(songListId);
+
             for (let i = 0; i < songListId.length; i++) {
                 const song = await Song.findOne({ id: songListId[i] }).select("songname thumbnail id artists");
                 if (song) {
