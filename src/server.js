@@ -6,6 +6,7 @@ import initApiRouter from "./routes/api.js";
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
+import {setupWebSocket}  from "./socket/socketConfig.js";
 require('../passport.js')
 
 require('dotenv').config()
@@ -13,8 +14,11 @@ require('dotenv').config()
 
 const app = express()
 const PORT = process.env.PORT || 6969
+const server = require('http').createServer(app);
 
 
+// Khởi tạo WebSocket server với cấu hình định sẵn
+setupWebSocket(server);
 const corsOptions = {
     origin: 'http://localhost:3000', // Thay đổi địa chỉ này thành nguồn gốc của ứng dụng của bạn
     optionsSuccessStatus: 200, // Mã trạng thái thành công mặc định khi yêu cầu CORS thành công
@@ -33,6 +37,6 @@ db.connect()
 initWebRouter(app); 
 initApiRouter(app); 
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(" Running on port " + PORT +":  http://localhost:" +PORT);
 })

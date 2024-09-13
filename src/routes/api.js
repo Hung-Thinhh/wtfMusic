@@ -3,15 +3,10 @@ import { checkUserJWT, checkUserPermission } from "../middleware/jwt.js";
 const passport = require('passport');
 
 const {
-    getartist,
-    songly,
-    songurl,
-    gethome,
     getArtist,
-
     search,
 } = require("../controller/getData.js");
-const { getRating } = require("../controller/RatingController.js");
+const { getRating,addHistoryRank } = require("../controller/RatingController.js");
 const { getHome } = require("../controller/homeController.js");
 const { fetchPlaylist, getRelatedPlaylist } = require("../controller/playlistController.js");
 const { fetchGenres, getGenresbyId } = require("../controller/genresController.js");
@@ -24,7 +19,6 @@ const {
     fetchSongData,
 } = require("../controller/clonedata.js");
 const { addToHistory, getHistory } = require("../controller/history.js");
-const { getRankMonth,addHistoryRank } = require("../controller/rankingCliend.js");
 const {
     handleRegister, handleLogin, handleLogingg, checkAccount,
     handleLogout, handleForgotPassword, handleVerifyOtp,RequestOTP
@@ -69,7 +63,7 @@ const { getPlaylistRankControl } = require("../controller/rangkingPlaylist.js");
 const { getSongRankListenControl } = require("../controller/rangkingSongListen.js");
 const { getPlaylistRankListenControl } = require("../controller/rangkingPlaylistListen.js");
 const { restComment,getComment,editComment,createComment,deleteComment,reportComment } = require("../controller/restComment.js");
-const { getbanData } = require("../controller/getBan.js");
+const { getbanData } = require("../controller/admin/getBan.js");
 
 const {
     searchSongsCtrl,
@@ -141,13 +135,11 @@ const initApiRouter = (app) => {
     router.post('/getuserlikesong', userGetLikeSongs);
     router.post('/addtoplaylist', addToPlaylist);
     //music
-    router.get('/getartist', getartist);
     router.get('/songdetail/:id', songdetail);
     router.get('/songPage/:id', songPage);
-    router.get('/songurl/:id', songurl);
-    router.get('/songly/:id', songly);
     router.get('/search/:id', search);
     router.get('/home', getHome);
+    // get rankings (rating)
     router.get('/rating', getRating);
     router.get('/artist/:id', getArtist);
     router.get('/get100', get100);
@@ -158,7 +150,6 @@ const initApiRouter = (app) => {
     router.get('/clone', fetchclone);
     router.post('/cloneplaylist', fetchplaylistclone);
     router.post('/clonepArtists', fetchArtistsClone);
-    router.post("/restcomment", restComment);
     router.get("/getComment/:id/:page", getComment);
     router.post("/createComment", createComment);
     router.post("/editComment", editComment);
@@ -173,8 +164,6 @@ const initApiRouter = (app) => {
     router.get('/getrankingplservicelisten/:id', getPlaylistRankListenControl);
 
 
-    //Bảng xếp hạng
-    router.get('/getRankCliend', getRankMonth);
 
 
 

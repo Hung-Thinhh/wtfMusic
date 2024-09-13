@@ -5,7 +5,7 @@ import mongoose, { Types } from "mongoose";
 
 const restCommentService = async (data, userId) => {
   if (userId) {
-    console.log(data);
+    // console.log(data);
     if (data.status === "create") {
       if (
         data.data.comments === "" ||
@@ -156,7 +156,6 @@ const restCommentService = async (data, userId) => {
   }
 };
 const getComments = async (id,page) => {
-  console.log("hahahai", id);
   const limit = 10;
   const skip = (page - 1) * limit;
   const countComment =  await Comment.countDocuments({
@@ -221,7 +220,6 @@ const getComments = async (id,page) => {
 };
 const editComments = async (data,userId) => {
   try {
-    console.log("hahahai", data);
     const oldComment = await Comment.findOne({ _id: data.commentId });
     if (oldComment && oldComment.userId === userId && data.text.length>0) {
       oldComment.content = data.text;
@@ -250,7 +248,6 @@ const editComments = async (data,userId) => {
 };
 const createComments = async (data,userId) => {
   try {
-    console.log("hahahai", data);
     if (!data.text) {
       return {
         EM: "comment không được để trống!",
@@ -301,7 +298,6 @@ const replies =  await Comment.find({ parentId: commentData.parentId});
 };
 const deleteComments = async (id,userId) => {
   try {
-    console.log("hahahai", userId);
     const oldComment = await Comment.findOne({ _id: id, userId: userId });
     const parentId = oldComment.parentId || 'no parent';
     if (oldComment) {
@@ -311,7 +307,7 @@ const deleteComments = async (id,userId) => {
       return {
         EM: "lấy comment thành công!",
         EC: "0",
-        DT: parentId,
+        DT: oldComment,
       };
     } else {
       return {

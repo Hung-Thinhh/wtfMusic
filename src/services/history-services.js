@@ -1,7 +1,7 @@
 import History from "../models/history.js";
 import Song from "../models/sonng_model.js";
 import Playlist from "../models/playlist_model.js";
-import addRanking from "./rankCliend.js"
+import {addRanking} from "./rankCliend.js"
 
 const addHistory = async (idUser, data) => {
   let roles;
@@ -52,7 +52,7 @@ const addHistory = async (idUser, data) => {
 const getMyHistory = async (idUser) => {
   let user = await History.findOne({ userId: idUser });
   if (user) {
-    console.log(user);
+    // console.log(user);
     const playlistIds = user.PlaylistHistory;
     const songId = user.SongHistory;
     const playlistInfoArray = new Array(playlistIds.length);

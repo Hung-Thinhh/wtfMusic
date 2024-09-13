@@ -260,7 +260,6 @@ const addLike = async (data, id) => {
 };
 const unLike = async (data, id) => {
   let updateData;
-  console.log(data);
   if (data.type == "song") {
     let ps = await Song.findOne({ id: data.id });
     let songRanking = await SongRanking.findOne({ songId: data.id });
@@ -403,7 +402,6 @@ const createMyPlaylist = async (user, playlistname) => {
     const hasDuplicate = await isDuplicateName(playlistname);
     if (!hasDuplicate) {
       const newPlaylistID = uuidv4().substring(0, 8).toUpperCase();
-      console.log("nowwwwwwwwwwwwwwwwwwwwwww");
       //Tạo playlist mới với các thông tin tương ứng
       const createdPlaylist = new Playlist({
         playlistId: newPlaylistID,
@@ -422,7 +420,6 @@ const createMyPlaylist = async (user, playlistname) => {
 
       // Lưu playlist
       const data1 = await createdPlaylist.save();
-      console.log("nvvvvvvvvvvvvvvvvvvvvvvvvvvv");
 
       //Thêm playlistId vào mảng playlistId của user
       // getUser.myPlayLists.push(newPlaylistID);
