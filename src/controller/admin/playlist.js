@@ -1,4 +1,6 @@
 const Playlist = require('../../models/playlist_model');
+const Ar = require('../../models/artists_model');
+const Genre = require('../../models/genre_model');
 const { v4: uuidv4 } = require("uuid");
 const cloudinary = require("cloudinary").v2;
 cloudinary.config({
@@ -31,13 +33,13 @@ const adminP = async (req, res) => {
             EC: "-1",
             DT: ""
           });
-        } else if (!req.body.playlistname || !req.body.genresid || !req.body.artistsId || !req.body.type || !req.body.description || !req.body.songid || !req.body.playlistname.trim() === "" || !req.body.genresid.trim() === "" || !req.body.artistsId.trim() === "" || !req.body.type.trim() === "" || !req.body.description.trim() === "" || !req.body.songid.trim() === ""){
+        } else if (!req.body.playlistname || !req.body.genresid || !req.body.artistsId || !req.body.type || !req.body.description || !req.body.songid || !req.body.playlistname.trim() === "" || !req.body.genresid.trim() === "" || !req.body.artistsId.trim() === "" || !req.body.type.trim() === "" || !req.body.description.trim() === "" || !req.body.songid.trim() === "") {
           return res.status(200).json({
             EM: "không được để trống",
             EC: "-1",
             DT: ""
           });
-        } 
+        }
         else {
           const playlistname = req.body.playlistname
           const genresid = req.body.genresid
@@ -60,6 +62,36 @@ const adminP = async (req, res) => {
             console.log("Failed to upload file:", error);
           }
           const newIDAr = uuidv4().substring(0, 8).toUpperCase();
+
+          const newGenreId = genresid.split(",");
+          const genrePromises = newGenreId.map(async (id) => {
+            const genre = await Genre.findOne({ genreId: id });
+            if (!genre) {
+              return res.status(200).json({
+                EM: "genreId không tồn tại",
+                EC: "-1",
+                DT: ""
+              });
+            } else {
+              await Genre.updateOne({ $push: { playlistId: id } });
+            }
+          });
+          await Promise.all(genrePromises);
+
+          const newArtistId = artistsId.split(",");
+          const artistPromises = newArtistId.map(async (id) => {
+            const artist = await Ar.findOne({ id: id });
+            if (!artist) {
+              return res.status(200).json({
+                EM: "artistId không tồn tại",
+                EC: "-1",
+                DT: ""
+              });
+            } else {
+              await Ar.updateOne({ $push: { playListId: id } });
+            }
+          });
+          await Promise.all(artistPromises);
           form = {
             playlistId: newIDAr,
             playlistname: playlistname,
@@ -71,8 +103,6 @@ const adminP = async (req, res) => {
             songid: songid.split(","),
           };
         }
-
-        console.log(data);
         let data = await Playlist.create(form);
 
         if (data) {
@@ -133,7 +163,35 @@ const adminP = async (req, res) => {
           } catch (error) {
             console.log("Failed to upload file:", error);
           }
+          const newGenreId = genresid.split(",");
+          const genrePromises = newGenreId.map(async (id) => {
+            const genre = await Genre.findOne({ genreId: id });
+            if (!genre) {
+              return res.status(200).json({
+                EM: "genreId không tồn tại",
+                EC: "-1",
+                DT: ""
+              });
+            } else {
+              await Genre.updateOne({ $push: { playlistId: id } });
+            }
+          });
+          await Promise.all(genrePromises);
 
+          const newArtistId = artistsId.split(",");
+          const artistPromises = newArtistId.map(async (id) => {
+            const artist = await Ar.findOne({ id: id });
+            if (!artist) {
+              return res.status(200).json({
+                EM: "artistId không tồn tại",
+                EC: "-1",
+                DT: ""
+              });
+            } else {
+              await Ar.updateOne({ $push: { playListId: id } });  
+            }
+          });
+          await Promise.all(artistPromises);
           form = {
             playlistId: playlistId,
             thumbnail: fileUrl,
