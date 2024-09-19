@@ -17,15 +17,13 @@ const PORT = process.env.PORT || 6969
 const server = require('http').createServer(app);
 
 
-// Khởi tạo WebSocket server với cấu hình định sẵn
 setupWebSocket(server);
 const corsOptions = {
-    origin: 'http://localhost:3000', // Thay đổi địa chỉ này thành nguồn gốc của ứng dụng của bạn
-    optionsSuccessStatus: 200, // Mã trạng thái thành công mặc định khi yêu cầu CORS thành công
+    origin: 'http://localhost:3000', 
+    optionsSuccessStatus: 200, 
     credentials: true,
   };
   
-  // Sử dụng middleware CORS trên tất cả các yêu cầu
 app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
