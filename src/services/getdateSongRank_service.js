@@ -49,7 +49,7 @@ const getSongRank = async (id, range, startDay) => {
             const completeSongRankings = Array.from(dateMap, ([date, likeCount]) => ({ date, likeCount }));
 
             return {
-                EM: "thêm vào lịch sử thành công!",
+                EM: "lấy dữ liệu thành công!",
                 EC: "0",
                 DT: completeSongRankings,
             };
@@ -67,7 +67,7 @@ const getSongRank = async (id, range, startDay) => {
                 },
             });
             return {
-                EM: "thêm vào lịch sử thành công!",
+                EM: "lấy dữ liệu thành công!",
                 EC: "0",
                 DT: songRankings,
             };
