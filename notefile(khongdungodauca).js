@@ -1,12 +1,11 @@
-import SongRanking from "../models/songRanking_model";
 
-const getSongRank = async (id, range, startDay) => {
-    try {
-        if (id === "all") {
-            const today = new Date(startDay);
+const getSongRank = async (id, type) => {
+    switch (type) {
+        case "all-allsong":
+            const today = new Date();
             today.setHours(0, 0, 0, 0);
             const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - range);
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
             const songRankings = await SongRanking.aggregate([
                 {
@@ -49,15 +48,15 @@ const getSongRank = async (id, range, startDay) => {
             const completeSongRankings = Array.from(dateMap, ([date, likeCount]) => ({ date, likeCount }));
 
             return {
-                EM: "lấy dữ liệu thành công!",
+                EM: "thêm vào lịch sử thành công!",
                 EC: "0",
                 DT: completeSongRankings,
             };
-        } else {
-            const today = new Date(startDay);
+        case "all-song":
+            const today = new Date();
             today.setHours(0, 0, 0, 0);
             const tenDaysAgo = new Date();
-            tenDaysAgo.setDate(tenDaysAgo.getDate() - Number(range));
+            tenDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
             const songRankings = await SongRanking.find({
                 songId: id,
@@ -67,18 +66,28 @@ const getSongRank = async (id, range, startDay) => {
                 },
             });
             return {
-                EM: "lấy dữ liệu thành công!",
+                EM: "thêm vào lịch sử thành công!",
                 EC: "0",
                 DT: songRankings,
             };
-        }
-    } catch (error) {
-        return {
-            EM: "Đã xảy ra lỗi!",
-            EC: "1",
-            DT: error.message,
-        };
+        case "range-allsong":
+
+            break;
+        case "range-song":
+
+            break;
+        default:
+            break;
     }
 };
 
+
+
 module.exports = { getSongRank };
+
+
+
+
+
+
+

@@ -157,7 +157,7 @@ const initApiRouter = (app) => {
     router.post("/reportComment", reportComment);
     router.post("/delemyplaylist", deleteMyPl);
 
-    router.get('/getrankingservice/:id', getSongRankControl);
+    router.get('/getrankingservice/:id/:range/:start', getSongRankControl);
     router.get('/getrankingplservice/:id', getPlaylistRankControl);
 
     router.get('/getrankingservicelisten/:id', getSongRankListenControl);

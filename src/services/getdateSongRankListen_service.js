@@ -1,11 +1,11 @@
 import SongRanking from "../models/songRanking_model";
 
-const getSongRankListen = async (id) => {
+const getSongRankListen = async (id, range, start) => {
     if (id === "all") {
-        const today = new Date();
+        const today = new Date(start);
         today.setHours(0, 0, 0, 0);
         const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - range);
 
         const songRankings = await SongRanking.aggregate([
             {
@@ -53,10 +53,10 @@ const getSongRankListen = async (id) => {
             DT: completeSongRankings,
         };
     } else {
-        const today = new Date();
+        const today = new Date(start);
         today.setHours(0, 0, 0, 0);
         const tenDaysAgo = new Date();
-        tenDaysAgo.setDate(tenDaysAgo.getDate() - 5);
+        tenDaysAgo.setDate(tenDaysAgo.getDate() -  range);
 
         const songRankings = await SongRanking.find({
             songId: id,
