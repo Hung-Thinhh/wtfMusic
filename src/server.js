@@ -6,7 +6,9 @@ import initApiRouter from "./routes/api.js";
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import {setupWebSocket}  from "./socket/socketConfig.js";
+import { setupWebSocket } from "./socket/socketConfig.js";
+import scheduler from './scheduler.js'; 
+
 require('../passport.js')
 
 require('dotenv').config()
@@ -33,6 +35,8 @@ app.use(cookieParser());
 configViewEngine(app);
 //conect database
 db.connect()
+scheduler.startScheduler(); // Khởi tạo scheduler
+
 // init web router
 initWebRouter(app); 
 initApiRouter(app); 

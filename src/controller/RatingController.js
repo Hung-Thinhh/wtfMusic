@@ -1,7 +1,11 @@
 import { getPlaylistRankMonth,getPlaylistRankWeek,addRanking } from "../services/rankCliend.js"
 const getRating = async (req, res) => {
-  const data = await getPlaylistRankMonth()
-  const weekChart = await getPlaylistRankWeek()
+  const [data, weekChart] = await Promise.all([
+    getPlaylistRankMonth(),
+    getPlaylistRankWeek(),
+  ]);
+  console.log(data);
+  
   if (data.EC == "0" && weekChart.EC=="0" ) {
     return res.status(200).json({
       EM: data.EM,

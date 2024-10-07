@@ -75,6 +75,10 @@ const songSchema = new Schema({
     trim: true,
     default: 0,
   },
+  // ranking: {
+  //   type: Schema.Types.ObjectId, // Sử dụng ObjectId để tạo liên kết với SongRanking
+  //   ref: 'SongRanking', // Xác định model liên kết là SongRanking
+  // },
   createdAt: {
     type: Date,
     default: Date.now,

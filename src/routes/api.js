@@ -3,9 +3,9 @@ import { checkUserJWT, checkUserPermission } from "../middleware/jwt.js";
 const passport = require('passport');
 
 const {
-    getArtist,
     search,
 } = require("../controller/getData.js");
+import {getArtist} from "../controller/ArtistController.js"
 const { getRating,addHistoryRank } = require("../controller/RatingController.js");
 const { getHome } = require("../controller/homeController.js");
 const { fetchPlaylist, getRelatedPlaylist } = require("../controller/playlistController.js");

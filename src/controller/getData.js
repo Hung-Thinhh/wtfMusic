@@ -57,6 +57,7 @@ const gethome = async (req, res) => {
 };
 
 const getArtist = async (req, res) => {
+    // id là alias 
     const artistId = req.params.id;
     await Ar.findOne({ alias: artistId }).then(async (data) => {
         if (data) {
@@ -80,8 +81,8 @@ const getArtist = async (req, res) => {
             return res.json(data);
         } else {
             const getSongmp3 = async () => {
-                const songly = await Nuxtify.getSongDetail(data.songListId);
-                return res.json(songly);
+                const songly = await Nuxtify.getArtist(artistId);
+                return res.json(songly.data);
             };
             getSongmp3();
         }

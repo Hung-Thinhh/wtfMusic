@@ -27,6 +27,8 @@ const multer = require("multer");
 
 const Infor = async (req, res) => {
   try {
+    console.log('ahhahahahahhah');
+    
     let data = await getInfor(req.user.id);
     if (data && data.EC == "0") {
       return res.status(200).json({

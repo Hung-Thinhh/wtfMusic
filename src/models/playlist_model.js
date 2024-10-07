@@ -29,7 +29,6 @@ const playlistSchema = new Schema({
     },
     thumbnail: {
         type: String,
-        required: true
     },
     type: {
         type: String,
