@@ -106,6 +106,7 @@ const createMonthlyRankingPlaylist = async (rankingDate) => {
 
   // Lấy 100 bài hát có điểm cao nhất
   const topSongs = await Song.find({})
+    .select("artists id songname thumbnail duration")
     .sort({ state: 1 })
     .limit(100)
     .then((songs) => {
@@ -172,7 +173,7 @@ const createMonthlyRankingPlaylist = async (rankingDate) => {
       songId,
       rankingDate
     );
-    console.log(`Bài hát ${songId}: Thứ hạng ${rank} - ${rankComparison}`);
+    // console.log(`Bài hát ${songId}: Thứ hạng ${rank} - ${rankComparison}`);
   }
 
   console.log(`Playlist ${playlistName} đã được tạo thành công!`);
@@ -258,6 +259,7 @@ const createWeeklyRankingPlaylist = async (rankingDate, genreId) => {
 
   // Lấy 100 bài hát có điểm cao nhất trong thể loại
   const topSongs = await Song.find({ genresid: genresMap[genreId] })
+    .select("artists id songname thumbnail duration")
     .sort({ state: 1 })
     .limit(50)
     .then((songs) => {
@@ -431,11 +433,13 @@ const getPlaylistRankMonth = async () => {
   ]);
 
   if (playlist.length === 0) {
-     playlist = await Playlist.aggregate([
-      { $match: {
-        playlistname: `Bảng xếp hạng tháng 9/${currentYear}`,
-        state: { $ne: 1 },
-      } },
+    playlist = await Playlist.aggregate([
+      {
+        $match: {
+          playlistname: `Bảng xếp hạng tháng 9/${currentYear}`,
+          state: { $ne: 1 },
+        },
+      },
       {
         $lookup: {
           from: "songs",
@@ -461,9 +465,8 @@ const getPlaylistRankMonth = async () => {
           as: "songs",
         },
       },
-     ]);
-   playlistNames = `Bảng xếp hạng tháng 8/${currentYear}`;
-    
+    ]);
+    playlistNames = `Bảng xếp hạng tháng 8/${currentYear}`;
   }
   const playlists = await Playlist.findOne(
     { playlistname: playlistNames },
@@ -503,9 +506,30 @@ const getPlaylistRankWeek = async () => {
           as: "songs", // Tên trường chứa kết quả lookup
         },
       },
+      {
+        $project: {
+          _id: 1, // Bao gồm trường _id của playlist
+          playlistname: 1, // Bao gồm trường playlistname của playlist
+          state: 1, // Bao gồm trường state của playlist
+          songid: 1, 
+
+          songs: {
+            $map: {
+              input: "$songs",
+              as: "song",
+              in: {
+                artists: "$$song.artists",
+                id: "$$song.id",
+                songname: "$$song.songname",
+                thumbnail: "$$song.thumbnail",
+                duration: "$$song.duration",
+              },
+            },
+          },
+        },
+      },
     ]);
 
-    console.log(playlist);
 
     if (!playlist.length > 0) {
       const Lastplaylist = await Playlist.aggregate([
@@ -523,10 +547,32 @@ const getPlaylistRankWeek = async () => {
             as: "songs", // Tên trường chứa kết quả lookup
           },
         },
+        {
+          $project: {
+            _id: 1, // Bao gồm trường _id của playlist
+            playlistname: 1, // Bao gồm trường playlistname của playlist
+            state: 1, // Bao gồm trường state của playlist
+            songid: 1, 
+            songs: {
+              $map: {
+                input: "$songs",
+                as: "song",
+                in: {
+                  artists: "$$song.artists",
+                  id: "$$song.id",
+                  songname: "$$song.songname",
+                  thumbnail: "$$song.thumbnail",
+                  duration: "$$song.duration",
+                },
+              },
+            },
+          },
+        },
       ]);
       console.log(
         `Bảng xếp hạng tuần 37/${currentYear} - ${genresMap[genreId]}`
       );
+
       const song = sortSongsBySongId(
         Lastplaylist[0].songid,
         Lastplaylist[0].songs
@@ -550,7 +596,6 @@ const addRanking = async (id) => {
   let songRanking = await SongRanking.findOne({ songId: id }).sort({
     rankingDate: -1,
   });
-  // console.log(songRanking);
   if (songRanking) {
     if (songRanking.rankingDate.getDate() === new Date().getDate()) {
       songRanking.listenCount += 1;

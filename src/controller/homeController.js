@@ -1,14 +1,6 @@
 
 // const { Nuxtify } = require("nuxtify-api");
 import  {getNewRelease,getSongHot,getSongRemix,getSongChill,getSongTop100,getAlbumHot,getSongRating,getSongSad} from "../services/home-services"
-
-
-
-
-const Song = require("../models/sonng_model");
-const Playlist = require("../models/playlist_model");
-const Ar = require('../models/artists_model');
-const Gr = require('../models/genre_model');
 const { Nuxtify } = require("nuxtify-api");
 
 

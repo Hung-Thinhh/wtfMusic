@@ -4,7 +4,7 @@ const getRating = async (req, res) => {
     getPlaylistRankMonth(),
     getPlaylistRankWeek(),
   ]);
-  console.log(data);
+  // console.log(data);
   
   if (data.EC == "0" && weekChart.EC=="0" ) {
     return res.status(200).json({

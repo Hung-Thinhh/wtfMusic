@@ -5,7 +5,7 @@ const passport = require('passport');
 const {
     search,
 } = require("../controller/getData.js");
-import {getArtist} from "../controller/ArtistController.js"
+import {getArtist, getArtistSong,getArtistPlaylist} from "../controller/ArtistController.js"
 const { getRating,addHistoryRank } = require("../controller/RatingController.js");
 const { getHome } = require("../controller/homeController.js");
 const { fetchPlaylist, getRelatedPlaylist } = require("../controller/playlistController.js");
@@ -142,6 +142,8 @@ const initApiRouter = (app) => {
     // get rankings (rating)
     router.get('/rating', getRating);
     router.get('/artist/:id', getArtist);
+    router.get('/artistSong/:id', getArtistSong);
+    router.get('/artistPlaylist/:id', getArtistPlaylist);
     router.get('/get100', get100);
     router.get('/getplaylist/:id', fetchPlaylist);
     router.get('/getRelatedPlaylist/:id', getRelatedPlaylist);
