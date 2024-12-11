@@ -1,7 +1,7 @@
 import { getPlaylist } from "./history-services";
 import Song from "../models/sonng_model.js";
 import Playlist from "../models/playlist_model.js";
-
+import Ar from "../models/artists_model.js";
 const getNewRelease = async () => {
   try {
     const [vPop, others, all] = await Promise.all([
@@ -20,11 +20,22 @@ const getNewRelease = async () => {
       Song.find({ state: { $ne: 1 } }).sort({ createdAt: -1 }).select("artists id songname thumbnail").limit(12)
     ]);
 
-    const newRelease = { all, vPop, others };
+    const populateArtists = async (songs) => {
+      return Promise.all(songs.map(async (song) => {
+        const artists = await Ar.find({ id: { $in: song.artists } });
+        return { ...song._doc, artists };
+      }));
+    };
+
+    const newRelease = {
+      all: await populateArtists(all),
+      vPop: await populateArtists(vPop),
+      others: await populateArtists(others)
+    };
     return newRelease;
   } catch (error) {
     console.error("Error fetching new releases:", error);
-    throw error; // Hoặc xử lý lỗi theo cách bạn muốn
+    throw error;
   }
 };
 
