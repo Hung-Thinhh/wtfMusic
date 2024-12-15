@@ -2,7 +2,7 @@
 // const { Nuxtify } = require("nuxtify-api");
 import  {getNewRelease,getSongHot,getSongRemix,getSongChill,getSongTop100,getAlbumHot,getSongRating,getSongSad} from "../services/home-services"
 const { Nuxtify } = require("nuxtify-api");
-
+const { ZingMp3 } = require("zingmp3-api-full-v3")
 
 const getRandomIds = (array, count) => {
   const shuffled = array.sort(() => 0.5 - Math.random());
@@ -11,7 +11,7 @@ const getRandomIds = (array, count) => {
 
 const handleHome = async (req, res) => {
   try {
-    const haha = await Nuxtify.getPlaylist('ZWZCOE6B');
+    const haha = await ZingMp3.getSong("Z6F7W66I");
 
     // Lấy tất cả các document từ collection
     // const documents = await Gr.find();

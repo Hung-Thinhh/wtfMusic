@@ -1,6 +1,7 @@
 import Song from "../models/sonng_model";
 import Playlist from "../models/playlist_model";
 import Genres from "../models/genre_model";
+const { ZingMp3 } = require("zingmp3-api-full-v3")
 const getSong = async (id) => {
   const song = await Song.findOne({
     id: id,
@@ -31,6 +32,11 @@ const getSong = async (id) => {
           DT: "",
         };
       } else {
+        const haha = await ZingMp3.getSong(id);
+        if (haha["msg"] != 'Bài hát chỉ dành cho tài khoản VIP, PRI' && song.songLink.includes('?') ) {
+          
+          song.songLink=haha.data["128"]
+        }
         return {
           EM: "thêm vào lịch sử thành công!",
           EC: "0",

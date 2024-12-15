@@ -1,22 +1,109 @@
 import { getPlaylist } from "./history-services";
+import { getPlaylistRankMonth } from "./rankCliend.js";
 import Song from "../models/sonng_model.js";
 import Playlist from "../models/playlist_model.js";
 
 const getNewRelease = async () => {
   try {
     const [vPop, others, all] = await Promise.all([
-      Song.find({
-        $and: [
-          { genresid: { $elemMatch: { $eq: "IWZ9Z087" } } },
-          { state: { $ne: 1 } }
-        ]
-      }).select("artists id songname thumbnail").limit(12),
+      // Song.find({
+      //   $and: [
+      //     { genresid: { $elemMatch: { $eq: "IWZ9Z087" } } },
+      //     { state: { $ne: 1 } }
+      //   ]
+      // }).select("artists id songname thumbnail").limit(12),
+      Song.aggregate([
+        {
+          $match: {
+            $and: [
+              { genresid: { $elemMatch: { $eq: "IWZ9Z087" } } },
+              { state: { $ne: 1 } }
+            ]
+          }
+        },
+        {
+          $unwind: "$artists" // Mở rộng mảng artists
+        },
+        {
+          $lookup: {
+            from: "artists", // Tên collection Artists
+            localField: "artists", // Trường chứa id nghệ sĩ trong collection Song
+            foreignField: "id", // Trường _id trong collection Artists
+            as: "artistInfo"
+          }
+        },
+        {
+          $group: {
+            _id: {
+              id: "$id",
+              songname: "$songname",
+              thumbnail: "$thumbnail"
+            },
+            artists: { $addToSet: "$artistInfo" } // Gom các nghệ sĩ vào một mảng
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            id: "$_id.id",
+            songname: "$_id.songname",
+            thumbnail: "$_id.thumbnail",
+            artists: 1
+          }
+        }
+      ]).limit(12),
       Song.find({
         $and: [
           { genresid: { $in: ['IWZ9Z086','IWZ9Z08U'] } },
           { state: { $ne: 1 } }
         ],
       }).select("artists id songname thumbnail").limit(12),
+      // Song.aggregate([
+      //   {
+      //     $sort: { createdAt: -1 } // Thêm điều kiện sort
+      //   },
+      //   {
+      //     $match: {
+      //       $and: [
+      //         { state: { $ne: 1 } }
+      //       ]
+      //     }
+      //   },
+        
+      //   {
+      //     $unwind: "$artists" // Mở rộng mảng artists
+      //   },
+      //   {
+      //     $lookup: {
+      //       from: "artists", // Tên collection Artists
+      //       localField: "artists", // Trường chứa id nghệ sĩ trong collection Song
+      //       foreignField: "id", // Trường _id trong collection Artists
+      //       as: "artistInfo"
+      //     }
+      //   },
+      //   {
+      //     $unwind: "$artistInfo"
+      //   },
+      //   {
+      //     $group: {
+      //       _id: {
+      //         id: "$id",
+      //         songname: "$songname",
+      //         thumbnail: "$thumbnail"
+      //       },
+      //       artists: { $addToSet: "$artistInfo" } // Gom các nghệ sĩ vào một mảng
+      //     }
+      //   },
+      //   {
+      //     $project: {
+      //       _id: 0,
+      //       id: "$_id.id",
+      //       songname: "$_id.songname",
+      //       thumbnail: "$_id.thumbnail",
+      //       artists: 1
+      //     }
+      //   }
+      // ]).limit(12)
       Song.find({ state: { $ne: 1 } }).sort({ createdAt: -1 }).select("artists id songname thumbnail").limit(12)
     ]);
 
@@ -64,10 +151,11 @@ const getSongSad = async () => {
 };
 
 const getSongRating = async () => {
-  const songRating = await Song.find({ state: { $ne: 1 } }).select("artists id songname thumbnail")
-    .sort({ listen: -1, createdAt: -1 })
-    .limit(8);
-  return songRating;
+  const data = await getPlaylistRankMonth()
+  // const songRating = await Song.find({ state: { $ne: 1 } }).select("artists id songname thumbnail")
+  //   .sort({ listen: -1, createdAt: -1 })
+  //   .limit(8);
+  return data.DT.NowPlaylist.songs.slice(0,9);
 };
 
 const getSongTop100 = async () => {

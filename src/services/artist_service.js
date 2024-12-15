@@ -33,7 +33,7 @@ const infoArtist = async (id) => {
       data.playListId = playlist;
     }
     const playlists = await Playlist.find({
-      artistsId: { $in: ["IW6ZZ690"] },
+      artistsId: { $in: [data.id] },
       type: "playlist",
     }).select("playlistname thumbnail playlistId");
     // Tạo bản sao của data

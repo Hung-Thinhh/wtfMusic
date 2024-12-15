@@ -431,8 +431,10 @@ const getPlaylistRankMonth = async () => {
       },
     },
   ]);
-
+  
   if (playlist.length === 0) {
+    console.log('Không có playlist');
+    
     playlist = await Playlist.aggregate([
       {
         $match: {
@@ -465,20 +467,48 @@ const getPlaylistRankMonth = async () => {
           as: "songs",
         },
       },
+      {
+        $project: {
+          _id: 1, // Bao gồm trường _id của playlist
+          playlistname: 1, // Bao gồm trường playlistname của playlist
+          state: 1, // Bao gồm trường state của playlist
+          songid: 1, 
+          playlistId:1,
+
+          songs: {
+            $map: {
+              input: "$songs",
+              as: "song",
+              in: {
+                artists: "$$song.artists",
+                id: "$$song.id",
+                songname: "$$song.songname",
+                thumbnail: "$$song.thumbnail",
+                duration: "$$song.duration",
+              },
+            },
+          },
+        },
+      },
     ]);
+
+
     playlistNames = `Bảng xếp hạng tháng 8/${currentYear}`;
   }
+  
+  
   const playlists = await Playlist.findOne(
     { playlistname: playlistNames },
     { songid: 1, _id: 0 }
   );
+  
 
   const song = sortSongsBySongId(playlist[0].songid, playlist[0].songs);
-
+const newData = {...playlist[0],songs: song}
   return {
     EM: "Lấy dữ liệu thành công!",
     EC: "0",
-    DT: { song, playlists },
+    DT: { NowPlaylist:newData, lastPlaylist :playlists },
   };
 };
 
@@ -491,7 +521,7 @@ const getPlaylistRankWeek = async () => {
 
   for (const genreId in genresMap) {
     const playlistName = `Bảng xếp hạng tuần ${currentWeek}/${currentYear} - ${genresMap[genreId]}`;
-    const playlist = await Playlist.aggregate([
+    let playlist = await Playlist.aggregate([
       {
         $match: {
           playlistname: playlistName,
@@ -512,6 +542,7 @@ const getPlaylistRankWeek = async () => {
           playlistname: 1, // Bao gồm trường playlistname của playlist
           state: 1, // Bao gồm trường state của playlist
           songid: 1, 
+          playlistId:1,
 
           songs: {
             $map: {
@@ -532,10 +563,10 @@ const getPlaylistRankWeek = async () => {
 
 
     if (!playlist.length > 0) {
-      const Lastplaylist = await Playlist.aggregate([
+      playlist = await Playlist.aggregate([
         {
           $match: {
-            playlistname: `Bảng xếp hạng tuần 37/${currentYear} - ${genresMap[genreId]}`,
+            playlistname: `Bảng xếp hạng tuần 38/${currentYear} - ${genresMap[genreId]}`,
             state: { $ne: 1 },
           },
         },
@@ -553,6 +584,7 @@ const getPlaylistRankWeek = async () => {
             playlistname: 1, // Bao gồm trường playlistname của playlist
             state: 1, // Bao gồm trường state của playlist
             songid: 1, 
+            playlistId:1,
             songs: {
               $map: {
                 input: "$songs",
@@ -569,18 +601,24 @@ const getPlaylistRankWeek = async () => {
           },
         },
       ]);
-      console.log(
-        `Bảng xếp hạng tuần 37/${currentYear} - ${genresMap[genreId]}`
-      );
+      // console.log(
+      //   `Bảng xếp hạng tuần 37/${currentYear} - ${genresMap[genreId]}`
+      // );
 
-      const song = sortSongsBySongId(
-        Lastplaylist[0].songid,
-        Lastplaylist[0].songs
-      );
-      playlists.push({ song, playlists: Lastplaylist });
+      
     } else {
       console.log("No playlist found for:", playlistName);
     }
+    const song = sortSongsBySongId(
+      playlist[0].songid,
+      playlist[0].songs
+    );
+    const newData = {...playlist[0],songs: song}
+    const Lastplaylist = await Playlist.findOne(
+      { playlistname: `Bảng xếp hạng tuần 37/${currentYear} - ${genresMap[genreId]}` },
+      { songid: 1, _id: 0 }
+    );
+    playlists.push({ NowPlaylist:newData, lastPlaylist: Lastplaylist });
   }
 
   return {

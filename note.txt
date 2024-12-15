@@ -1,0 +1,34 @@
+// Giả sử bạn có collection "playlists" và "songs"
+const playlists = db.collection('playlists');
+const songs = db.collection('songs');
+const artists = db.collection('artists');
+
+// Lấy thông tin playlist dựa trên id
+const playlistId = 'playlistId'; // Thay thế bằng id playlist thực tế
+const playlist = await playlists.findOne({ _id: playlistId });
+
+// Lấy thông tin các bài hát trong playlist
+const songIds = playlist.songs; // Giả sử trường "songs" chứa danh sách id bài hát
+
+// Sử dụng $lookup để kết nối với collection "songs"
+const songData = await songs.aggregate([
+  {
+    $match: {
+      _id: { $in: songIds }
+    }
+  },
+  {
+    $lookup: {
+      from: "artists", // Tên collection "artists"
+      localField: "artistId", // Trường "artistId" trong collection "songs"
+      foreignField: "_id", // Trường "_id" trong collection "artists"
+      as: "artist"
+    }
+  },
+  {
+    $unwind: "$artist" // Mở rộng trường "artist" thành một document riêng biệt
+  }
+]).toArray();
+
+// In ra thông tin các bài hát và nghệ sĩ
+console.log(songData);

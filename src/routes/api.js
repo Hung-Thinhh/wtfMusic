@@ -32,6 +32,8 @@ import {
     addLikeSomething,
     unLikeSomething,
     getMyPl,
+    getBlocked,
+    removeBlocked,
     createMyPl,
     addToPlaylist,
     getAllUs,
@@ -96,7 +98,8 @@ const initApiRouter = (app) => {
     router.get('/auth/google/callback', (req, res, next) => {
           
         passport.authenticate('google', (err, profile,data) => {
-            // console.log('ahhaha',profile,);
+            console.log('ahhaha',data,);
+
             req.user = data;
             next()
         })(req, res, next);
@@ -111,7 +114,7 @@ const initApiRouter = (app) => {
     router.get('/auth/facebook/callback', (req, res, next) => {
           
         passport.authenticate('facebook', (err, profile,data) => {
-            // console.log('ahhaha',profile,);
+            console.log('ahhaha',data,);
             req.user = data;
             next()
         })(req, res, next);
@@ -131,7 +134,10 @@ const initApiRouter = (app) => {
     router.post('/addlike', addLikeSomething);
     router.post('/unlike', unLikeSomething);
     router.post('/createplaylist', createMyPl);
-    router.post('/getuserplaylist', getMyPl);
+    router.get('/getuserplaylist', getMyPl);
+    router.get('/getBlocked', getBlocked);
+    router.post('/removeBlocked', removeBlocked);
+
     router.post('/getuserlikesong', userGetLikeSongs);
     router.post('/addtoplaylist', addToPlaylist);
     //music
