@@ -25,7 +25,7 @@ const songSchema = new Schema({
     index: true,
   },
   artists: {
-    type: Array,
+    type: [String], // Ensure this is an array of strings
     required: true,
     trim: true,
     index: true,

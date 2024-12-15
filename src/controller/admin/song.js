@@ -565,6 +565,19 @@ const adminS = async (req, res) => {
   }
 }
 
+const call = async (req, res) => {
+  try {
+    const { id } = req.params; // Ensure id is defined from request parameters
+    // ...existing code...
+    const songListId = [id]; // Use the defined id variable
+    // ...existing code...
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
 module.exports = {
-  adminS
+  adminS,
+  call
 };

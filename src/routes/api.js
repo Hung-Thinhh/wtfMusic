@@ -5,8 +5,8 @@ const passport = require('passport');
 const {
     search,
 } = require("../controller/getData.js");
-import {getArtist, getArtistSong,getArtistPlaylist} from "../controller/ArtistController.js"
-const { getRating,addHistoryRank } = require("../controller/RatingController.js");
+import { getArtist, getArtistSong, getArtistPlaylist } from "../controller/ArtistController.js"
+const { getRating, addHistoryRank } = require("../controller/RatingController.js");
 const { getHome } = require("../controller/homeController.js");
 const { fetchPlaylist, getRelatedPlaylist } = require("../controller/playlistController.js");
 const { fetchGenres, getGenresbyId } = require("../controller/genresController.js");
@@ -21,7 +21,7 @@ const {
 const { addToHistory, getHistory } = require("../controller/history.js");
 const {
     handleRegister, handleLogin, handleLogingg, checkAccount,
-    handleLogout, handleForgotPassword, handleVerifyOtp,RequestOTP
+    handleLogout, handleForgotPassword, handleVerifyOtp, RequestOTP
 } = require("../controller/Authentication.js");
 
 import {
@@ -57,14 +57,14 @@ const { adminA } = require("../controller/admin/artists.js");
 const { adminP } = require("../controller/admin/playlist.js");
 const { bancomment } = require("../controller/admin/comment.js");
 
-const {getSongEditPage_Controller} =require("../controller/admin/getSongCrtl[editPage].js");
+const { getSongEditPage_Controller } = require("../controller/admin/getSongCrtl[editPage].js");
 
 const { getSongRankControl } = require("../controller/rangkingSong.js");
 const { getPlaylistRankControl } = require("../controller/rangkingPlaylist.js");
 
 const { getSongRankListenControl } = require("../controller/rangkingSongListen.js");
 const { getPlaylistRankListenControl } = require("../controller/rangkingPlaylistListen.js");
-const { restComment,getComment,editComment,createComment,deleteComment,reportComment } = require("../controller/restComment.js");
+const { restComment, getComment, editComment, createComment, deleteComment, reportComment } = require("../controller/restComment.js");
 const { getbanData } = require("../controller/admin/getBan.js");
 
 const {
@@ -93,9 +93,12 @@ const initApiRouter = (app) => {
     router.get("/account", checkAccount);
     router.post("/logout", handleLogout);
     router.get('/google',
-        passport.authenticate('google', { scope: ['profile','email'], session: false }));
-      
+        passport.authenticate('google', { scope: ['profile', 'email'], session: false }));
+
     router.get('/auth/google/callback', (req, res, next) => {
+
+        passport.authenticate('google', (err, profile, data) => {
+            // console.log('ahhaha',profile,);
           
         passport.authenticate('google', (err, profile,data) => {
             console.log('ahhaha',data,);
@@ -109,9 +112,12 @@ const initApiRouter = (app) => {
     }
     );
     router.get('/facebook',
-        passport.authenticate('facebook', { session: false,scope: ['email']}));
-      
+        passport.authenticate('facebook', { session: false, scope: ['email'] }));
+
     router.get('/auth/facebook/callback', (req, res, next) => {
+
+        passport.authenticate('facebook', (err, profile, data) => {
+            // console.log('ahhaha',profile,);
           
         passport.authenticate('facebook', (err, profile,data) => {
             console.log('ahhaha',data,);
@@ -120,11 +126,11 @@ const initApiRouter = (app) => {
         })(req, res, next);
     },
         (req, res) => {
-        res.redirect(`http://localhost:3000/login-gg-success/${req.user.token}`);
-        // handleLogingg(req, res,req.user)
-    }
+            res.redirect(`http://localhost:3000/login-gg-success/${req.user.token}`);
+            // handleLogingg(req, res,req.user)
+        }
     );
-    router.post("/login-gg-success",handleLogingg);
+    router.post("/login-gg-success", handleLogingg);
 
     //user
     router.get("/getInfor", Infor);
@@ -166,10 +172,10 @@ const initApiRouter = (app) => {
     router.post("/delemyplaylist", deleteMyPl);
 
     router.get('/getrankingservice/:id/:range/:start', getSongRankControl);
-    router.get('/getrankingplservice/:id', getPlaylistRankControl);
+    router.post('/getrankingplservice', getPlaylistRankControl);
 
-    router.get('/getrankingservicelisten/:id', getSongRankListenControl);
-    router.get('/getrankingplservicelisten/:id', getPlaylistRankListenControl);
+    router.get('/getrankingservicelisten/:id/:range/:start', getSongRankListenControl);
+    router.post('/getrankingplservicelisten', getPlaylistRankListenControl);
 
 
 

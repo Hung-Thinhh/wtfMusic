@@ -4,7 +4,7 @@ const getSongRankListen = async (id, range, start) => {
     if (id === "all") {
         const today = new Date(start);
         today.setHours(0, 0, 0, 0);
-        const thirtyDaysAgo = new Date();
+        const thirtyDaysAgo = new Date(start);
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - range);
 
         const songRankings = await SongRanking.aggregate([
@@ -55,8 +55,8 @@ const getSongRankListen = async (id, range, start) => {
     } else {
         const today = new Date(start);
         today.setHours(0, 0, 0, 0);
-        const tenDaysAgo = new Date();
-        tenDaysAgo.setDate(tenDaysAgo.getDate() -  range);
+        const tenDaysAgo = new Date(start);
+        tenDaysAgo.setDate(tenDaysAgo.getDate() - range);
 
         const songRankings = await SongRanking.find({
             songId: id,
@@ -72,7 +72,5 @@ const getSongRankListen = async (id, range, start) => {
         };
     }
 };
-
-
 
 module.exports = { getSongRankListen };
