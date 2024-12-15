@@ -100,25 +100,23 @@ const initApiRouter = (app) => {
         passport.authenticate('google', (err, profile, data) => {
             // console.log('ahhaha',profile,);
           
-        passport.authenticate('google', (err, profile,data) => {
-            console.log('ahhaha',data,);
+            passport.authenticate('google', (err, profile, data) => {
+                console.log('ahhaha', data,);
 
-            req.user = data;
-            next()
-        })(req, res, next);
-    }, (req, res) => {
-        res.redirect(`http://localhost:3000/login-gg-success/${req.user.token}`);
-        // handleLogingg(req, res,req.user)
-    }
-    );
+                req.user = data;
+                next()
+            })(req, res, next);
+        }, (req, res) => {
+            res.redirect(`http://localhost:3000/login-gg-success/${req.user.token}`);
+            // handleLogingg(req, res,req.user)
+        }
+        )
+    });
     router.get('/facebook',
         passport.authenticate('facebook', { session: false, scope: ['email'] }));
 
     router.get('/auth/facebook/callback', (req, res, next) => {
 
-        passport.authenticate('facebook', (err, profile, data) => {
-            // console.log('ahhaha',profile,);
-          
         passport.authenticate('facebook', (err, profile,data) => {
             console.log('ahhaha',data,);
             req.user = data;
