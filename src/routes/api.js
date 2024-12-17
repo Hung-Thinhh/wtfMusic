@@ -73,7 +73,7 @@ const {
     searchArtistsCtrl,
 } = require("../controller/admin/adminSearch.js");
 
-
+const  {getSlideController,setSildeController,insertSildeController} = require("../controller/admin/getSlideController.js");
 
 const router = express.Router();
 
@@ -201,6 +201,10 @@ const initApiRouter = (app) => {
     router.post("/admin/searchPlaylist", searchPlaylistCtrl);
     router.post("/admin/searchUser", searchUserCtrl);
     router.post("/admin/searchArtists", searchArtistsCtrl);
+    router.get("/admin/getslide", getSlideController);
+    router.post("/admin/setslide/:id", setSildeController);
+    router.post("/admin/insertslide", insertSildeController);
+
 
 
     router.get("/admin/editpage/:id", getSongEditPage_Controller);

@@ -3,7 +3,6 @@ const { getPlaylistRankListen } = require('../services/getdatePlaylitstRankListe
 const getPlaylistRankListenControl = async (req, res) => {
   const idata = req.body;
   const data = await getPlaylistRankListen(idata);
-  console.log("playlist lis",data);
   if (data.EC == "0") {
     return res.status(200).json({
       EM: data.EM,
