@@ -23,43 +23,49 @@ const getInfor = async (id) => {
 };
 const updateInfor = async (data, id) => {
   const newInfor = data.infor;
-  const existingUser = await User.findOne({ email: newInfor.email });
-  if (existingUser) {
-    if (existingUser.id === newInfor.id) {
-      const updateUser = await User.findOneAndUpdate({ id: id }, newInfor, {
-        upsert: true,
-        new: true,
-      }).select("-_id username email birthday avt");
-      if (updateUser) {
-        return {
-          EM: "updated successfully",
-          EC: "0",
-          DT: updateUser,
-        };
-      } else {
-        console.log(
-          "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
-        );
-        return false;
-      }
-    }
+  console.log(newInfor);
+  const user = await User.findOne({ id: id });
+  const checkUsername = await User.findOne({ username: newInfor.username });
+  if (checkUsername && user.username != newInfor.username) {
+    return {
+      EM: "Username is already",
+      EC: "1",
+      DT: [],
+    };
+    
     // Nếu đã có tài khoản sử dụng địa chỉ email này, xử lý logic trả về thông báo hoặc hành động phù hợp.
   } else {
-    const updateUser = await User.findOneAndUpdate({ id: id }, newInfor, {
-      upsert: true,
-      new: true,
-    }).select("-_id username email birthday avt");
-    if (updateUser) {
+    const checkEmail = await User.findOne({ email: newInfor.email });
+    if (checkEmail  && user.email != newInfor.email) {
       return {
-        EM: "updated successfully",
-        EC: "0",
-        DT: updateUser,
+        EM: "Email is already",
+        EC: "1",
+        DT: [],
+      };
+    }else if (user.type=='email'  && user.email != newInfor.email) {
+      return {
+        EM: "Không được đổi email này!!",
+        EC: "1",
+        DT: [],
       };
     } else {
-      console.log(
-        "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
-      );
-      return false;
+        const updateUser = await User.findOneAndUpdate({ id: id }, newInfor, {
+          upsert: true,
+          new: true,
+        }).select("-_id username email birthday avt");
+        if (updateUser) {
+          return {
+            EM: "updated successfully",
+            EC: "0",
+            DT: updateUser,
+          };
+        } else {
+          console.log(
+            "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
+          );
+          return false;
+        }
+      
     }
   }
 };
@@ -154,10 +160,12 @@ const addBanSong = async (songId, id) => {
     { upsert: true }
   );
   if (updateUser) {
+    const userUpdate = await User.findOne({ id: id });
+
     return {
       EM: "Bài nhạc đã bị cấm",
       EC: "0",
-      DT: "",
+      DT: userUpdate.banSongs,
     };
   } else {
     return {
@@ -643,6 +651,68 @@ const getMylikesSongs = async (idUser) => {
     };
   }
 };
+const getBlockedSong = async (idUser) => {
+  try {
+    const getUser = await User.findOne({ id: idUser });
+
+    if (getUser.banSongs.length > 0) {
+      const getsong = async (id) => {
+        return await Song.findOne({ id: id });
+      };
+      const songPromises = getUser.banSongs.map((idSong) => {
+        return getsong(idSong);
+      });
+      const songs = await Promise.all(songPromises);
+      return {
+        EM: "Lấy danh sách nhạc đã thich thành công!",
+        EC: "0",
+        DT: songs,
+      };
+    } else {
+      return {
+        EM: "Lấy danh sách nhạc đã thich thành công!",
+        EC: "0",
+        DT: [],
+      };
+    }
+  } catch (err) {
+    return {
+      EM: "Lấy danh sách nhạc đã thich thất bại!",
+      EC: "-1",
+      DT: "",
+    };
+  }
+};
+const removeBlockedSong = async (idUser,id) => {
+  try {
+    const getUser =await User.findOneAndUpdate(
+      { id: idUser },
+      { $pull: { banSongs: id } },
+      { new: true } 
+    );
+
+    if (getUser) {
+      const userUpdate = await User.findOne({ id: idUser });
+      return {
+        EM: "Unban thành công!",
+        EC: "0",
+        DT: userUpdate.banSongs,
+      };
+    } else {
+      return {
+        EM: "Unban thất bại!",
+        EC: "1",
+        DT: '',
+      };
+    }
+  } catch (err) {
+    return {
+      EM: "Lấy danh sách nhạc đã thich thất bại!",
+      EC: "-1",
+      DT: "",
+    };
+  }
+};
 const changeRole = async (data) => {
   let updateData;
   if (data.status === "delete") {
@@ -768,4 +838,5 @@ module.exports = {
   changeRole,
   deleteMyPlaylist,
   resetpassword,
+  getBlockedSong,removeBlockedSong
 };

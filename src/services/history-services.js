@@ -102,14 +102,14 @@ const getMyHistory = async (idUser) => {
       return {
         EM: "thêm vào lịch sử thất bại!",
         EC: "1",
-        DT: "",
+        DT: { playlist: [], song: [] },
       };
     }
   } else {
     return {
-      EM: "thêm vào lịch sử thất bại!",
+      EM: "Không thấy tài khoản",
       EC: "1",
-      DT: "",
+      DT: { playlist: [], song: [] },
     };
   }
 };

@@ -24,7 +24,8 @@ const verifyToken = (token) => {
 };
 
 const SecurePaths = ["/user", "/account", "/getInfor", "/editInfor", "/changepass",
-  "/banSong", "/addlike", "/unlike", "/createplaylist", "/getuserplaylist", "/addtoplaylist",
+  "/banSong", "/addlike", "/unlike", "/createplaylist", "/getuserplaylist", "/getBlocked",
+  "/removeBlocked", "/addtoplaylist",
   "/getuserlikesong", "/addnewhistory", "/getHistory", "/delemyplaylist",
   "/editComment", "/createComment", "/deleteComment","/reportComment"];
 

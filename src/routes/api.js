@@ -32,6 +32,8 @@ import {
     addLikeSomething,
     unLikeSomething,
     getMyPl,
+    getBlocked,
+    removeBlocked,
     createMyPl,
     addToPlaylist,
     getAllUs,
@@ -97,21 +99,26 @@ const initApiRouter = (app) => {
 
         passport.authenticate('google', (err, profile, data) => {
             // console.log('ahhaha',profile,);
-            req.user = data;
-            next()
-        })(req, res, next);
-    }, (req, res) => {
-        res.redirect(`http://localhost:3000/login-gg-success/${req.user.token}`);
-        // handleLogingg(req, res,req.user)
-    }
-    );
+          
+            passport.authenticate('google', (err, profile, data) => {
+                console.log('ahhaha', data,);
+
+                req.user = data;
+                next()
+            })(req, res, next);
+        }, (req, res) => {
+            res.redirect(`http://localhost:3000/login-gg-success/${req.user.token}`);
+            // handleLogingg(req, res,req.user)
+        }
+        )
+    });
     router.get('/facebook',
         passport.authenticate('facebook', { session: false, scope: ['email'] }));
 
     router.get('/auth/facebook/callback', (req, res, next) => {
 
-        passport.authenticate('facebook', (err, profile, data) => {
-            // console.log('ahhaha',profile,);
+        passport.authenticate('facebook', (err, profile,data) => {
+            console.log('ahhaha',data,);
             req.user = data;
             next()
         })(req, res, next);
@@ -131,7 +138,10 @@ const initApiRouter = (app) => {
     router.post('/addlike', addLikeSomething);
     router.post('/unlike', unLikeSomething);
     router.post('/createplaylist', createMyPl);
-    router.post('/getuserplaylist', getMyPl);
+    router.get('/getuserplaylist', getMyPl);
+    router.get('/getBlocked', getBlocked);
+    router.post('/removeBlocked', removeBlocked);
+
     router.post('/getuserlikesong', userGetLikeSongs);
     router.post('/addtoplaylist', addToPlaylist);
     //music
