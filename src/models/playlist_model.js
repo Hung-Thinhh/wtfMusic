@@ -34,7 +34,7 @@ const playlistSchema = new Schema({
         type: String,
         required: true
     },
-    description: { //Sửa lại trường 'desciption' thành 'description'
+    description: {
         type: String,
         required: true,
         trim: true,
@@ -61,7 +61,7 @@ const playlistSchema = new Schema({
         type: Number,
         required: true,
         trim: true,
-        default:0,
+        default: 0,
     },
     createdAt: {
         type: Date,

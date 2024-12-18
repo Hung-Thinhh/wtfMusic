@@ -83,19 +83,19 @@ const adminA = async (req, res) => {
           await Promise.all([...songPromises, ...playlistPromises]);
 
           form = {
-              infor: {
-                id: newIDAr,
-                artistsName: artistsName,
-                avt: fileUrl,
-                alias: artistsName,
-                biography: biography,
-                birthday: birthday,
-                realName: realName,
-                songListId: songListId.split(","),
-                playListId: playListId.split(","),
-                totalFollow: 0
-              }
-            };
+            infor: {
+              id: newIDAr,
+              artistsName: artistsName,
+              avt: fileUrl,
+              alias: artistsName,
+              biography: biography,
+              birthday: birthday,
+              realName: realName,
+              songListId: songListId.split(","),
+              playListId: playListId.split(","),
+              totalFollow: 0
+            }
+          };
         }
 
         let data = await Ar.create(form.infor);
@@ -129,12 +129,14 @@ const adminA = async (req, res) => {
         } else if (!req.file) {
 
           form = {
-            artistsName: req.body.artistsName,
-            biography: req.body.biography,
-            birthday: req.body.birthday,
-            realName: req.body.realName,
-            songListId: req.body.songListId.split(","),
-            playListId: req.body.playListId.split(","),
+            infor: {
+              artistsName: req.body.artistsName,
+              biography: req.body.biography,
+              birthday: req.body.birthday,
+              realName: req.body.realName,
+              songListId: req.body.songListId.split(","),
+              playListId: req.body.playListId.split(",")
+            }
 
           };
           console.log("dell up", form.infor);
@@ -200,9 +202,8 @@ const adminA = async (req, res) => {
             play.updateOne({ $push: { playlistId: id } });
           }
         });
-        console.log("coas up", req.body.id, form);
-        let data = await Ar.updateOne({ id: req.body.id }, form);
-
+        let data = await Ar.findOneAndUpdate({ id: req.body.id }, form);
+console.log("sdsdsdsdsdsdsdsdsdsdsdsdsdsd",req.body.id,form,data)
         if (data) {
           return res.status(200).json({
             EM: "cập nhật thông tin thành công",
