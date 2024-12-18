@@ -10,22 +10,22 @@ const adminAr = async (req, res) => {
             { $sort: { _id: -1 } },
             { $skip: +limit },
             { $limit: 10 },
-            {
-                $lookup: {
-                    from: 'songs',
-                    localField: 'songListId',
-                    foreignField: 'id',
-                    as: 'songListNames'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'playlists',
-                    localField: 'playListId',
-                    foreignField: 'playlistId',
-                    as: 'playListNames'
-                }
-            },
+            // {
+            //     $lookup: {
+            //         from: 'songs',
+            //         localField: 'songListId',
+            //         foreignField: 'id',
+            //         as: 'songListId'
+            //     }
+            // },
+            // {
+            //     $lookup: {
+            //         from: 'playlists',
+            //         localField: 'playListId',
+            //         foreignField: 'playlistId',
+            //         as: 'playListId'
+            //     }
+            // },
             {
                 $project: {
                     _id: 0,
@@ -36,9 +36,10 @@ const adminAr = async (req, res) => {
                     realName: 1,
                     biography: 1,
                     birthday: 1,
-                    totalFollow: 1,
-                    songListNames: { id: 1, songname: 1, thumbnail: 1 },
-                    playListNames: { playlistId: 1, playlistname: 1, thumbnail: 1 },
+                    songListId: 1,
+                    playListId:1,
+                    // songListNames: { id: 1, songname: 1, thumbnail: 1 },
+                    // playListNames: { playlistId: 1, playlistname: 1, thumbnail: 1 },
                     createdAt: 1,
                     state: 1
                 }

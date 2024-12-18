@@ -9,7 +9,7 @@ const adminSong = async (req, res) => {
         const songData = await Song.aggregate([
             { $sort: { _id: -1 } },
             { $skip: +limit },
-            { $limit: 20 },
+            { $limit: 10 },
             {
                 $lookup: {
                     from: 'genres',

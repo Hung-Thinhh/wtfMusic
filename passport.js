@@ -14,14 +14,18 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "/api/auth/google/callback",
     },
+    accessToken => {
+      console.log('kiki',accessToken);
+    },
     async function (accessToken, refreshToken, profile, cb) {
       //   thêm vào db
-      const user = await User.findOne({
-        email: profile.emails[0].value,
-      });
+      console.log('logoooooooooooooooooooooooooooo');
+      
+      let user = await User.findOne({ email: profile.emails[0].value });
+
       if (!user) {
         let hashPass = hashPassword("123456xyz");
-        const user = new User({
+        user = new User({
           id: generateId(),
           email: profile.emails[0].value,
           username: profile.id,
@@ -30,20 +34,18 @@ passport.use(
           birthday: "",
           role: "1",
           type_login: "email",
-          token:generateId()
+          token: generateId()
         });
         await user.save();
-      return cb(null, profile, user);
-
       } else {
-        const user = await User.findOneAndUpdate({ email: profile.emails[0].value }, {token:generateId()}, {
+        user = await User.findOneAndUpdate({ email: profile.emails[0].value }, { token: generateId() }, {
           upsert: true,
           new: true,
-        }).select("-_id email token")
-      return cb(null, profile, user);
-
+        }).select("-_id email token");
       }
 
+      // Gọi cb một lần duy nhất để thông báo cho passport
+      return cb(null, profile, user);
     }
   )
 );

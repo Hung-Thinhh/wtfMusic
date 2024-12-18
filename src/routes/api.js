@@ -95,23 +95,29 @@ const initApiRouter = (app) => {
     router.get('/google',
         passport.authenticate('google', { scope: ['profile', 'email'], session: false }));
 
-    router.get('/auth/google/callback', (req, res, next) => {
-
-        passport.authenticate('google', (err, profile, data) => {
-            // console.log('ahhaha',profile,);
+        router.get('/auth/google/callback', (req, res, next) => {
+            console.log('kiiiiiiiiiiiiiiiiiiiiiiii');
           
             passport.authenticate('google', (err, profile, data) => {
-                console.log('ahhaha', data,);
-
-                req.user = data;
-                next()
+              if (err) {
+                // Xử lý lỗi
+                console.error('Lỗi xác thực Google:', err);
+                return res.status(500).send('Lỗi xác thực Google');
+              }
+          
+              if (!data) {
+                // Xử lý trường hợp không tìm thấy người dùng
+                console.error('Không tìm thấy người dùng');
+                return res.status(401).send('Không tìm thấy người dùng');
+              }
+          
+              // Lưu thông tin người dùng vào req.user
+              req.user = data;
+          
+              // Chuyển hướng đến trang thành công
+              res.redirect(`http://localhost:3000/login-gg-success/${req.user.token}`);
             })(req, res, next);
-        }, (req, res) => {
-            res.redirect(`http://localhost:3000/login-gg-success/${req.user.token}`);
-            // handleLogingg(req, res,req.user)
-        }
-        )
-    });
+          });
     router.get('/facebook',
         passport.authenticate('facebook', { session: false, scope: ['email'] }));
 
