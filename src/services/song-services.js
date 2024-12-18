@@ -3,12 +3,17 @@ import Playlist from "../models/playlist_model";
 import Genres from "../models/genre_model";
 const { ZingMp3 } = require("zingmp3-api-full-v3")
 const getSong = async (id) => {
-  const song = await Song.findOne({
-    id: id,
-    state: { $ne: 1 }
-  });
-  if (song) {
-    const genreId = song.genresid;
+  const song = await Song.aggregate([
+    {
+      $match: {
+        id: id,
+        state: { $ne: 1 }
+      }
+    }
+  ]);
+  
+  if (song[0]) {
+    const genreId = song[0].genresid;
     const genres = [];
     const promises = genreId.map((id) => {
       return Genres.findOne({ genreId: id })
@@ -33,14 +38,14 @@ const getSong = async (id) => {
         };
       } else {
         const haha = await ZingMp3.getSong(id);
-        if (haha["msg"] != 'Bài hát chỉ dành cho tài khoản VIP, PRI' && song.songLink.includes('?') ) {
+        if (haha["msg"] != 'Bài hát chỉ dành cho tài khoản VIP, PRI' && song[0].songLink.includes('?') ) {
           
-          song.songLink=haha.data["128"]
+          song[0].songLink=haha.data["128"]
         }
         return {
           EM: "thêm vào lịch sử thành công!",
           EC: "0",
-          DT: { song, genres },
+          DT: { song:song[0], genres },
         };
       }
     } catch (error) {
@@ -60,26 +65,34 @@ const getSong = async (id) => {
   }
 };
 const getSongRelated = async (id) => {
-  const song = await Song.findOne({
-    id: id,
-    state: { $ne: 1 }
-  });
-  if (song) {
-    const genreId = song.genresid;
+  const song = await Song.aggregate([
+    {
+      $match: {
+        id: id,
+        state: { $ne: 1 }
+      }
+    }
+  ]);
+  console.log(song);
+
+  if (song && song[0]) {
+    const genreId = song[0].genresid;
     const genres = [];
     const promises = genreId.map((id) => {
       return Genres.findOne({ genreId: id })
         .then((genresItem) => {
           // Nếu tìm thấy playlist, thêm thông tin vào mảng playlistInfoArray
-          if (genres) {
+         
             const genresInfo = genresItem;
             genres.push(genresInfo);
-          }
+          
         })
         .catch((error) => {
           console.log("Error retrieving playlist:", error);
         });
     });
+    console.log(genres);
+    
     try {
       const results = await Promise.all(promises);
       if (results.some((result) => result instanceof Error)) {
@@ -91,20 +104,20 @@ const getSongRelated = async (id) => {
         };
       } else {
         const songRelated = await Song.find({
-          genresid: { $in: song.genresid },
+          genresid: { $in: song[0].genresid },
           state: { $ne: 1 }
         })
           .sort({ createdAt: -1 })
           .limit(12);
         const playlistRelated = await Playlist.find({
-          genresid: { $in: song.genresid },
+          genresid: { $in: song[0].genresid },
         })
           .sort({ createdAt: -1 })
           .limit(5);
         return {
           EM: "thêm vào lịch sử thành công!",
           EC: "0",
-          DT: { song, songRelated, playlistRelated },
+          DT: { song:song[0], songRelated, playlistRelated },
         };
       }
     } catch (error) {

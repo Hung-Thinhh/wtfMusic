@@ -365,7 +365,7 @@ const getMyPlaylist = async (idUser) => {
 
     if (getUser.myPlayLists.length > 0) {
       const getplaylist = async (id) => {
-        return await Playlist.findOne({ playlistId: id });
+        return await Playlist.findOne({ playlistId: id }).select('playlistId playlistname thumbnail');
       };
       const playlistPromises = getUser.myPlayLists.map((idPlaylist) => {
         return getplaylist(idPlaylist);
@@ -616,10 +616,10 @@ const getMylikesSongs = async (idUser) => {
 
     if (getUser.likedSongs.length > 0) {
       const getsong = async (id) => {
-        return await Song.findOne({ id: id });
+        return await Song.findOne({ id: id }).select('id songname thumbnail duration songLink');
       };
       const getplaylist = async (id) => {
-        return await Playlist.findOne({ playlistId: id });
+        return await Playlist.findOne({ playlistId: id }).select('playlistId playlistname thumbnail');
       };
       const songPromises = getUser.likedSongs.map((idSong) => {
         return getsong(idSong);
@@ -657,7 +657,7 @@ const getBlockedSong = async (idUser) => {
 
     if (getUser.banSongs.length > 0) {
       const getsong = async (id) => {
-        return await Song.findOne({ id: id });
+        return await Song.findOne({ id: id }).select('id songname thumbnail songLink');
       };
       const songPromises = getUser.banSongs.map((idSong) => {
         return getsong(idSong);

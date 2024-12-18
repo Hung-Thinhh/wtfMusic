@@ -60,7 +60,7 @@ const getMyHistory = async (idUser) => {
 
     // Lặp qua từng id playlist và tìm playlist dựa trên id
     const playlistPromises = playlistIds.map((playlistId, index) => {
-      return Playlist.findOne({ playlistId: playlistId })
+      return Playlist.findOne({ playlistId: playlistId }).select('playlistId playlistname thumbnail')
         .then((playlist) => {
           if (playlist) {
             playlistInfoArray[index] = playlist;
@@ -73,7 +73,7 @@ const getMyHistory = async (idUser) => {
 
     // Lặp qua từng id song và tìm song dựa trên id
     const songPromises = songId.map((id, index) => {
-      return Song.findOne({ id: id, state: { $ne: 1 } })
+      return Song.findOne({ id: id, state: { $ne: 1 } }).select('id songname thumbnail duration songLink')
         .then((songItem) => {
           if (songItem) {
             songInfoArray[index] = songItem;

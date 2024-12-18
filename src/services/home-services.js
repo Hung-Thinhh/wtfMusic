@@ -15,20 +15,19 @@ const getNewRelease = async () => {
       Song.aggregate([
         {
           $match: {
-            $and: [
-              { genresid: { $elemMatch: { $eq: "IWZ9Z087" } } },
-              { state: { $ne: 1 } }
-            ]
+               genresid: { $elemMatch: { $eq: "IWZ9Z087" } } ,
+               state: { $ne: 1 } 
+            
           }
         },
         {
-          $unwind: "$artists" // Mở rộng mảng artists
+          $unwind: "$artists"
         },
         {
           $lookup: {
-            from: "artists", // Tên collection Artists
-            localField: "artists", // Trường chứa id nghệ sĩ trong collection Song
-            foreignField: "id", // Trường _id trong collection Artists
+            from: "artists",
+            localField: "artists",
+            foreignField: "id",
             as: "artistInfo"
           }
         },
@@ -39,7 +38,7 @@ const getNewRelease = async () => {
               songname: "$songname",
               thumbnail: "$thumbnail"
             },
-            artists: { $addToSet: "$artistInfo" } // Gom các nghệ sĩ vào một mảng
+            artists: { $addToSet: { $arrayElemAt: ["$artistInfo", 0] } }
           }
         },
         {
@@ -51,6 +50,8 @@ const getNewRelease = async () => {
             artists: 1
           }
         }
+       
+        
       ]).limit(12),
       Song.find({
         $and: [
@@ -107,17 +108,22 @@ const getNewRelease = async () => {
       Song.find({ state: { $ne: 1 } }).sort({ createdAt: -1 }).select("artists id songname thumbnail").limit(12)
     ]);
 
-    const populateArtists = async (songs) => {
-      return Promise.all(songs.map(async (song) => {
-        const artists = await Ar.find({ id: { $in: song.artists } });
-        return { ...song._doc, artists };
-      }));
-    };
+    // const populateArtists = async (songs) => {
+    //   return Promise.all(songs.map(async (song) => {
+    //     const artists = await Ar.find({ id: { $in: song.artists } });
+    //     return { ...song._doc, artists };
+    //   }));
+    // };
 
+    // const newRelease = {
+    //   all: await populateArtists(all),
+    //   vPop: await populateArtists(vPop),
+    //   others: await populateArtists(others)
+    // };
     const newRelease = {
-      all: await populateArtists(all),
-      vPop: await populateArtists(vPop),
-      others: await populateArtists(others)
+      all,
+      vPop,
+      others
     };
     return newRelease;
   } catch (error) {
