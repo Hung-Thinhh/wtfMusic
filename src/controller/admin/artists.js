@@ -239,7 +239,6 @@ console.log(form)
       }
     });
   } catch (err) {
-    console.log(err);
     return res.status(200).json({
       EM: "error from server",
       EC: "-1",
