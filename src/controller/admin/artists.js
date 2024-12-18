@@ -127,19 +127,14 @@ const adminA = async (req, res) => {
             DT: ""
           });
         } else if (!req.file) {
-
           form = {
-            infor: {
               artistsName: req.body.artistsName,
               biography: req.body.biography,
               birthday: req.body.birthday,
               realName: req.body.realName,
               songListId: req.body.songListId.split(","),
               playListId: req.body.playListId.split(",")
-            }
-
           };
-          console.log("dell up", form.infor);
         } else {
           const artistsName = req.body.artistsName
           const biography = req.body.biography
@@ -176,6 +171,7 @@ const adminA = async (req, res) => {
           }
 
         }
+
         const songListId = req.body.songListId.split(",");
         songListId.forEach((id) => {
           const song = Song.findOne({ id: id });
@@ -202,8 +198,9 @@ const adminA = async (req, res) => {
             play.updateOne({ $push: { playlistId: id } });
           }
         });
+
         let data = await Ar.findOneAndUpdate({ id: req.body.id }, form);
-console.log("sdsdsdsdsdsdsdsdsdsdsdsdsdsd",req.body.id,form,data)
+console.log(form)
         if (data) {
           return res.status(200).json({
             EM: "cập nhật thông tin thành công",
