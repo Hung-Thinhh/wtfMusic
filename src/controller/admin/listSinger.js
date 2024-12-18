@@ -1,6 +1,5 @@
-const Song = require('../../models/sonng_model');
 const Ar = require('../../models/artists_model');
-const Playlist = require('../../models/playlist_model');
+
 
 const adminAr = async (req, res) => {
     const limit = req.params.id;
@@ -47,6 +46,7 @@ const adminAr = async (req, res) => {
         ]);
 
         const responseData = { handleData: artistData, maxPage: artistCount };
+        console.log(responseData);
         res.json(responseData);
     } catch (err) {
         console.error(err);
