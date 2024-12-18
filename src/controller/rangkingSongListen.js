@@ -5,7 +5,6 @@ const getSongRankListenControl = async (req, res) => {
   const range = req.query.range;
   const start = req.query.start;
   const data = await getSongRankListen(songId, range, start);
-  console.log("song ls", data);
   if (data.EC == "0") {
     return res.status(200).json({
       EM: data.EM,
