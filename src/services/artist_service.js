@@ -1,133 +1,148 @@
-const { Nuxtify } = require("nuxtify-api");
 const Ar = require("../models/artists_model");
-const Song = require("../models/sonng_model");
-const Playlist = require("../models/playlist_model");
+
 const infoArtist = async (id) => {
-  const data = await Ar.findOne({ alias: id }).select(
-    "artistsName id biography birthday playListId realName avt totalFollow songListId"
-  );
+  const data = await Ar.aggregate([
+    { $match: { alias: id } },
+    {
+      $lookup: {
+        from: "songs",
+        localField: "songListId",
+        foreignField: "id",
+        pipeline: [
+          { $project: { id: 1 , songname: 1, thumbnail: 1, id: 1, duration: 1 } },
+        ],
+        as: "songListId",
+      },
+    },
+    {
+      $lookup: {
+        from: "playlists",
+        localField: "playListId",
+        foreignField: "playlistId",
+        as: "playListId",
+      },
+    },
+    {
+      $lookup: {
+        from: "playlists",
+        let: { artistId: "$id" },
+        pipeline: [
+          { $match: { $expr: { $in: ["$$artistId", "$artistsId"] }, type: "playlist" } },
+          { $project: { playlistname: 1, thumbnail: 1, playlistId: 1 } },
+        ],
+        as: "playlistJoin",
+      },
+    },
+    {
+      $lookup: {
+        from: "artists",
+        let: { songListId: "$songListId" },
+        pipeline: [
+          { $match: { $expr: { $in: ["$id", "$$songListId.id"] }, id: { $ne: "$id" } } },
+          { $project: { artistsName: 1, id: 1, avt: 1, totalFollow: 1, alias: 1 } },
+        ],
+        as: "relatedArtists",
+      },
+    },
+    {
+      $project: {
+        artistsName: 1,
+        id: 1,
+        biography: 1,
+        birthday: 1,
+        playListId: 1,
+        realName: 1,
+        avt: 1,
+        totalFollow: 1,
+        songListId: 1,
+        playlistJoin: 1,
+        relatedArtists: 1,
+      },
+    },
+  ]);
 
-  if (data) {
-    const song = await Song.find({ id: { $in: data.songListId } }).select(
-      "songname thumbnail id artists duration"
-    );
-    if (song) {
-      data.songListId = song;
-    }
-    // Lấy danh sách các nghệ sĩ liên quan
-    const relatedArtistsIds = data.songListId.flatMap((song) =>
-      song.artists.map((artist) => artist.id)
-    ); // Lấy danh sách ID nghệ sĩ từ song.artists
-    // console.log(relatedArtistsIds);
-    const relatedArtists = await Ar.find({
-      id: { $in: relatedArtistsIds.filter((a) => a !== data.id) },
-    })
-      .select("artistsName id avt totalFollow alias")
-      .lean();
-    // console.log(relatedArtists);
-
-    const playlist = await Playlist.find({
-      playlistId: { $in: data.playListId },
-    }).select("playlistname thumbnail playlistId");
-    if (playlist) {
-      data.playListId = playlist;
-    }
-    const playlists = await Playlist.find({
-      artistsId: { $in: [data.id] },
-      type: "playlist",
-    }).select("playlistname thumbnail playlistId");
-    // Tạo bản sao của data
-
-    const newData = JSON.parse(JSON.stringify(data));
-
-    // Thêm trường mới vào bản sao
-    newData.playlistJoin = playlists;
-    newData.relatedArtists = relatedArtists;
-
-    // console.log(newData); // Kiểm tra kết quả
-
+  if (data.length > 0) {
     return {
       EM: "Lấy artist thành công!",
       EC: "0",
-      DT: newData, // Sử dụng dữ liệu đã được cập nhật
+      DT: data[0],
     };
   } else {
-    const getSongmp3 = async () => {
-      const songly = await Nuxtify.getArtist(artistId);
-      return {
-        EM: "Lấy genres thành công!",
-        EC: "0",
-        DT: songly.data, // Sử dụng dữ liệu đã được cập nhật
-      };
+    return {
+      EM: "Artist not found",
+      EC: "1",
+      DT: null,
     };
-    getSongmp3();
   }
 };
+
 const ArtistSong = async (id) => {
-  const data = await Ar.findOne({ alias: id })
-    .select("playListId  songListId")
-    
-      if (data) {
-        const song = await Song.find({ id: { $in: data.songListId } }).select(
-          "songname thumbnail id artists duration"
-        );
-        if (song) {
-          return {
-            EM: "Lấy artist song thành công!",
-            EC: "0",
-            DT: song, // Sử dụng dữ liệu đã được cập nhật
-          };
-        } else {
-          return {
-            EM: "error",
-            EC: "1",
-            DT: "", // Sử dụng dữ liệu đã được cập nhật
-          };
-        }
+  const data = await Ar.aggregate([
+    { $match: { alias: id } },
+    {
+      $lookup: {
+        from: "songs",
+        localField: "songListId",
+        foreignField: "id",
+        pipeline: [
+          { $project: { songname: 1, thumbnail: 1, id: 1, duration: 1 } },
+        ],
+        as: "songListId",
+      },
+    },
+    {
+      $project: {
+        songListId: 1,
+      },
+    },
+  ]);
 
-        const playlist = await Playlist.find({
-          playlistId: { $in: data.playListId },
-        }).select("playlistname thumbnail playlistId");
-        if (playlist) {
-          data.playListId = playlist;
-        }
-      } else {
-        return {
-          EM: "error",
-          EC: "1",
-          DT: "", // Sử dụng dữ liệu đã được cập nhật
-        };
-      }
-  
+  if (data.length > 0) {
+    return {
+      EM: "Lấy artist song thành công!",
+      EC: "0",
+      DT: data[0].songListId,
+    };
+  } else {
+    return {
+      EM: "Artist not found",
+      EC: "1",
+      DT: null,
+    };
+  }
 };
+
 const Artistplaylist = async (id) => {
-  const data = await Ar.findOne({ alias: id })
-    .select("playListId  songListId")
-   
-      if (data) {
-        const playlist = await Playlist.find({
-          playlistId: { $in: data.playListId },
-        }).select("playlistname thumbnail playlistId");
-        if (playlist) {
-          return {
-            EM: "Lấy artist song thành công!",
-            EC: "0",
-            DT: playlist, // Sử dụng dữ liệu đã được cập nhật
-          };
-        } else {
-          return {
-            EM: "error",
-            EC: "1",
-            DT: "", // Sử dụng dữ liệu đã được cập nhật
-          };
-        }
-      } else {
-        return {
-          EM: "error",
-          EC: "1",
-          DT: "", // Sử dụng dữ liệu đã được cập nhật
-        };
-      }
+  const data = await Ar.aggregate([
+    { $match: { alias: id } },
+    {
+      $lookup: {
+        from: "playlists",
+        localField: "playListId",
+        foreignField: "playlistId",
+        as: "playListId",
+      },
+    },
+    {
+      $project: {
+        playListId: 1,
+      },
+    },
+  ]);
 
+  if (data.length > 0) {
+    return {
+      EM: "Lấy artist playlist thành công!",
+      EC: "0",
+      DT: data[0].playListId,
+    };
+  } else {
+    return {
+      EM: "Artist not found",
+      EC: "1",
+      DT: null,
+    };
+  }
 };
-export { infoArtist, ArtistSong, Artistplaylist };
+
+module.exports = { infoArtist, ArtistSong, Artistplaylist };

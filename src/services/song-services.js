@@ -37,7 +37,7 @@ const getSong = async (id) => {
       }
     }
   ]);
-  
+
   if (song[0]) {
     const genreId = song[0].genresid;
     const genres = [];
@@ -59,33 +59,33 @@ const getSong = async (id) => {
       if (results.some((result) => result instanceof Error)) {
         console.log("Error retrieving playlist info:", results);
         return {
-          EM: "thêm vào lịch sử thất bại!",
+          EM: "Truy cập thông tin nhạc thất bại!",
           EC: "1",
           DT: "",
         };
       } else {
         const haha = await ZingMp3.getSong(id);
-        if (haha["msg"] != 'Bài hát chỉ dành cho tài khoản VIP, PRI' && song[0].songLink.includes('?') ) {
-          
-          song[0].songLink=haha.data["128"]
+        if (haha["msg"] != 'Bài hát chỉ dành cho tài khoản VIP, PRI' && song[0].songLink.includes('?')) {
+
+          song[0].songLink = haha.data["128"]
         }
         return {
-          EM: "thêm vào lịch sử thành công!",
+          EM: "Truy cập thông tin nhạc thành công!",
           EC: "0",
-          DT: { song:song[0], genres },
+          DT: { song: song[0], genres },
         };
       }
     } catch (error) {
       console.log("Error retrieving playlist info:", error);
       return {
-        EM: "thêm vào lịch sử thất bại!",
+        EM: "Truy cập thông tin nhạc thất bại!",
         EC: "1",
         DT: "",
       };
     }
   } else {
     return {
-      EM: "thêm vào lịch sử thất bại!",
+      EM: "Truy cập thông tin nhạc thất bại!",
       EC: "1",
       DT: "",
     };
@@ -134,23 +134,23 @@ const getSongRelated = async (id) => {
       return Genres.findOne({ genreId: id })
         .then((genresItem) => {
           // Nếu tìm thấy playlist, thêm thông tin vào mảng playlistInfoArray
-         
-            const genresInfo = genresItem;
-            genres.push(genresInfo);
-          
+
+          const genresInfo = genresItem;
+          genres.push(genresInfo);
+
         })
         .catch((error) => {
           console.log("Error retrieving playlist:", error);
         });
     });
     console.log(genres);
-    
+
     try {
       const results = await Promise.all(promises);
       if (results.some((result) => result instanceof Error)) {
         console.log("Error retrieving playlist info:", results);
         return {
-          EM: "thêm vào lịch sử thất bại!",
+          EM: "Truy cập thông tin nhạc thất bại!",
           EC: "1",
           DT: "",
         };
@@ -167,22 +167,22 @@ const getSongRelated = async (id) => {
           .sort({ createdAt: -1 })
           .limit(5);
         return {
-          EM: "thêm vào lịch sử thành công!",
+          EM: "Truy cập thông tin nhạc thành công!",
           EC: "0",
-          DT: { song:song[0], songRelated, playlistRelated },
+          DT: { song: song[0], songRelated, playlistRelated },
         };
       }
     } catch (error) {
       console.log("Error retrieving playlist info:", error);
       return {
-        EM: "thêm vào lịch sử thất bại!",
+        EM: "Truy cập thông tin nhạc thất bại!",
         EC: "1",
         DT: "",
       };
     }
   } else {
     return {
-      EM: "thêm vào lịch sử thất bại!",
+      EM: "Truy cập thông tin nhạc thất bại!",
       EC: "1",
       DT: "",
     };
