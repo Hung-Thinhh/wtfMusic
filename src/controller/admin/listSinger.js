@@ -46,7 +46,6 @@ const adminAr = async (req, res) => {
         ]);
 
         const responseData = { handleData: artistData, maxPage: artistCount };
-        console.log(responseData);
         res.json(responseData);
     } catch (err) {
         console.error(err);

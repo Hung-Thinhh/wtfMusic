@@ -69,6 +69,8 @@ const getGenresById = async (id) => {
       }).select("playlistname playlistId description thumbnail")
         .sort({ listen: -1 })
         .limit(5);
+      console.log(songHot);
+      
       return songHot;
     };
     const getAlbumHot = async () => {
@@ -98,7 +100,7 @@ const getGenresById = async (id) => {
     // console.log(genres);
 
     if (albums.length > 0) {
-      const listArtist = albums.map((item) => item.artistsId[0]);
+      const listArtist = albums.map((item) => item.artistsId&& item.artistsId[0]);
       const format = await Promise.all(
         listArtist.map(async (p) => {
           const playlists = await Playlist.findOne({ playlistId: p });

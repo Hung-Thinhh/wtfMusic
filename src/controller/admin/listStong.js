@@ -5,6 +5,21 @@ const Ar = require('../../models/artists_model');
 const adminSong = async (req, res) => {
     const limit = req.params.id;
     try {
+        await Song.aggregate([
+            {
+              $match: {
+                "artists": { $type: "array", $elemMatch: { $type: "object" } }
+              }
+            },
+            {
+              $set: {
+                "artists": { $map: { input: "$artists", as: "artist", in: "$$artist.id" } }
+              }
+            },
+            {
+              $out: "songs"
+            }
+          ])
         const songCount = await Song.countDocuments({});
         const songData = await Song.aggregate([
             { $sort: { _id: -1 } },

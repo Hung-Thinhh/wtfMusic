@@ -9,6 +9,32 @@ const getSong = async (id) => {
         id: id,
         state: { $ne: 1 }
       }
+    },
+    {
+      $lookup: {
+        from: "artists",
+        localField: "artists",
+        foreignField: "id",
+        as: "artistInfo",
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        // Các trường khác bạn muốn giữ lại
+        artistInfo: 1, // Giữ lại thông tin genres
+        genresid: 1,
+        id: 1,
+        songname: 1,
+        thumbnail: 1,
+        alias: 1,
+        artists: 1,
+        like: 1,
+        listen: 1,
+        songLink: 1,
+        duration: 1,
+        lyric:1
+      }
     }
   ]);
   
@@ -20,6 +46,7 @@ const getSong = async (id) => {
         .then((genresItem) => {
           if (genres) {
             const genresInfo = genresItem;
+            if(genresInfo)
             genres.push(genresInfo);
           }
         })
@@ -70,6 +97,31 @@ const getSongRelated = async (id) => {
       $match: {
         id: id,
         state: { $ne: 1 }
+      }
+    },
+    {
+      $lookup: {
+        from: "artists",
+        localField: "artists",
+        foreignField: "id",
+        as: "artistInfo",
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        // Các trường khác bạn muốn giữ lại
+        artistInfo: 1, // Giữ lại thông tin genres
+        genresid: 1,
+        id: 1,
+        songname: 1,
+        thumbnail: 1,
+        alias: 1,
+        artists: 1,
+        like: 1,
+        listen: 1,
+        songLink: 1,
+        duration: 1,
       }
     }
   ]);

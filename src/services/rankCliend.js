@@ -417,11 +417,19 @@ const getPlaylistRankMonth = async () => {
           },
           { $sort: { id: 1 } },
           {
+            $lookup: { // Thêm stage lookup cho artist
+              from: "artists",
+              localField: "artists",
+              foreignField: "id",
+              as: "artist_info",
+            },
+          },
+          {
             $project: {
               _id: 0,
               id: 1,
               songname: 1,
-              artists: 1,
+              artists: { $ifNull: ["$artist_info", []] },
               thumbnail: 1,
               duration: 1,
             },

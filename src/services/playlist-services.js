@@ -24,12 +24,20 @@ const getPlaylist = async (id) => {
             },
           },
           {
+            $lookup: { // Thêm stage lookup cho artist
+              from: "artists",
+              localField: "artists",
+              foreignField: "id",
+              as: "artist_info",
+            },
+          },
+          {
             $project: { // Chỉ giữ lại id và thumbnail
               _id: 0,
               id: 1,
               thumbnail: 1,
               songname: 1,
-              artists: 1,
+              artists: { $ifNull: ["$artist_info", []] },
               duration: 1,
             }
           }
