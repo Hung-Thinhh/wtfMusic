@@ -362,10 +362,9 @@ const unLike = async (data, id) => {
 const getMyPlaylist = async (idUser) => {
   try {
     const getUser = await User.findOne({ id: idUser });
-
     if (getUser.myPlayLists.length > 0) {
       const getplaylist = async (id) => {
-        return await Playlist.findOne({ playlistId: id }).select('playlistId playlistname thumbnail');
+        return await Playlist.findOne({ playlistId: id }).select('playlistId playlistname thumbnail songid');
       };
       const playlistPromises = getUser.myPlayLists.map((idPlaylist) => {
         return getplaylist(idPlaylist);
