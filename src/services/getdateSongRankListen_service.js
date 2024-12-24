@@ -84,38 +84,54 @@ const getSongRankListen = async (id, range, start) => {
         };
     }
 };
-const getRankMoth = async ()=>{
+const getRankMoth = async () => {
     try {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
         const songRankings = await SongRanking.aggregate([
             {
                 $match: {
                     rankingDate: {
-                        $gte: thirtyDaysAgo,
-                        $lte: today,
+                        $gte: startOfMonth,
+           
                     },
                 },
             },
             {
                 $group: {
-                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$rankingDate" } },
+                    _id: "$songId",
                     listenCount: { $sum: "$listenCount" },
                 },
             },
             {
-                $project: {
-                    _id: 0,
-                    date: "$_id",
-                    listenCount: { $ifNull: ["$listenCount", 0] },
+                $sort: { listenCount: -1 },
+            },
+            {
+                $limit: 20,
+            },
+            {
+                $lookup: {
+                    from: "songs",
+                    localField: "_id",
+                    foreignField: "id",
+                    as: "songDetails",
                 },
             },
             {
-                $sort: { date: 1 },
+                $unwind: "$songDetails",
+            },
+            {
+                $project: {
+                    _id: 0,
+                    songId: "$_id",
+                    listenCount: 1,
+                    songName: "$songDetails.songname",
+                },
             },
         ]);
+
         return {
             EM: "lấy lượt nghe!",
             EC: "0",
@@ -128,5 +144,6 @@ const getRankMoth = async ()=>{
             DT: [],
         };
     }
-}
-module.exports = { getSongRankListen,getRankMoth };
+};
+
+module.exports = { getSongRankListen, getRankMoth };

@@ -83,6 +83,7 @@ const { getPlaylistRankControl } = require("../controller/rangkingPlaylist.js");
 
 const {
   getSongRankListenControl,
+  getRankMothControl
 } = require("../controller/rangkingSongListen.js");
 const {
   getPlaylistRankListenControl,
@@ -232,6 +233,10 @@ const initApiRouter = (app) => {
   router.get(
     "/getrankingservicelisten/:id/:range/:start",
     getSongRankListenControl
+  );
+  
+  router.get(
+    "/admin/songRankThisMonth",getRankMothControl
   );
   router.post("/getrankingplservicelisten", getPlaylistRankListenControl);
 
