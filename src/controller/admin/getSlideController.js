@@ -30,6 +30,19 @@ const setSildeController = async (req, res) => {
             }
             try {
                 const file = req.file;
+                if (!file) {
+                    const slide = {
+                        slideName: data.slideName,
+                        slideDescription: data.slideDescription,
+                        playlistId: data.playlistId.split(','), // Convert to array
+                    };
+                    try {
+                        const updateResult = await setSilde(slideId, slide);
+                        return res.status(200).json(updateResult);
+                    } catch (error) {
+                        return res.status(400).json({ error: error.message });
+                    }
+                }
                 const data = req.body;
                 const slideId = req.params.id;
 
@@ -72,6 +85,9 @@ const insertSildeController = async (req, res) => {
             }
             try {
                 const file = req.file;
+                if (!file) {
+                    return res.status(400).json({ error: "No file uploaded" });
+                }
                 const data = req.body;
                 const slideId = uuidv4();
                 const slideName = data.slideName;

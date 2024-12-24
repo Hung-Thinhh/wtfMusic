@@ -47,7 +47,13 @@ const setSilde = async (id, data) => {
     try {
         const slide = await Slide.findById(id);
         if (slide) {
-            await slide.updateOne(data);
+            const updateData = {};
+            if (data.slideName) updateData.slideName = data.slideName;
+            if (data.slideImage) updateData.slideImage = data.slideImage;
+            if (data.slideDescription) updateData.slideDescription = data.slideDescription;
+            if (data.playlistId) updateData.playlistId = data.playlistId;
+
+            await slide.updateOne(updateData);
             return {
                 EM: "set thành công!",
                 EC: "0",
