@@ -21,7 +21,7 @@ const slideSchema = new Schema({
         required: true
     },
     playlistId: {
-        type: [Schema.Types.ObjectId],
+        type: Array,
         ref: 'Playlist',
         required: true
     }
