@@ -14,9 +14,6 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "/api/auth/google/callback",
     },
-    accessToken => {
-      console.log('kiki',accessToken);
-    },
     async function (accessToken, refreshToken, profile, cb) {
       //   thêm vào db
       console.log('logoooooooooooooooooooooooooooo');
@@ -24,6 +21,8 @@ passport.use(
       let user = await User.findOne({ email: profile.emails[0].value });
 
       if (!user) {
+        console.log('kooooooooooooooooo');
+
         let hashPass = hashPassword("123456xyz");
         user = new User({
           id: generateId(),
@@ -38,6 +37,8 @@ passport.use(
         });
         await user.save();
       } else {
+        console.log('cóooooooooooooooo');
+        
         user = await User.findOneAndUpdate({ email: profile.emails[0].value }, { token: generateId() }, {
           upsert: true,
           new: true,

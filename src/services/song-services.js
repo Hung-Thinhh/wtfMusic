@@ -1,14 +1,14 @@
 import Song from "../models/sonng_model";
 import Playlist from "../models/playlist_model";
 import Genres from "../models/genre_model";
-const { ZingMp3 } = require("zingmp3-api-full-v3")
+const { ZingMp3 } = require("zingmp3-api-full-v3");
 const getSong = async (id) => {
   const song = await Song.aggregate([
     {
       $match: {
         id: id,
-        state: { $ne: 1 }
-      }
+        state: { $ne: 1 },
+      },
     },
     {
       $lookup: {
@@ -16,7 +16,7 @@ const getSong = async (id) => {
         localField: "artists",
         foreignField: "id",
         as: "artistInfo",
-      }
+      },
     },
     {
       $project: {
@@ -33,9 +33,9 @@ const getSong = async (id) => {
         listen: 1,
         songLink: 1,
         duration: 1,
-        lyric:1
-      }
-    }
+        lyric: 1,
+      },
+    },
   ]);
 
   if (song[0]) {
@@ -46,8 +46,7 @@ const getSong = async (id) => {
         .then((genresItem) => {
           if (genres) {
             const genresInfo = genresItem;
-            if(genresInfo)
-            genres.push(genresInfo);
+            if (genresInfo) genres.push(genresInfo);
           }
         })
         .catch((error) => {
@@ -65,9 +64,11 @@ const getSong = async (id) => {
         };
       } else {
         const haha = await ZingMp3.getSong(id);
-        if (haha["msg"] != 'Bài hát chỉ dành cho tài khoản VIP, PRI' && song[0].songLink.includes('?')) {
-
-          song[0].songLink = haha.data["128"]
+        if (
+          haha["msg"] != "Bài hát chỉ dành cho tài khoản VIP, PRI" &&
+          song[0].songLink.includes("?")
+        ) {
+          song[0].songLink = haha.data["128"];
         }
         return {
           EM: "Truy cập thông tin nhạc thành công!",
@@ -96,8 +97,8 @@ const getSongRelated = async (id) => {
     {
       $match: {
         id: id,
-        state: { $ne: 1 }
-      }
+        state: { $ne: 1 },
+      },
     },
     {
       $lookup: {
@@ -105,7 +106,7 @@ const getSongRelated = async (id) => {
         localField: "artists",
         foreignField: "id",
         as: "artistInfo",
-      }
+      },
     },
     {
       $project: {
@@ -122,8 +123,8 @@ const getSongRelated = async (id) => {
         listen: 1,
         songLink: 1,
         duration: 1,
-      }
-    }
+      },
+    },
   ]);
   console.log(song);
 
@@ -137,7 +138,6 @@ const getSongRelated = async (id) => {
 
           const genresInfo = genresItem;
           genres.push(genresInfo);
-
         })
         .catch((error) => {
           console.log("Error retrieving playlist:", error);
@@ -155,12 +155,51 @@ const getSongRelated = async (id) => {
           DT: "",
         };
       } else {
-        const songRelated = await Song.find({
-          genresid: { $in: song[0].genresid },
-          state: { $ne: 1 }
-        })
-          .sort({ createdAt: -1 })
-          .limit(12);
+        // const songRelated = await Song.find({
+        //   genresid: { $in: song[0].genresid },
+        //   state: { $ne: 1 },
+        // })
+        //   .sort({ createdAt: -1 })
+        //   .limit(12);
+        const songRelated = await Song.aggregate([
+          {
+            $match: {
+              genresid: { $in: song[0].genresid },
+              state: { $ne: 1 },
+            },
+          },
+          {
+            $lookup: {
+              from: "artists",
+              localField: "artists",
+              foreignField: "id",
+              as: "artistInfo",
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              // Các trường khác bạn muốn giữ lại
+              artistInfo: 1, // Giữ lại thông tin genres
+              genresid: 1,
+              id: 1,
+              songname: 1,
+              thumbnail: 1,
+              alias: 1,
+              artists: { $ifNull: ["$artistInfo", []] },
+              like: 1,
+              listen: 1,
+              songLink: 1,
+              duration: 1,
+            },
+          },
+          {
+            $sort: { createdAt: -1 } 
+          },
+          {
+            $limit: 12
+          }
+        ]);
         const playlistRelated = await Playlist.find({
           genresid: { $in: song[0].genresid },
         })

@@ -415,8 +415,6 @@ const createMyPlaylist = async (user, playlistname) => {
         playlistname: playlistname,
         genresid: [],
         artistsId: [user.id],
-        thumbnail:
-          "https://photo-resize-zmp3.zmdcdn.me/w240_r1x1_jpeg/cover/f/3/a/f/f3af71df0b7a68ec44955faa5dc7d0ce.jpg",
         description: "/",
         songid: [],
         like: 0,
@@ -615,15 +613,17 @@ const getMylikesSongs = async (idUser) => {
 
     if (getUser.likedSongs.length > 0) {
       const getsong = async (id) => {
-        return await Song.findOne({ id: id }).select('id songname thumbnail duration songLink');
+        const song = await Song.findOne({ id: id }).select('id songname thumbnail duration songLink');
+        return song 
       };
       const getplaylist = async (id) => {
-        return await Playlist.findOne({ playlistId: id }).select('playlistId playlistname thumbnail');
+        const playlist = await Playlist.findOne({ playlistId: id }).select('playlistId playlistname thumbnail');
+        return playlist
       };
       const songPromises = getUser.likedSongs.map((idSong) => {
         return getsong(idSong);
       });
-      const songs = await Promise.all(songPromises);
+      const songs = await Promise.all(songPromises).then(songs => songs.filter(song => song !== null));
 
       const playlistPromises = getUser.likedPlayLists.map((idplaylist) => {
         return getplaylist(idplaylist);

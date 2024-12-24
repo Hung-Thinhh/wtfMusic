@@ -29,10 +29,12 @@ const playlistSchema = new Schema({
     },
     thumbnail: {
         type: String,
+        default: 'https://photo-zmp3.zmdcdn.me/album_default.png',
     },
     type: {
         type: String,
-        required: true
+        required: true,
+        default: 'playlist',
     },
     description: {
         type: String,

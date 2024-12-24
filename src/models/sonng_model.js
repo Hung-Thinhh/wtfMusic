@@ -18,6 +18,7 @@ const songSchema = new Schema({
   thumbnail: {
     type: String,
     required: true,
+    default: "https://photo-resize-zmp3.zmdcdn.me/w600_r1x1_jpeg/cover/3/2/a/3/32a35f4d26ee56366397c09953f6c269.jpg",
   },
   alias: {
     type: String,
