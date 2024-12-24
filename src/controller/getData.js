@@ -107,7 +107,7 @@ const search = async (req, res) => {
     const searchterm = async () => {
         try {
             const keyword = req.params.id;
-            const artistResults = await Ar.find({ alias: { $regex: keyword, $options: "i" } }, { artistsName: 1, avt: 1, id: 1 }).limit(5);
+            const artistResults = await Ar.find({ alias: { $regex: keyword, $options: "i" } }, { artistsName: 1, avt: 1, id: 1, alias:1 }).limit(5);
             const playlistResults = await Playlist.find({ playlistname: { $regex: keyword, $options: "i" } }, { thumbnail: 1, playlistId: 1, playlistname: 1, artistsId: 1 }).limit(5);
             const songResults = await Song.find({ songname: { $regex: keyword, $options: "i" } }, { thumbnail: 1, songname: 1, id: 1, artists: 1 }).limit(5);
 

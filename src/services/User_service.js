@@ -8,6 +8,7 @@ const { v4: uuidv4 } = require("uuid");
 const { Nuxtify } = require("nuxtify-api");
 const SongRanking = require("../models/songRanking_model.js");
 const PlaylistRanking = require("../models/playlistRanking_model.js");
+import {getIO}  from "../socket/socketConfig.js";
 
 const getInfor = async (id) => {
   let user = await User.findOne({ id: id });
@@ -758,6 +759,8 @@ const changeRole = async (data) => {
       );
       if (result.modifiedCount > 0) {
         updateData = data.role;
+        const io = getIO();
+        io.emit('ban_user', userID);
       }
     } else {
       return {

@@ -462,40 +462,25 @@ const getPlaylistRankMonth = async () => {
             },
             { $sort: { id: 1 } },
             {
+              $lookup: { // Thêm stage lookup cho artist
+                from: "artists",
+                localField: "artists",
+                foreignField: "id",
+                as: "artist_info",
+              },
+            },
+            {
               $project: {
                 _id: 0,
                 id: 1,
                 songname: 1,
-                artists: 1,
+                artists: { $ifNull: ["$artist_info", []] },
                 thumbnail: 1,
                 duration: 1,
               },
             },
           ],
           as: "songs",
-        },
-      },
-      {
-        $project: {
-          _id: 1, // Bao gồm trường _id của playlist
-          playlistname: 1, // Bao gồm trường playlistname của playlist
-          state: 1, // Bao gồm trường state của playlist
-          songid: 1, 
-          playlistId:1,
-
-          songs: {
-            $map: {
-              input: "$songs",
-              as: "song",
-              in: {
-                artists: "$$song.artists",
-                id: "$$song.id",
-                songname: "$$song.songname",
-                thumbnail: "$$song.thumbnail",
-                duration: "$$song.duration",
-              },
-            },
-          },
         },
       },
     ]);
@@ -538,33 +523,35 @@ const getPlaylistRankWeek = async () => {
       },
       {
         $lookup: {
-          from: "songs", // Tên collection của bài hát
-          localField: "songid", // Tên trường chứa id bài hát trong playlist
-          foreignField: "id", // Tên trường chứa id bài hát trong collection "songs"
-          as: "songs", // Tên trường chứa kết quả lookup
-        },
-      },
-      {
-        $project: {
-          _id: 1, // Bao gồm trường _id của playlist
-          playlistname: 1, // Bao gồm trường playlistname của playlist
-          state: 1, // Bao gồm trường state của playlist
-          songid: 1, 
-          playlistId:1,
-
-          songs: {
-            $map: {
-              input: "$songs",
-              as: "song",
-              in: {
-                artists: "$$song.artists",
-                id: "$$song.id",
-                songname: "$$song.songname",
-                thumbnail: "$$song.thumbnail",
-                duration: "$$song.duration",
+          from: "songs",
+          let: { song_ids: "$songid" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $in: ["$id", "$$song_ids"] },
               },
             },
-          },
+            { $sort: { id: 1 } },
+            {
+              $lookup: { // Thêm stage lookup cho artist
+                from: "artists",
+                localField: "artists",
+                foreignField: "id",
+                as: "artist_info",
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                id: 1,
+                songname: 1,
+                artists: { $ifNull: ["$artist_info", []] },
+                thumbnail: 1,
+                duration: 1,
+              },
+            },
+          ],
+          as: "songs",
         },
       },
     ]);
@@ -580,32 +567,35 @@ const getPlaylistRankWeek = async () => {
         },
         {
           $lookup: {
-            from: "songs", // Tên collection của bài hát
-            localField: "songid", // Tên trường chứa id bài hát trong playlist
-            foreignField: "id", // Tên trường chứa id bài hát trong collection "songs"
-            as: "songs", // Tên trường chứa kết quả lookup
-          },
-        },
-        {
-          $project: {
-            _id: 1, // Bao gồm trường _id của playlist
-            playlistname: 1, // Bao gồm trường playlistname của playlist
-            state: 1, // Bao gồm trường state của playlist
-            songid: 1, 
-            playlistId:1,
-            songs: {
-              $map: {
-                input: "$songs",
-                as: "song",
-                in: {
-                  artists: "$$song.artists",
-                  id: "$$song.id",
-                  songname: "$$song.songname",
-                  thumbnail: "$$song.thumbnail",
-                  duration: "$$song.duration",
+            from: "songs",
+            let: { song_ids: "$songid" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $in: ["$id", "$$song_ids"] },
                 },
               },
-            },
+              { $sort: { id: 1 } },
+              {
+                $lookup: { // Thêm stage lookup cho artist
+                  from: "artists",
+                  localField: "artists",
+                  foreignField: "id",
+                  as: "artist_info",
+                },
+              },
+              {
+                $project: {
+                  _id: 0,
+                  id: 1,
+                  songname: 1,
+                  artists: { $ifNull: ["$artist_info", []] },
+                  thumbnail: 1,
+                  duration: 1,
+                },
+              },
+            ],
+            as: "songs",
           },
         },
       ]);

@@ -12,6 +12,32 @@ const infoArtist = async (id) => {
           { $project: { id: 1 , songname: 1, thumbnail: 1, id: 1, duration: 1 } },
         ],
         as: "songListId",
+        let: { songListId: "$songListId" },
+        pipeline: [
+          {
+            $match: {
+              "state": { $ne: 1 },
+            },
+          },
+          {
+            $lookup: { // Thêm stage lookup cho artist
+              from: "artists",
+              localField: "artists",
+              foreignField: "id",
+              as: "artist_info",
+            },
+          },
+          {
+            $project: { // Chỉ giữ lại id và thumbnail
+              _id: 0,
+              id: 1,
+              thumbnail: 1,
+              songname: 1,
+              artists: { $ifNull: ["$artist_info", []] },
+              duration: 1,
+            }
+          }
+        ],
       },
     },
     {
@@ -53,6 +79,7 @@ const infoArtist = async (id) => {
         playListId: 1,
         realName: 1,
         avt: 1,
+        songListId: { $first: "$songListId" },
         totalFollow: 1,
         songListId: 1,
         playlistJoin: 1,
