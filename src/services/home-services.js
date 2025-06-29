@@ -229,10 +229,9 @@ const getSongSad = async () => {
 
 const getSongRating = async () => {
   const data = await getPlaylistRankMonth();
-  // const songRating = await Song.find({ state: { $ne: 1 } }).select("artists id songname thumbnail")
-  //   .sort({ listen: -1, createdAt: -1 })
-  //   .limit(8);
-  return data.DT.NowPlaylist.songs.slice(0, 9);
+  // Filter out any songs that might be empty or null, then slice the first 9
+  const filteredSongs = data.DT.NowPlaylist.songs.filter(song => song && Object.keys(song).length > 0);
+  return filteredSongs.slice(0, 9);
 };
 
 const getSongTop100 = async () => {

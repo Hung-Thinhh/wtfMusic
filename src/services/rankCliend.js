@@ -446,7 +446,7 @@ const getPlaylistRankMonth = async () => {
     playlist = await Playlist.aggregate([
       {
         $match: {
-          playlistname: `Bảng xếp hạng tháng 9/${currentYear}`,
+          playlistname: `Bảng xếp hạng tháng 9/2024`,
           state: { $ne: 1 },
         },
       },
@@ -484,9 +484,9 @@ const getPlaylistRankMonth = async () => {
         },
       },
     ]);
+    
 
-
-    playlistNames = `Bảng xếp hạng tháng 8/${currentYear}`;
+    playlistNames = `Bảng xếp hạng tháng 8/2024`;
   }
   
   
@@ -561,7 +561,7 @@ const getPlaylistRankWeek = async () => {
       playlist = await Playlist.aggregate([
         {
           $match: {
-            playlistname: `Bảng xếp hạng tuần 38/${currentYear} - ${genresMap[genreId]}`,
+            playlistname: `Bảng xếp hạng tuần 38/2024 - ${genresMap[genreId]}`,
             state: { $ne: 1 },
           },
         },
@@ -613,7 +613,7 @@ const getPlaylistRankWeek = async () => {
     );
     const newData = {...playlist[0],songs: song}
     const Lastplaylist = await Playlist.findOne(
-      { playlistname: `Bảng xếp hạng tuần 37/${currentYear} - ${genresMap[genreId]}` },
+      { playlistname: `Bảng xếp hạng tuần 37/2024 - ${genresMap[genreId]}` },
       { songid: 1, _id: 0 }
     );
     playlists.push({ NowPlaylist:newData, lastPlaylist: Lastplaylist });
