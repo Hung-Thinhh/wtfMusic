@@ -20,15 +20,18 @@ const server = require('http').createServer(app);
 
 
 setupWebSocket(server);
-// const corsOptions = {
-//     origin: process.env.CLIENT, 
-//     optionsSuccessStatus: 200, 
-//     credentials: true,
-//   };
+const corsOptions = {
+    origin: process.env.CLIENT, 
+    optionsSuccessStatus: 200, 
+    credentials: true,
+  };
   
-app.use(cors({
-    origin: '*'
-}));
+app.use(cors(corsOptions));
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  next();
+});
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
