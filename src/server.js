@@ -21,7 +21,7 @@ const server = require('http').createServer(app);
 
 setupWebSocket(server);
 const corsOptions = {
-    origin: 'http://localhost:3000', 
+    origin: process.env.CLIENT, 
     optionsSuccessStatus: 200, 
     credentials: true,
   };
