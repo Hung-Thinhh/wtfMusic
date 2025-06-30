@@ -3,88 +3,96 @@ import Playlist from "../models/playlist_model";
 import Genres from "../models/genre_model";
 const { ZingMp3 } = require("zingmp3-api-full-v3");
 const getSong = async (id) => {
-  const song = await Song.aggregate([
-    {
-      $match: {
-        id: id,
-        state: { $ne: 1 },
+  try {
+    const songResult = await Song.aggregate([
+      {
+        $match: {
+          id: id,
+          state: { $ne: 1 },
+        },
       },
-    },
-    {
-      $lookup: {
-        from: "artists",
-        localField: "artists",
-        foreignField: "id",
-        as: "artistInfo",
+      {
+        $lookup: {
+          from: "artists",
+          localField: "artists",
+          foreignField: "id",
+          pipeline: [
+            {
+              $project: {
+                _id: 0,
+                id: 1,
+                artistsName: 1,
+                avt: 1,
+                alias: 1,
+              },
+            },
+          ],
+          as: "artistInfo",
+        },
       },
-    },
-    {
-      $project: {
-        _id: 0,
-        // Các trường khác bạn muốn giữ lại
-        artistInfo: 1, // Giữ lại thông tin genres
-        genresid: 1,
-        id: 1,
-        songname: 1,
-        thumbnail: 1,
-        alias: 1,
-        artists: 1,
-        like: 1,
-        listen: 1,
-        songLink: 1,
-        duration: 1,
-        lyric: 1,
+      {
+        $lookup: {
+          from: "genres",
+          localField: "genresid",
+          foreignField: "genreId",
+          pipeline: [
+            {
+              $project: {
+                _id: 0,
+                genreId: 1,
+                genrename: 1,
+              },
+            },
+          ],
+          as: "genres",
+        },
       },
-    },
-  ]);
+      {
+        $project: {
+          _id: 0,
+          artistInfo: 1,
+          genres: 1,
+          id: 1,
+          songname: 1,
+          thumbnail: 1,
+          alias: 1,
+          like: 1,
+          listen: 1,
+          songLink: 1,
+          duration: 1,
+          lyric: 1,
+        },
+      },
+    ]);
 
-  if (song[0]) {
-    const genreId = song[0].genresid;
-    const genres = [];
-    const promises = genreId.map((id) => {
-      return Genres.findOne({ genreId: id })
-        .then((genresItem) => {
-          if (genres) {
-            const genresInfo = genresItem;
-            if (genresInfo) genres.push(genresInfo);
-          }
-        })
-        .catch((error) => {
-          console.log("Error retrieving playlist:", error);
-        });
-    });
-    try {
-      const results = await Promise.all(promises);
-      if (results.some((result) => result instanceof Error)) {
-        console.log("Error retrieving playlist info:", results);
-        return {
-          EM: "Truy cập thông tin nhạc thất bại!",
-          EC: "1",
-          DT: "",
-        };
-      } else {
-        const haha = await ZingMp3.getSong(id);
-        if (
-          haha["msg"] != "Bài hát chỉ dành cho tài khoản VIP, PRI" &&
-          song[0].songLink.includes("?")
-        ) {
-          song[0].songLink = haha.data["128"];
-        }
-        return {
-          EM: "Truy cập thông tin nhạc thành công!",
-          EC: "0",
-          DT: { song: song[0], genres },
-        };
-      }
-    } catch (error) {
-      console.log("Error retrieving playlist info:", error);
+    const song = songResult[0];
+    if (!song) {
       return {
         EM: "Truy cập thông tin nhạc thất bại!",
         EC: "1",
         DT: "",
       };
     }
-  } else {
+
+    
+
+    // Lấy link nhạc mới nếu cần
+    const haha = await ZingMp3.getSong(id);
+    if (
+      haha?.msg !== "Bài hát chỉ dành cho tài khoản VIP, PRI" &&
+      haha?.data?.["128"] &&
+      song.songLink?.includes("?")
+    ) {
+      song.songLink = haha.data["128"];
+    }
+
+    return {
+      EM: "Truy cập thông tin nhạc thành công!",
+      EC: "0",
+      DT: { song},
+    };
+  } catch (error) {
+    console.error("Lỗi khi lấy thông tin bài hát:", error);
     return {
       EM: "Truy cập thông tin nhạc thất bại!",
       EC: "1",
@@ -92,6 +100,7 @@ const getSong = async (id) => {
     };
   }
 };
+
 const getSongRelated = async (id) => {
   const song = await Song.aggregate([
     {
@@ -194,11 +203,11 @@ const getSongRelated = async (id) => {
             },
           },
           {
-            $sort: { createdAt: -1 } 
+            $sort: { createdAt: -1 },
           },
           {
-            $limit: 12
-          }
+            $limit: 12,
+          },
         ]);
         const playlistRelated = await Playlist.find({
           genresid: { $in: song[0].genresid },

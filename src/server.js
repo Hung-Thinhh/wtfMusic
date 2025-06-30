@@ -38,7 +38,7 @@ app.use(cookieParser());
 configViewEngine(app);
 //conect database
 db.connect()
-scheduler.startScheduler(); // Khởi tạo scheduler
+// scheduler.startScheduler(); // Khởi tạo scheduler
 
 // init web router
 initWebRouter(app); 
