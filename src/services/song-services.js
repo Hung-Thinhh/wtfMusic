@@ -78,6 +78,7 @@ const getSong = async (id) => {
 
     // Lấy link nhạc mới nếu cần
     const haha = await ZingMp3.getSong(id);
+    console.log("mp3", haha);
     if (
       haha?.msg !== "Bài hát chỉ dành cho tài khoản VIP, PRI" &&
       haha?.data?.["128"] &&
@@ -135,7 +136,6 @@ const getSongRelated = async (id) => {
       },
     },
   ]);
-  console.log(song);
 
   if (song && song[0]) {
     const genreId = song[0].genresid;
