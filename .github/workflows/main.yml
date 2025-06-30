@@ -21,7 +21,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd /services/wtfMusic
+            cd /home/ubuntu/services/wtfMusic
             git fetch origin
             git checkout main
             git pull
