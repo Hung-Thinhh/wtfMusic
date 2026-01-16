@@ -43,7 +43,7 @@ db.connect()
 // init web router
 initWebRouter(app); 
 initApiRouter(app); 
-
-server.listen(PORT, () => {
-    console.log(" Running on port " + PORT +":  http://localhost:" +PORT);
-})
+// Thêm '0.0.0.0' để server chấp nhận kết nối từ bên ngoài container
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is running on port ${PORT} at http://0.0.0.0:${PORT}`);
+});
